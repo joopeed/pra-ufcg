@@ -1,0 +1,28 @@
+<register>
+	<title>Shipping</title>
+	<field>
+		<label>Address</label>
+		<type>text</type>
+		<name>address</name>
+	</field>
+	<field>
+		<label>City</label>
+		<type>text</type>
+		<name>city</name>
+	</field>
+	<field>
+		<label>State</label>
+		<type>text</type>
+		<name>state</name>
+	</field>
+	<field>
+		<label>Zip Code</label>
+		<type>text</type>
+		<name>zipcode</name>
+	</field>
+	<field>
+		<label>Country</label>
+		<type>text</type>
+		<name>country</name>
+	</field>
+</register>
