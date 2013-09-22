@@ -33,498 +33,433 @@ class Pregao(db.Model):
 
 
 class Pedido(db.Model):
-    id = db.IntegerProperty(required=True)
     demandante = db.StringProperty(required=True)
-    data_entrada = db.StringProperty(required=True)
+    data_entrada = db.StringProperty(required=True) #db.DateTimeProperty(auto_now_add=True)
     descricao = db.StringProperty(required=True)
     numero = db.StringProperty(required=True)
-    email_demandante = db.EmailProperty(required=True)
-    local = db.StringProperty(default = "PRA")
-    data_pregao = db.DateTimeProperty()
-    data_resultado = db.DateTimeProperty()
+    email_demandante = db.StringProperty(required=True)
+    local = db.StringProperty(default = "PRA/Gabinete")
 
-    legalidade = db.StringProperty(
-        default = "indefinido",
-        choices = set([
+    legalidade_choices = (
             "indefinido",
             "legal",
             "ilegal"
-        ])
-    )
+        )
 
-    autorizacao = db.StringProperty(
+    legalidade = db.StringProperty(
         default = "indefinido",
-        choices = set([
+        choices = set(legalidade_choices)
+    )
+    
+
+    autorizacao_choices = (
             "indefinido",
             "autorizado",
             "nao autorizado"
-        ])
+        )
+
+    autorizacao = db.StringProperty(
+        default = "indefinido",
+        choices = set(autorizacao_choices)
+    )
+
+    conferencia_choices = (
+            "indefinido",
+            "incompleto",
+            "completo"
     )
 
     conferencia = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "incompleto",
-            "completo"
-        ])
+        choices = set(conferencia_choices)
     )
+
+    minuta_choices = (
+            "indefinido",
+            "elaborado"
+        )
 
     minuta = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "de acordo",
-            "nao de acordo"
-        ])
+        choices = set(minuta_choices)
     )
 
 
-    legalidade_materiais = db.StringProperty(
-        default = "indefinido",
-        choices = set([
+    legalidade_materiais_choices = (
             "indefinido",
             "legal",
             "ilegal"
-        ])
+        )
+
+    legalidade_materiais = db.StringProperty(
+        default = "indefinido",
+        choices = set(legalidade_materiais_choices)
     )
-	
+    
+    pregao_choices = (
+            "indefinido",
+            "informado no SIASE e Comprasnet",
+            "Edital publicado",
+            "Data marcada",
+            "Realizado"
+        )
+
     pregao = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "iniciado"
-        ])
+        choices = set(pregao_choices)
     )
 
-
-    adjudicacao = db.StringProperty(
-        default = "indefinido",
-        choices = set([
+    licitacao_choices = (
             "indefinido",
-            "sim",
-            "nao"
-        ])
-    )
+            "concluida",
+            "em avaliacao"
+        )
 
     licitacao = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "realizado",
-            "homologado"
-        ])
+        choices = set(licitacao_choices)
     )
+
+    adjudicacao_choices = (
+            "indefinido",
+            "termo elaborado"
+        )
+
+    adjudicacao = db.StringProperty(
+        default = "indefinido",
+        choices = set(adjudicacao_choices)
+    )
+
+    homologacao_choices = (
+        "indefinido", 
+            "homologado",
+            "nao homologado"
+        )
+
+    homologacao = db.StringProperty(
+        default = "indefinido",
+        choices = set(homologacao_choices)
+    )    
+
+    publicacao_choices = (
+            "indefinido",
+            "publicado"
+        )
 
     publicacao = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "publicado"
-        ])
+        choices = set(publicacao_choices)
     )
+
+    minuta_empenho_choices = (
+            "indefinido",
+            "elaborada"
+        )
 
     minuta_empenho = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "elaborada"
-        ])
+        choices = set(minuta_empenho_choices)
     )
+
+    detalhamento_choices = (
+            "indefinido",
+            "detalhado",
+            "no SEPLAN"
+        )
 
     detalhamento = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "de acordo",
-            "nao de acordo"
-        ])
+        choices = set(detalhamento_choices)
     )
-	
-    empenho = db.StringProperty(
-        default = "indefinido",
-        choices = set([
+
+    empenho_choices = (
             "indefinido",
             "empenhado",
-            "no empenho"
-        ])
+            "recebido"
+        )
+    
+    empenho = db.StringProperty(
+        default = "indefinido",
+        choices = set(empenho_choices)
     )
+
+    nota_almoxarifado_choices = (
+            "indefinido",
+            "enviado"
+        )
 
     nota_almoxarifado = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "enviado"
-        ])
+        choices = set( nota_almoxarifado_choices)
     )
 
-    patrimonio = db.StringProperty(
-        default = "indefinido",
-        choices = set([
+    tombamento_choices = (
             "indefinido",
-            "no patrimonio", 
-	    "tombado"
-        ])
+        "tombado"
+        )
+
+    tombamento = db.StringProperty(
+        default = "indefinido",
+        choices = set( tombamento_choices)
     )
+
+    nota_contabilidade_choices = (
+            "indefinido",
+            "enviado"
+        )
 
     nota_contabilidade = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "enviado"
-        ])
+        choices = set(nota_contabilidade_choices )
     )
+
+    liquidacao_choices = (
+            "indefinido",
+        "servico atestado", 
+            "liquidado"
+        )
      
     liquidacao = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "liquidado"
-        ])
+        choices = set(liquidacao_choices )
     )
+
+    pagamento_choices = (
+            "indefinido",
+            "pago"
+        )
 
     pagamento = db.StringProperty(
         default = "indefinido",
-        choices = set([
-            "indefinido",
-            "pago"
-        ])
+        choices = set(pagamento_choices)
     )
 
 
 
-class CriarHandler(webapp2.RequestHandler):
-    def get(self):
-	user = users.get_current_user() 
-	if user and user in users_permission and "criar" in users_permission[user]:
-		self.response.out.write("""
-					<html>
-					<head>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/styles.css">
-					<link rel="stylesheet" type="text/css" href="/stylesheets/div_styles.css">
-					<title>Processos - PRA - UFCG</title>
-					<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-					<script type="text/javascript" src="js/progressbar.js"></script>
-					<script type="text/javascript" src="js/div_hide.js"></script>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/progressbar.css">
-					</head>
-					""")
-		self.response.write("""
-			<div style="background-color:#660000;position:absolute;left:0px;right:0px;top:0px;height:100px;padding:10px;font-size:30px; color: white; ">PRA - UFCG</div><div style="background-color:white;position:relative;left:90%;top:0px;padding:10px;color:white;">"""+('<a href="%s">Sair</a>' %
-		                (users.create_logout_url('/')))+"""</div>
-			<div style="position:absolute;left:0px;right:0px;top:80px;height:30px;padding:0px;z-index:1;">
-					<div id="progressBar" class="big-green"><div></div></div>
-			</div>
-				<form action="/salvaPedido" method="post">""")
-		opened = open("sequence.txt").read().split("\n")[:-1]
-		for i in range(len(opened)):
-			start = 'class="hidden"'
-			back = """<a href="javascript:unhide('form"""+str(i-1)+"""');unhide('form"""+str(i)+"""');progressBar("""+str(100/len(opened)*(i-1))+""", $('#progressBar'));">Back</a>"""
-			next = """<a href="javascript:unhide('form"""+str(i+1)+"""');unhide('form"""+str(i)+"""');progressBar("""+str(100/len(opened)*(i+1))+""", $('#progressBar'));">Next</a>"""
-			submit = ""
-			if i==0:  
-				start = ' class="unhidden"'
-				back = ""
-			if i==len(opened)-1: 
-				next = ""
-				submit = '<input type="submit" value="Enviar"></input>'		
-			self.response.write("""
-			<div id="form"""+str(i)+"""" """+start+"""style="background-color:#dfdfdf;position:absolute;left:0px;right:0px;top:100px;padding:25px;">
-						"""+generate_form(opened[i].strip("\n") +".xml")+back+next+submit+"""
-					</div>""")
-		self.response.write("""</form><script>
-			progressBar(2, $('#progressBar'));
-			</script>
-				""")
-		self.response.out.write("</html>")
-	else:
-            self.redirect( users.create_login_url('/') )
-
-"""
-def iterate_over_xml(xml_file):
-        import xml.etree.ElementTree as xml
-        tree = xml.parse(xml_file)
-        root = tree.getroot()
-        def iterate_over_node(node, level, dic):
-                if len(node) == 0: return 
-                for child in node:
-                        if child.text:
-                                print "-"*level, child.tag+"="+child.text
-                        else:
-                                print "-"*level, child.tag
-			dic[child.tag] = child.text, otherdic
-                        iterate_over_node(child, level+1, otherdic)
-        dic ={}
-	iterate_over_node(root, 0, dic)
-	print dic
-"""
-
-
-class SalvaPedidoHandler(webapp2.RequestHandler):
-    def post(self):
-	query = list(db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"))
-	if(len(query)==0):
-		id = 0
-	else:
-		id = query[0].id+1
-	novo = Pedido( id=id,
-			demandante=self.request.get("demandante"),
-			data_entrada=self.request.get("data_entrada"),
-			descricao=self.request.get("descricao"),
-			numero=self.request.get("numero"),
-			email_demandante=self.request.get("email_demandante"),
-			local="PRA",
-			)
-	novo.put()
-	self.redirect("/")
-
-class AutorizaPedidoHandler(webapp2.RequestHandler):
-    def get(self):
-	for pedido in db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"):
-		if pedido.numero == self.request.get("numero"):
-			pedido.autorizacao = str(self.request.get("estado"))
-		db.put(pedido)
-	self.redirect("/")
-
-class LicitaPedidoHandler(webapp2.RequestHandler):
-    def get(self):
-	for pedido in db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"):
-		if pedido.numero == self.request.get("numero"):
-			pedido.licitacao = str(self.request.get("estado"))
-		db.put(pedido)
-	self.redirect("/")
-
-class AcompanharHandler(webapp2.RequestHandler):
-    def get(self):
-	import operator
-	user = users.get_current_user()
-	
-        if user and user in users_permission and "acompanhar" in users_permission[user]:
-		self.response.write("""
-					<html>
-					<head>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/styles.css">
-					<link rel="stylesheet" type="text/css" href="/stylesheets/div_styles.css">
-					<title>Processos - PRA - UFCG</title>
-					<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-					<script type="text/javascript" src="js/progressbar.js"></script>
-					<script type="text/javascript" src="js/div_hide.js"></script>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/progressbar.css">
-					</head>
-
-					<div style="background-color:#660000;position:absolute;left:0px;right:0px;top:0px;height:100px;padding:10px;font-size:30px; color: white; ">PRA - UFCG</div>
-<div style="background-color:white;position:relative;left:90%;top:0px;padding:10px;color:white;">"""+('<a href="%s">Sair</a>' %
-                        (users.create_logout_url('/')))+"""</div>
-<div style="background-color:#dfdfdf;position:absolute;left:0px;right:0px;top:100px;padding:25px;">
-""")
-		if len(list(db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"))) > 0:
-			i = 0	
-			for tal in db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"):
-				description = "<br>Demandante: "+tal.demandante + "<br>" + "Data de Entrada: " + tal.data_entrada + "<br>" + "Descricao: " + tal.descricao + "<br>"+"Numero: " + tal.numero + "<br>"+"Email do demandante: " + str(tal.email_demandante) + "<br>"
-				image = ""
-				if tal.licitacao == "a licitar" and tal.autorizacao == "autorizado":
-					image = '<img border="0" src="/images/pedido_a_licitar.png">'
-				elif tal.licitacao == "licitacao concluida" and tal.autorizacao == "autorizado" :
-					image = '<img border="0" src="/images/pedido_licitacao_concluida.png">'
-				elif tal.licitacao == "em licitacao" and tal.autorizacao == "autorizado" :
-					image = '<img border="0" src="/images/pedido_em_licitacao.png">'
-				if tal.autorizacao == "indefinido" and tal.licitacao == "a licitar":
-					image = '<img border="0" src="/images/pedido_criado.png">'			
-				elif tal.autorizacao == "autorizado" and tal.licitacao == "a licitar":
-					 image = '<img border="0" src="/images/pedido_autorizado.png">'
-				elif tal.autorizacao == "nao autorizado" and tal.licitacao == "a licitar":
-					 image = '<img border="0" src="/images/pedido_nao_autorizado.png">'
-				self.response.write("""<a href="javascript:unhide('process"""+str(i)+"""');">"""+str(tal.numero) + '</a><br><div id="process'+str(i)+'" class="hidden">'+image+description+'</div>')
-				i+=1	
-		else:
-			self.response.write("Não há processos para acompanhar")
-        else:
-            self.redirect( users.create_login_url('/') )
 
 
 
 
-
-
-
-class AutorizarHandler(webapp2.RequestHandler):
-    def get(self):
-	import operator
-	user = users.get_current_user()
-	
-        if user and user in users_permission and "acompanhar" in users_permission[user]:
-		self.response.write("""
-					<html>
-					<head>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/styles.css">
-					<link rel="stylesheet" type="text/css" href="/stylesheets/div_styles.css">
-					<title>Processos - PRA - UFCG</title>
-					<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-					<script type="text/javascript" src="js/progressbar.js"></script>
-					<script type="text/javascript" src="js/div_hide.js"></script>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/progressbar.css">
-					</head>
-
-					<div style="background-color:#660000;position:absolute;left:0px;right:0px;top:0px;height:100px;padding:10px;font-size:30px; color: white; ">PRA - UFCG</div>
-<div style="background-color:white;position:relative;left:90%;top:0px;padding:10px;color:white;">"""+('<a href="%s">Sair</a>' %
-                        (users.create_logout_url('/')))+"""</div>
-<div style="background-color:#dfdfdf;position:absolute;left:0px;right:0px;top:100px;padding:25px;">
-""")
-		if len(list(db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"))) > 0:
-			i = 0	
-			for tal in db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"):
-				if tal.autorizacao == "indefinido":
-					description ="<br>Demandante: "+tal.demandante + "<br>" + "Data de Entrada: " + tal.data_entrada + "<br>" + "Descricao: " + tal.descricao + "<br>"+"Numero: " + tal.numero + "<br>"+"Email do demandante: " + str(tal.email_demandante)+ "<br>"
-					image = ""
-					if tal.licitacao == "a licitar" and tal.autorizacao == "autorizado":
-						image = '<img border="0" src="/images/pedido_a_licitar.png">'
-					elif tal.licitacao == "licitacao concluida" and tal.autorizacao == "autorizado" :
-						image = '<img border="0" src="/images/pedido_licitacao concluida.png">'
-					elif tal.licitacao == "em licitacao" and tal.autorizacao == "autorizado" :
-						image = '<img border="0" src="/images/pedido_em_licitacao.png">'
-					if tal.autorizacao == "indefinido" and tal.licitacao == "a licitar":
-						image = '<img border="0" src="/images/pedido_criado.png">'			
-					elif tal.autorizacao == "autorizado" and tal.licitacao == "a licitar":
-						 image = '<img border="0" src="/images/pedido_autorizado.png">'
-					elif tal.autorizacao == "nao autorizado" and tal.licitacao == "a licitar":
-						 image = '<img border="0" src="/images/pedido_nao_autorizado.png">'
-					self.response.write("""<a href="javascript:unhide('process"""+str(i)+"""');">"""+str(tal.numero) + '</a><br><div id="process'+str(i)+'" class="hidden">'+description+image+'&nbsp;<form action="autorizaPedido"><input type="hidden" name="numero" value="'+tal.numero+'"><select name="estado"><option value="autorizado">Autorizar</option><option value="nao autorizado">Nao Autorizar</option></select><input type="submit" value="Mudar estado de autorizacao"></input></form></div>')
-					i+=1	
-			if i == 0:
-			 self.response.write("Não há processos para autorizar")
-		else:
-			self.response.write("Não há processos para autorizar")
-        else:
-            self.redirect( users.create_login_url('/') )
-
-
-
-
-
-
-
-
-class LicitarHandler(webapp2.RequestHandler):
-    def get(self):
-	import operator
-	user = users.get_current_user()
-        if user and user in users_permission and "licitar" in users_permission[user]:
-		self.response.write("""
-					<html>
-					<head>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/styles.css">
-					<link rel="stylesheet" type="text/css" href="/stylesheets/div_styles.css">
-					<title>Processos - PRA - UFCG</title>
-					<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-					<script type="text/javascript" src="js/progressbar.js"></script>
-					<script type="text/javascript" src="js/div_hide.js"></script>
-					<link rel="stylesheet" type="text/css" href="/stylesheets/progressbar.css">
-					</head>
-
-					<div style="background-color:#660000;position:absolute;left:0px;right:0px;top:0px;height:100px;padding:10px;font-size:30px; color: white; ">PRA - UFCG</div>
-<div style="background-color:white;position:relative;left:90%;top:0px;padding:10px;color:white;">"""+('<a href="%s">Sair</a>' %
-                        (users.create_logout_url('/')))+"""</div>
-<div style="background-color:#dfdfdf;position:absolute;left:0px;right:0px;top:100px;padding:25px;">
-""")
-		if len(list(db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"))) > 0:
-			i = 0	
-			for tal in db.GqlQuery("SELECT * FROM Pedido ORDER BY id DESC"):
-				if tal.autorizacao == "autorizado" and tal.licitacao in ["em licitacao", "a licitar"]:
-					description ="<br>Demandante: "+tal.demandante + "<br>" + "Data de Entrada: " + tal.data_entrada + "<br>" + "Descricao: " + tal.descricao + "<br>"+"Numero: " + tal.numero + "<br>"+"Email do demandante: " + str(tal.email_demandante)+ "<br>"
-							
-					image = ""
-					if tal.licitacao == "a licitar" and tal.autorizacao == "autorizado":
-						image = '<img border="0" src="/images/pedido_a_licitar.png">'
-					elif tal.licitacao == "licitacao concluida" and tal.autorizacao == "autorizado" :
-						image = '<img border="0" src="/images/pedido_licitacao_concluida.png">'
-					elif tal.licitacao == "em licitacao" and tal.autorizacao == "autorizado" :
-						image = '<img border="0" src="/images/pedido_em_licitacao.png">'
-					if tal.autorizacao == "indefinido" and tal.licitacao == "a licitar":
-						image = '<img border="0" src="/images/pedido_criado.png">'			
-					elif tal.autorizacao == "autorizado" and tal.licitacao == "a licitar":
-						 image = '<img border="0" src="/images/pedido_autorizado.png">'
-					elif tal.autorizacao == "nao autorizado" and tal.licitacao == "a licitar":
-						 image = '<img border="0" src="/images/pedido_nao_autorizado.png">'
-					self.response.write("""<a href="javascript:unhide('process"""+str(i)+"""');">"""+str(tal.numero) + '</a><br><div id="process'+str(i)+'" class="hidden">'+image+description+'&nbsp;<form action="licitaPedido"><input type="hidden" name="numero" value="'+tal.numero+'"><select name="estado"><option value="em licitacao">Em Licitacao</option><option value="licitacao concluida">licitacao concluida</option></select><input type="submit" value="Mudar estado de licitacao"></input></form></div>')
-					i+=1	
-			if i == 0:
-			 self.response.write("Não há processos para licitar")
-		else:
-			self.response.write("Não há processos para licitar")
-        else:
-            self.redirect( users.create_login_url('/') )
-        
 from google.appengine.api import users
 
-users_permission = { users.User("usuario_qualquer@example.com"): ['acompanhar'],
-users.User("usuario_protocolo@example.com"): ['criar', 'acompanhar'],
-users.User("usuario_autorizar@example.com"): ['autorizar', 'acompanhar'],
-users.User("daltonserey@gmail.com"):  ['criar', 'licitar', 'autorizar', 'acompanhar'], 
-users.User("jcafigueiredo@gmail.com"):  ['criar', 'licitar', 'autorizar', 'acompanhar'],
-users.User("usuario_licitar@example.com"): ['licitar','acompanhar'], 
-users.User("joopeeds@gmail.com"): ['autorizar', 'acompanhar'],
-users.User("franco.tejo@ccc.ufcg.edu.br"):  ['criar', 'acompanhar']}
-	
+
+permission_type = {
+1:'acompanhar_qualquer',
+2:'acompanhar_proprios',
+3:'legalidade',
+4:'autorizacao',
+5:'conferencia',
+6:'minuta',
+7:'legalidade_materiais',
+8:'pregao',
+9:'licitacao',
+10:'adjudicacao',
+11:'homologacao',
+12:'publicacao',
+13:'minuta_empenho',
+14:'detalhamento',
+15:'empenho',
+16:'nota_almoxarifado',
+17:'tombamento',
+18:'nota_contabilidade',
+19:'liquidacao',
+10:'pagamento',
+21:'criacao'
+}
+
+users_permission = { 
+users.User("usuario_qualquer@example.com"): [2],
+users.User("joopeeds@gmail.com"): [1, 21]
+}
+    
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-	
-	user = users.get_current_user()
+    
+        """user = users.get_current_user()
 
         if user:
             greeting = ('Seja bem vindo ao sistema PRA, %s! (<a href="%s">sign out</a>)' %
                         (user.nickname(), users.create_logout_url('/')))
-	    if user in users_permission:
-	     for perm in users_permission[user]:
-		 greeting += ('<br><a href="%s">%s</a>' % (perm, perm))
-	    else:
-		greeting += "<br>Você não tem nenhuma permissão<br>"
+        if user in users_permission:
+         for perm in users_permission[user]:
+         greeting += ('<br><a href="%s">%s</a>' % (perm, perm))
+        else:
+        greeting += "<br>Você não tem nenhuma permissão<br>"
         else:
             greeting = ('<a href="%s">Sign in or register</a>.' %
                         users.create_login_url('/'))
+"""
+        greeting = """
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the     -->
+<!-- browser's rendering engine into                -->
+<!-- "Standards Mode". Replacing this declaration   -->
+<!-- with a "Quirks Mode" doctype is not supported. -->
 
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <!--                                                               -->
+    <!-- Consider inlining CSS to reduce the number of requested files -->
+    <!--                                                               -->
+    <link type="text/css" rel="stylesheet" href="stylesheets/StockWatcher.css">
+
+    <!--                                           -->
+    <!-- Any title is fine                         -->
+    <!--                                           -->
+     <title>SISTEMA PRA@UFCG</title>
+    
+    <!--                                           -->
+    <!-- This script loads your compiled module.   -->
+    <!-- If you add any GWT meta tags, they must   -->
+    <!-- be added before this line.                -->
+    <!--                                           -->
+    <script type="text/javascript" language="javascript" src="js/stockwatcher.nocache.js"></script>
+  </head>
+
+  <!--                                           -->
+  <!-- The body can have arbitrary html, or      -->
+  <!-- you can leave the body empty if you want  -->
+  <!-- to create a completely dynamic UI.        -->
+  <!--                                           -->
+  <body>
+
+    <!-- OPTIONAL: include this if you want history support -->
+    <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+    
+    <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+    <noscript>
+      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
+      </div>
+    </noscript>
+
+    
+<div id="top_bar">
+  <h2 style="padding-left: 1%"><img src="images/spra-ufcg-branco.svg" width="10%"></h2>
+    <div id="user_on_top_bar">  
+    </div>    
+</div>
+<div id="main"><div id="main_top"></div><div id="main_left"><br><br></div><div id="main_right"><br><br></div></div>
+<div id="bottom_bar"><div id="bottom_bar_in">Pr&oacute;-Reitoria de Gest&atilde;o Administrativo-Financeira @ Universidade Federal de Campina Grande - 2013</div></div>
+    
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+    
         self.response.out.write('<html><body>%s</body></html>' % greeting)
 
 
 
 
-def xmltodict(xml_file):
-    import xml.etree.ElementTree as ElementTree
-    tree = ElementTree.parse(xml_file)
-    element = tree.getroot()
-    def xmltodict_handler(parent_element):
-        result = dict()
-        for element in parent_element:
-            if len(element):
-                obj = xmltodict_handler(element)
-            else:
-                obj = element.text
 
-            if result.get(element.tag):
-                if hasattr(result[element.tag], "append"):
-                    result[element.tag].append(obj)
+class PermissoesHandler(webapp2.RequestHandler):
+    def get(self):
+        import json
+        if not users.get_current_user():
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps({'status':'Disconnected', 'url': users.create_login_url('/')}))
+        else:
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            permissions = []
+            for permission_number in users_permission[users.get_current_user()]:
+                permissions.append(permission_type[permission_number])
+            self.response.out.write(json.dumps({'status':'Connected', 'permissoes': permissions }))    
+
+
+        
+class LoginHandler(webapp2.RequestHandler):
+    def get(self):
+        import json
+        if not users.get_current_user():
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps({'status':'Disconnected', 'url': users.create_login_url('/')}))
+        else:
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps({'status':'Connected', 'url': users.create_logout_url('/'), 'user_email': users.get_current_user().email(), 'user_nickname':           users.get_current_user().nickname(), 'user_user_id': users.get_current_user().user_id()}))        
+
+class ListaPedido(webapp2.RequestHandler):
+    def get(self):
+        import json
+        if not users.get_current_user():
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps({'status':'Disconnected', 'url': users.create_login_url('/')}))
+        else:
+            dic = {}
+            if self.request.get("numero"):
+                for pedido in db.GqlQuery("SELECT * FROM Pedido WHERE numero in ('"+self.request.get("numero")+"')"):
+                    dic = {
+                        "numero": pedido.numero,
+                        "demandante": pedido.demandante,
+                        "descricao": pedido.descricao,
+                        "data_entrada": pedido.data_entrada,
+                        "email_demandante": pedido.email_demandante,
+                        "local": pedido.local,
+                        "legalidade": { "status": pedido.legalidade, "choices": pedido.legalidade_choices},
+                        "autorizacao": {"status":pedido.autorizacao, "choices":pedido.autorizacao_choices},
+                        "conferencia": {"status":pedido.conferencia, "choices":pedido.conferencia_choices}, 
+                        "minuta":  {"status":pedido.minuta, "choices":pedido.minuta_choices},
+                        "legalidade_materiais":  {"status":pedido.legalidade_materiais, "choices":pedido.legalidade_materiais_choices},
+                        "pregao":  {"status":pedido.pregao, "choices":pedido.pregao_choices},
+                        "licitacao":  {"status":pedido.licitacao, "choices":pedido.licitacao_choices},
+                        "adjudicacao":  {"status":pedido.adjudicacao, "choices":pedido.adjudicacao_choices},
+                        "homologacao":  {"status":pedido.homologacao, "choices":pedido.homologacao_choices},
+                        "publicacao":  {"status":pedido.publicacao, "choices":pedido.publicacao_choices},
+                        "minuta_empenho":  {"status":pedido.minuta_empenho, "choices":pedido.minuta_empenho_choices},
+                        "detalhamento":  {"status":pedido.detalhamento, "choices":pedido.detalhamento_choices},
+                        "empenho":  {"status":pedido.empenho, "choices":pedido.empenho_choices},
+                        "liquidacao":  {"status":pedido.liquidacao, "choices":pedido.liquidacao_choices},
+                        "pagamento":  {"status":pedido.pagamento, "choices":pedido.pagamento_choices}                           
+                        }
+
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2)) 
+            else:
+                todos = []
+                if 1 in users_permission[users.get_current_user()]:
+                     query = db.GqlQuery("SELECT numero FROM Pedido")
                 else:
-                    result[element.tag] = [result[element.tag], obj]
-            else:
-                result[element.tag] = [obj]
-        return result
+                     query = db.GqlQuery("SELECT * FROM Pedido WHERE email_demandante in ('"+users.get_current_user().email()+"')")
+                for each in list(query):
+                       todos.append(each.numero)
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps({'status':'Connected', 'pedidos': todos}))    
 
-    return {element.tag: xmltodict_handler(element)}
-
-def generate_form(xml_file):
-	form = "<table>"
-	generated_dict = xmltodict(xml_file)
-	for key, value in generated_dict.items():
-		form += "<h1>" + generated_dict[key]["title"][0] + "</h1>\n"
-		for subkey, subvalue in value.items():
-			if subkey == "field":
-				for things in subvalue:
-					form += '<tr><td align="right">'+things["label"][0]+'</td>\n'+'<td><input type="'+things["type"][0]+'" name="'+things["name"][0]+'"></td><tr>\n'
-	return form + "</table>"
-
-		
+class CadastraPedido(webapp2.RequestHandler):
+    def post(self):
+        if users.get_current_user() and 21 in users_permission[users.get_current_user()]:
+            novo = Pedido(demandante=self.request.get("demandante"), 
+                          data_entrada=self.request.get("data_entrada"), 
+                          descricao=self.request.get("descricao"), 
+                          numero=self.request.get("numero"), 
+                          email_demandante=self.request.get("email_demandante"))
+            novo.put()
+            
 
 
-app = webapp2.WSGIApplication([
-    ('/', MainHandler), ('/criar', CriarHandler), ('/salvaPedido', SalvaPedidoHandler) , ('/acompanhar', AcompanharHandler), 
-('/autorizar', AutorizarHandler), ('/autorizaPedido', AutorizaPedidoHandler), ('/licitar', LicitarHandler), ('/licitaPedido', LicitaPedidoHandler)
-], debug=True)
+
+
+
+
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/Pedido', ListaPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
