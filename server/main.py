@@ -263,13 +263,15 @@ permission_type = {
 17:'tombamento',
 18:'nota_contabilidade',
 19:'liquidacao',
-10:'pagamento',
+20:'pagamento',
 21:'criacao'
 }
 
 users_permission = { 
 users.User("usuario_qualquer@example.com"): [2],
-users.User("joopeeds@gmail.com"): [1, 21]
+users.User("joopeeds@gmail.com"): [1, 21],
+users.User("jcafigueiredo@gmail.com"): [1, 21],
+users.User("daltonserey@gmail.com"): [1, 21]
 }
     
 class MainHandler(webapp2.RequestHandler):
@@ -342,7 +344,7 @@ class MainHandler(webapp2.RequestHandler):
     <div id="user_on_top_bar">  
     </div>    
 </div>
-<div id="main"><div id="main_top"></div><div id="main_left"><br><br></div><div id="main_right"><br><br></div></div>
+<div id="main"><div align="center" id="main_top"></div><div id="main_bottom"></div></div>
 <div id="bottom_bar"><div id="bottom_bar_in">Pr&oacute;-Reitoria de Gest&atilde;o Administrativo-Financeira @ Universidade Federal de Campina Grande - 2013</div></div>
     
   </body>
@@ -446,9 +448,62 @@ class ListaPedido(webapp2.RequestHandler):
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps({'status':'Connected', 'pedidos': todos}))    
 
+
+
+
+
+class ListaPedidoForTable(webapp2.RequestHandler):
+    def get(self):
+            import json
+            dic = {"pedidos": []}
+            search = self.request.get("search")
+            query = db.GqlQuery("SELECT * FROM Pedido ORDER BY data_entrada DESC")
+            for pedido in query:
+                    tudo = pedido.numero + pedido.demandante + pedido.descricao + pedido.data_entrada
+                    pedido_info = {
+                        "numero": pedido.numero,
+                        "demandante": pedido.demandante,
+                        "descricao": pedido.descricao,
+                        "data_entrada": pedido.data_entrada,
+                        "email_demandante": pedido.email_demandante,
+                        "local": pedido.local, 
+                        "legalidade":  pedido.legalidade,
+                        "autorizacao": pedido.autorizacao, 
+                        "conferencia": pedido.conferencia, 
+                        "minuta":  pedido.minuta, 
+                        "legalidade_materiais": pedido.legalidade_materiais, 
+                        "pregao":  pedido.pregao, 
+                        "licitacao":  pedido.licitacao, 
+                        "adjudicacao":  pedido.adjudicacao, 
+                        "homologacao":  pedido.homologacao,
+                        "publicacao": pedido.publicacao,
+                        "minuta_empenho": pedido.minuta_empenho, 
+                        "detalhamento": pedido.detalhamento, 
+                        "empenho":  pedido.empenho, 
+                        "almoxarifado":  pedido.nota_almoxarifado, 
+                        "tombamento":  pedido.tombamento, 
+                        "contabilidade":  pedido.nota_contabilidade, 
+                        "liquidacao": pedido.liquidacao, 
+                        "pagamento": pedido.pagamento                 
+                        }
+                    if search.lower() in tudo.lower():
+                        dic["pedidos"].append(pedido_info)
+
+
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2)) 
+            
+
+
+
+
+
+
+
+
 class CadastraPedido(webapp2.RequestHandler):
     def post(self):
-        if users.get_current_user() and 21 in users_permission[users.get_current_user()]:
+        #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
             novo = Pedido(demandante=self.request.get("demandante"), 
                           data_entrada=self.request.get("data_entrada"), 
                           descricao=self.request.get("descricao"), 
@@ -462,4 +517,4 @@ class CadastraPedido(webapp2.RequestHandler):
 
 
 
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/Pedido', ListaPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/Pedido', ListaPedido),('/PedidosForTable', ListaPedidoForTable), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)

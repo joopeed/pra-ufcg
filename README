@@ -1,0 +1,10 @@
+Server:
+Arquivos e pastas app engine
+    -images: imagens do sistema
+    -js: contém os arquivos gerados pelo gwt
+    -stylesheets: algumas folhas de estilo
+    -main.py: o sistema propriamente dito e seus handlers
+
+Client:
+Arquivos da pasta src/ do projeto gwt do client
+    -StockWatcher.java é o arquivo principal ~está mal nomeado~
