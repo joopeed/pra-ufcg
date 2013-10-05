@@ -8,8 +8,8 @@ handlers:
 - url: /stylesheets
   static_dir: stylesheets
 
-- url: /js
-  static_dir: js
+- url: /client_js
+  static_dir: client_js
 
 - url: /images
   static_dir: images
@@ -17,10 +17,6 @@ handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
-
-- url: /teste.json
-  static_files: teste.json
-  upload: teste.json
 
 - url: .*
   script: main.app
