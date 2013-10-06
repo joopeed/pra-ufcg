@@ -33,8 +33,8 @@ class Pedido(db.Model):
     email_demandante = db.StringProperty(required=True)
     local = db.StringProperty(default = "PRA/Gabinete")
 
-    historico_data = db.ListProperty() 
-    historico_info = db.StringListProperty() 
+    historico_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
+    historico_info = db.StringListProperty(str, indexed=True, default=[]) 
 
     legalidade_parecer = db.BooleanProperty()
     legalidade_data_envio = db.DateTimeProperty()
@@ -48,16 +48,16 @@ class Pedido(db.Model):
     corretude_data = db.DateTimeProperty()  
     
     #Listas em que um indice representa um ciclo completo de elaboracao da minuta
-    minuta_parecer = db.ListProperty()
-    minuta_data_inicio = db.ListProperty()     
-    minuta_data_envio = db.ListProperty()
-    minuta_data_retorno = db.ListProperty()
+    minuta_parecer = db.ListProperty(bool, indexed=True, default=[])
+    minuta_data_inicio = db.ListProperty(datetime.datetime, indexed=True, default=[])      
+    minuta_data_envio = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
+    minuta_data_retorno = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
     
     #ciclo do pregao
-    pregao_parecer = db.ListProperty()
-    pregao_data = db.ListProperty()
-    pregao_numero = db.ListProperty()
-    licitacao_data = db.ListProperty()
+    pregao_parecer = db.ListProperty(bool, indexed=True, default=[])
+    pregao_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
+    pregao_numero = db.ListProperty(str, indexed=True, default=[]) 
+    licitacao_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
 
     adjudicacao_data = db.DateTimeProperty()  
     homologacao_data = db.DateTimeProperty()  
@@ -118,7 +118,7 @@ users.User("daltonserey@gmail.com"): [1, 21]
     
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        body = open("client_js/base.html").read()
+        body = open("base.html").read()
         self.response.out.write('<html><body>%s</body></html>' % body)
 
 
@@ -214,6 +214,7 @@ class ListaPedido(webapp2.RequestHandler):
 #Fazendo
 class GetPedido(webapp2.RequestHandler):
     def get(self):
+            import json
             query = self.request.get("q")
             if query:
                 dic = {}
@@ -222,29 +223,48 @@ class GetPedido(webapp2.RequestHandler):
                         "numero": pedido.numero,
                         "demandante": pedido.demandante,
                         "descricao": pedido.descricao,
-                        "data_entrada": pedido.data_entrada,
+                        "data_entrada": pedido.data_entrada.isoformat(),
                         "email_demandante": pedido.email_demandante,
                         "local": pedido.local,
-                        "legalidade": { "status": pedido.legalidade, "choices": pedido.legalidade_choices},
-                        "autorizacao": {"status":pedido.autorizacao, "choices":pedido.autorizacao_choices},
-                        "conferencia": {"status":pedido.conferencia, "choices":pedido.conferencia_choices}, 
-                        "minuta":  {"status":pedido.minuta, "choices":pedido.minuta_choices},
-                        "legalidade_materiais":  {"status":pedido.legalidade_materiais, "choices":pedido.legalidade_materiais_choices},
-                        "pregao":  {"status":pedido.pregao, "choices":pedido.pregao_choices},
-                        "licitacao":  {"status":pedido.licitacao, "choices":pedido.licitacao_choices},
-                        "adjudicacao":  {"status":pedido.adjudicacao, "choices":pedido.adjudicacao_choices},
-                        "homologacao":  {"status":pedido.homologacao, "choices":pedido.homologacao_choices},
-                        "publicacao":  {"status":pedido.publicacao, "choices":pedido.publicacao_choices},
-                        "minuta_empenho":  {"status":pedido.minuta_empenho, "choices":pedido.minuta_empenho_choices},
-                        "detalhamento":  {"status":pedido.detalhamento, "choices":pedido.detalhamento_choices},
-                        "empenho":  {"status":pedido.empenho, "choices":pedido.empenho_choices},
-                        "liquidacao":  {"status":pedido.liquidacao, "choices":pedido.liquidacao_choices},
-                        "pagamento":  {"status":pedido.pagamento, "choices":pedido.pagamento_choices}                           
+                        "historico_data": [ data.isoformat() for data in pedido.historico_data ],
+                        "historico_info": pedido.historico_info,
+                        "legalidade": { 
+                                    "parecer": pedido.legalidade_parecer, 
+                                    "data_envio": pedido.legalidade_data_envio.isoformat() if pedido.legalidade_data_envio else "", 
+                                    "data_retorno": pedido.legalidade_data_retorno.isoformat() if pedido.legalidade_data_retorno else "" },
+                        "autorizacao": {"parecer":pedido.autorizacao_parecer },
+                        "corretude": {
+                                    "descricao":pedido.corretude_descricao, 
+                                    "quantitivo":pedido.corretude_quantitativo, 
+                                    "cotacao":pedido.corretude_cotacao, 
+                                    "data":pedido.corretude_data.isoformat()  if pedido.corretude_data else "" }, 
+                        "minuta":  { "parecer": pedido.minuta_parecer, 
+                                    "data_inicio": [ data.isoformat() for data in pedido.minuta_data_inicio ], 
+                                    "data_envio":  [ data.isoformat() for data in pedido.minuta_data_envio ], 
+                                    "data_retorno": [ data.isoformat() for data in pedido.minuta_data_retorno ]}, 
+                        "pregao": { "parecer": pedido.pregao_parecer,
+                                    "pregao_data": [ data.isoformat() for data in pedido.pregao_data ],
+                                    "pregao_numero": pedido.pregao_numero,
+                                    "licitacao_data": [ data.isoformat() for data in pedido.licitacao_data ], 
+                                    },
+                        "adjudicacao": pedido.adjudicacao_data.isoformat()  if pedido.adjudicacao_data else "" ,
+                        "homologacao":  pedido.homologacao_data.isoformat() if pedido.homologacao_data else "",
+                        "publicacao": pedido.publicacao_data.isoformat() if pedido.publicacao_data else "",
+                        "detalhamento": {"parecer":pedido.detalhamento_parecer, 
+                                         "data":pedido.detalhamento_data.isoformat() if pedido.detalhamento_data else ""},
+                        "empenho": pedido.empenho_data,
+                        "nota_almoxarifado":pedido.nota_almoxarifado_data.isoformat() if  pedido.nota_almoxarifado_data else "",
+                        "patrimonio":pedido.patrimonio_data.isoformat() if  pedido.patrimonio_data else "",
+                        "nota_contabilidade":pedido.nota_contabilidade_data.isoformat() if pedido.nota_contabilidade_data else "",
+                        "liquidacao": pedido.liquidacao_data.isoformat() if pedido.liquidacao_data else "",
+                        "pagamento": pedido.pagamento_data.isoformat() if pedido.pagamento_data else ""                        
                         }
 
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2)) 
- 
+
+
+
 
 
 class ListaPedidoForTable(webapp2.RequestHandler):
@@ -292,7 +312,17 @@ class ListaPedidoForTable(webapp2.RequestHandler):
 
 
 
-
+class InitSys(webapp2.RequestHandler):
+    def get(self):
+        #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
+            novo = Pedido(key_name="CG26388734", demandante="Joao Pedro Ferreira de Melo Leoncio", 
+                          data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
+                          descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
+                          numero="CG26388734", 
+                          email_demandante="joopeeds@gmail.com")
+            novo.historico_info.append("Pedido criado no sistema")
+            novo.historico_data.append(datetime.datetime(2013, 10, 5, 20, 27))
+            novo.put()
 
 
 
@@ -312,4 +342,4 @@ class CadastraPedido(webapp2.RequestHandler):
 
 
 
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/Pedido', ListaPedido),('/PedidosForTable', ListaPedidoForTable), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/getpedido', GetPedido),('/PedidosForTable', ListaPedidoForTable), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
