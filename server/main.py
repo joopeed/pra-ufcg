@@ -17,69 +17,7 @@
 #
 import webapp2, datetime
 from google.appengine.ext import db
-
-
-class Usuario(db.Model):
-    usuario_google = db.UserProperty(required=True)
-    nome = db.StringProperty(required=True)
-    email = db.EmailProperty(required=True)
-    setor = db.StringProperty(required=True)
-
-class Pedido(db.Model):
-    demandante = db.StringProperty(required=True)
-    data_entrada = db.DateTimeProperty(required=True)
-    descricao = db.StringProperty(required=True)
-    numero = db.StringProperty(required=True)
-    email_demandante = db.StringProperty(required=True)
-    local = db.StringProperty(default = "PRA/Gabinete")
-
-    historico_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
-    historico_info = db.StringListProperty(str, indexed=True, default=[]) 
-
-    legalidade_parecer = db.BooleanProperty()
-    legalidade_data_envio = db.DateTimeProperty()
-    legalidade_data_retorno = db.DateTimeProperty()    
-
-    autorizacao_parecer = db.BooleanProperty()
-
-    corretude_descricao = db.BooleanProperty()
-    corretude_quantitativo = db.BooleanProperty()
-    corretude_cotacao = db.BooleanProperty()
-    corretude_data = db.DateTimeProperty()  
-    
-    #Listas em que um indice representa um ciclo completo de elaboracao da minuta
-    minuta_parecer = db.ListProperty(bool, indexed=True, default=[])
-    minuta_data_inicio = db.ListProperty(datetime.datetime, indexed=True, default=[])      
-    minuta_data_envio = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
-    minuta_data_retorno = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
-    
-    #ciclo do pregao
-    pregao_parecer = db.ListProperty(bool, indexed=True, default=[])
-    pregao_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
-    pregao_numero = db.ListProperty(str, indexed=True, default=[]) 
-    licitacao_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
-
-    adjudicacao_data = db.DateTimeProperty()  
-    homologacao_data = db.DateTimeProperty()  
-    publicacao_data = db.DateTimeProperty()  
-
-    detalhamento_parecer = db.BooleanProperty()  
-    detalhamento_data = db.DateTimeProperty()  
-
-    empenho_data = db.DateTimeProperty() 
-    
-    nota_almoxarifado_data = db.DateTimeProperty() 
-    
-    patrimonio_data = db.DateTimeProperty() 
-    
-    nota_contabilidade_data = db.DateTimeProperty() 
-    
-    liquidacao_data = db.DateTimeProperty() 
-
-    pagamento_data = db.DateTimeProperty() 
-
-
-
+from modelos import *
 
 
 from google.appengine.api import users
@@ -315,14 +253,15 @@ class ListaPedidoForTable(webapp2.RequestHandler):
 class InitSys(webapp2.RequestHandler):
     def get(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
-            novo = Pedido(key_name="CG26388734", demandante="Joao Pedro Ferreira de Melo Leoncio", 
-                          data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
-                          descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
-                          numero="CG26388734", 
-                          email_demandante="joopeeds@gmail.com")
-            novo.historico_info.append("Pedido criado no sistema")
-            novo.historico_data.append(datetime.datetime(2013, 10, 5, 20, 27))
-            novo.put()
+            for i in range(20):
+                novo = Pedido(key_name="CG26388734"+str(i), demandante="Joao Pedro Ferreira de Melo Leoncio", 
+                              data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
+                              descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
+                              numero="CG26388734"+str(i), 
+                              email_demandante="joopeeds@gmail.com")
+                novo.historico_info.append("Pedido criado no sistema")
+                novo.historico_data.append(datetime.datetime.now())
+                novo.put()
 
 
 
@@ -336,10 +275,50 @@ class CadastraPedido(webapp2.RequestHandler):
                           email_demandante=self.request.get("email_demandante"))
             novo.put()
             
+class SetPedido(webapp2.RequestHandler):
+    def post(self):
+        #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
+        if self.request.get("numero") and self.request.get("demandante") and self.request.get("data_entrada") and self.request.get("descricao") and self.request.get("email_demandante"):
+                novo = Pedido(key_name=self.request.get("numero"), 
+                              demandante=self.request.get("demandante"), 
+                              data_entrada=self.request.get("data_entrada"), 
+                              descricao=self.request.get("descricao"), 
+                              numero=self.request.get("numero"), 
+                              email_demandante=self.request.get("email_demandante"))
+                novo.historico_info.append("Pedido criado no sistema")
+                novo.historico_data.append(datetime.datetime.now())
+                novo.put()
+        else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'error':'Missing paramaters'}.items()) ))
+
+
+
+class SearchPedido(webapp2.RequestHandler):
+    def get(self):
+            import json
+            dic = {"pedidos": []}
+            search = self.request.get("q")
+            query = db.GqlQuery("SELECT numero, demandante, descricao, data_entrada, local FROM Pedido ORDER BY data_entrada DESC")
+            for pedido in query:
+                    tudo = pedido.numero + pedido.demandante + pedido.descricao + pedido.data_entrada.isoformat()
+                    if search.lower() in tudo.lower():
+                        pedido_info = { "numero": pedido.numero, 
+                                        "demandante": pedido.demandante,        
+                                        "descricao": pedido.descricao, 
+                                        "data_entrada": pedido.data_entrada.isoformat(),
+                                        "local": pedido.local,
+                                        "estados_concluidos": pedido.estados_concluidos(),
+                                        "estados_totais": pedido.estados_totais()
+                                        }
+                        dic["pedidos"].append(pedido_info)
+
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2)) 
+            
 
 
 
 
 
-
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/getpedido', GetPedido),('/PedidosForTable', ListaPedidoForTable), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
