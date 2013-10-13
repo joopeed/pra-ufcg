@@ -183,7 +183,7 @@ class GetPedido(webapp2.RequestHandler):
                         "pregao": { "parecer": pedido.pregao_parecer,
                                     "pregao_data": [ data.isoformat() for data in pedido.pregao_data ],
                                     "pregao_numero": pedido.pregao_numero,
-                                    "licitacao_data": [ data.isoformat() for data in pedido.licitacao_data ], 
+                                    "pregao_licitacao_data": [ data.isoformat() for data in pedido.pregao_licitacao_data ], 
                                     },
                         "adjudicacao": pedido.adjudicacao_data.isoformat()  if pedido.adjudicacao_data else "" ,
                         "homologacao":  pedido.homologacao_data.isoformat() if pedido.homologacao_data else "",
@@ -274,33 +274,82 @@ class CadastraPedido(webapp2.RequestHandler):
                           numero=self.request.get("numero"), 
                           email_demandante=self.request.get("email_demandante"))
             novo.put()
-            
+
 class SetPedido(webapp2.RequestHandler):
-    def post(self):
+    def get(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
         if self.request.get("numero") and self.request.get("demandante") and self.request.get("data_entrada") and self.request.get("descricao") and self.request.get("email_demandante"):
                 novo = Pedido(key_name=self.request.get("numero"), 
                               demandante=self.request.get("demandante"), 
-                              data_entrada=self.request.get("data_entrada"), 
+                              data_entrada=datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S"), 
                               descricao=self.request.get("descricao"), 
                               numero=self.request.get("numero"), 
                               email_demandante=self.request.get("email_demandante"))
                 novo.historico_info.append("Pedido criado no sistema")
                 novo.historico_data.append(datetime.datetime.now())
                 novo.put()
-        else:
-                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'error':'Missing paramaters'}.items()) ))
+        elif self.request.get("numero"):
+                pedido = searchkey(self.request.get("numero"))
+                if self.request.get("demandante"): pedido.demandante = self.request.get("demandante")
+                if self.request.get("data_entrada"): pedido.data_entrada = datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")
+                if self.request.get("descricao"): pedido.descricao=self.request.get("descricao")
+                if self.request.get("email_demandante"): pedido.email_demandante=self.request.get("email_demandante")
+                pedido.put()
 
 
+def searchkey(key):
+       return list(db.GqlQuery("SELECT * FROM Pedido WHERE numero in ('"+key+"')"))[0]
 
 class SearchPedido(webapp2.RequestHandler):
+
+    # TODO Ajeitar esta seboseira
     def get(self):
             import json
             dic = {"pedidos": []}
             search = self.request.get("q")
-            query = db.GqlQuery("SELECT numero, demandante, descricao, data_entrada, local FROM Pedido ORDER BY data_entrada DESC")
-            for pedido in query:
+            query = db.GqlQuery("SELECT * FROM Pedido ORDER BY data_entrada DESC")
+
+            if search.lower() == 'legalidade:legal':
+                for pedido in query:
+                    if pedido.legalidade_parecer:
+                        pedido_info = { "numero": pedido.numero,
+                                        "demandante": pedido.demandante,
+                                        "descricao": pedido.descricao,
+                                        "data_entrada": pedido.data_entrada.isoformat(),
+                                        "local": pedido.local,
+                                        "estados_concluidos": pedido.estados_concluidos(),
+                                        "estados_totais": pedido.estados_totais()
+                                        }
+                        dic["pedidos"].append(pedido_info)
+                        
+            elif search.lower() == 'legalidade:ilegal':
+                for pedido in query:
+                    if not pedido.legalidade_parecer:
+                        pedido_info = { "numero": pedido.numero,
+                                        "demandante": pedido.demandante,
+                                        "descricao": pedido.descricao,
+                                        "data_entrada": pedido.data_entrada.isoformat(),
+                                        "local": pedido.local,
+                                        "estados_concluidos": pedido.estados_concluidos(),
+                                        "estados_totais": pedido.estados_totais()
+                                        }
+                        dic["pedidos"].append(pedido_info)
+            
+            elif search.lower() == 'legalidade:indefinido' or search.lower() == 'legalidade:indefinida':
+                for pedido in query:
+                    if pedido.legalidade_parecer == None:
+                        pedido_info = { "numero": pedido.numero,
+                                        "demandante": pedido.demandante,
+                                        "descricao": pedido.descricao,
+                                        "data_entrada": pedido.data_entrada.isoformat(),
+                                        "local": pedido.local,
+                                        "estados_concluidos": pedido.estados_concluidos(),
+                                        "estados_totais": pedido.estados_totais()
+                                        }
+                        dic["pedidos"].append(pedido_info)
+
+            else:
+                for pedido in query:
                     tudo = pedido.numero + pedido.demandante + pedido.descricao + pedido.data_entrada.isoformat()
                     if search.lower() in tudo.lower():
                         pedido_info = { "numero": pedido.numero, 
@@ -314,9 +363,323 @@ class SearchPedido(webapp2.RequestHandler):
                         dic["pedidos"].append(pedido_info)
 
             self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2)) 
-            
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2))
 
+
+
+	
+
+#HANDLERS DOS ESTADOS
+     
+#Legalidade
+class LegalidadeHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data_envio = dateutil.parser.parse(self.request.get("data_envio"))
+            data_retorno = dateutil.parser.parse(self.request.get("data_retorno"))
+            parecer = self.request.get("parecer")
+           
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if parecer: 
+                    pedido_em_questao.legalidade_parecer = parecer
+                if data_envio: pedido_em_questao.legalidade_data_envio = data_envio
+                if data_retorno: pedido_em_questao.legalidade_data_retorno = data_retorno
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Autorizacao
+class AutorizacaoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            parecer = self.request.get("parecer")
+           
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if parecer: pedido_em_questao.autorizacao_parecer = parecer
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Corretude
+class CorretudeHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            descricao = self.request.get("descricao")
+            quantitativo = self.request.get("quantitativo")
+            cotacao = self.request.get("cotacao")
+            data = self.request.get("data")
+           
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if descricao: pedido_em_questao.corretude_descricao = descricao
+                if quantitativo:pedido_em_questao.corretude_quantitativo = quantitativo
+                if cotacao: pedido_em_questao.corretude_cotacao = cotacao
+                if data: pedido_em_questao.corretude_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Minuta
+class MinutaHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            parecer = self.request.get("parecer")
+            data_inicio = dateutil.parser.parse(self.request.get("data_inicio"))
+            data_envio = dateutil.parser.parse(self.request.get("data_envio"))
+            data_retorno = dateutil.parser.parse(self.request.get("data_retorno"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if parecer: pedido_em_questao.minuta_parecer.append(parecer)
+                if data_inicio: pedido_em_questao.minuta_data_inicio.append(data_inicio)
+                if data_envio: pedido_em_questao.minuta_data_envio.append(data_envio)
+                if data_retorno: pedido_em_questao.minuta_data_retorno.append(data_retorno)
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Pregao
+class PregaoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            parecer = parecer = self.request.get("parecer")
+            data = dateutil.parser.parse(self.request.get("data"))
+            numero = self.request.get("numero")
+            licitacao_data = dateutil.parser.parse(self.request.get("licitacao_data"))
+           
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if parecer: pedido_em_questao.pregao_parecer.append(parecer)
+                if data: pedido_em_questao.pregao_data.append(data)
+                if numero: pedido_em_questao.pregao_numero.append(numero)
+                if licitacao_data: pedido_em_questao.pregao_licitacao_data.append(licitacao_data)
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Adjudicacao
+class AdjudicacaoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.adjudicacao_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Homologacao
+class HomologacaoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.homologacao_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Publicacao
+class PublicacaoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.publicacao_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Detalhamento
+class DetalhamentoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            parecer = self.request.get("parecer")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if parecer: pedido_em_questao.detalhamento_parecer = parecer
+                if data: pedido_em_questao.detalhamento_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Empenho
+class EmpenhoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.empenho_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Nota do almoxarifado
+class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.nota_almoxarifado_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Patrimonio
+class PatrimonioHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.patrimonio_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Nota da contabilidade
+class NotaContabilidadeHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.nota_contabilidade_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Liquidacao
+class LiquidacaoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.liquidacao_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+     
+#Pagamento
+class PagamentoHandler(webapp2.RequestHandler):
+        def get(self):
+     
+            import json
+     
+            pedido = self.request.get("pedido")
+            data = dateutil.parser.parse(self.request.get("data"))
+     
+            if pedido:
+                pedido_em_questao = Pedido.get(pedido)
+                if data: pedido_em_questao.pagamento_data = data
+            else:
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+     
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
 
 
 

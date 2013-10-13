@@ -16,6 +16,16 @@ indexes:
     direction: desc
   - name: demandante
   - name: descricao
+  - name: legalidade_parecer
+  - name: local
+  - name: numero
+
+- kind: Pedido
+  properties:
+  - name: data_entrada
+    direction: desc
+  - name: demandante
+  - name: descricao
   - name: local
   - name: numero
 
