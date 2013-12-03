@@ -173,7 +173,7 @@ class GetPedido(webapp2.RequestHandler):
                         "autorizacao": {"parecer":pedido.autorizacao_parecer },
                         "corretude": {
                                     "descricao":pedido.corretude_descricao, 
-                                    "quantitivo":pedido.corretude_quantitativo, 
+                                    "quantitativo":pedido.corretude_quantitativo, 
                                     "cotacao":pedido.corretude_cotacao, 
                                     "data":pedido.corretude_data.isoformat()  if pedido.corretude_data else "" }, 
                         "minuta":  { "parecer": pedido.minuta_parecer, 
@@ -181,21 +181,21 @@ class GetPedido(webapp2.RequestHandler):
                                     "data_envio":  [ data.isoformat() for data in pedido.minuta_data_envio ], 
                                     "data_retorno": [ data.isoformat() for data in pedido.minuta_data_retorno ]}, 
                         "pregao": { "parecer": pedido.pregao_parecer,
-                                    "pregao_data": [ data.isoformat() for data in pedido.pregao_data ],
-                                    "pregao_numero": pedido.pregao_numero,
-                                    "pregao_licitacao_data": [ data.isoformat() for data in pedido.pregao_licitacao_data ], 
+                                    "data": [ data.isoformat() for data in pedido.pregao_data ],
+                                    "numero": pedido.pregao_numero,
+                                    "licitacao_data": [ data.isoformat() for data in pedido.pregao_licitacao_data ], 
                                     },
-                        "adjudicacao": pedido.adjudicacao_data.isoformat()  if pedido.adjudicacao_data else "" ,
-                        "homologacao":  pedido.homologacao_data.isoformat() if pedido.homologacao_data else "",
-                        "publicacao": pedido.publicacao_data.isoformat() if pedido.publicacao_data else "",
+                        "adjudicacao": { "data": pedido.adjudicacao_data.isoformat()  if pedido.adjudicacao_data else "" },
+                        "homologacao":  { "data": pedido.homologacao_data.isoformat() if pedido.homologacao_data else "" },
+                        "publicacao": { "data": pedido.publicacao_data.isoformat() if pedido.publicacao_data else "" },
                         "detalhamento": {"parecer":pedido.detalhamento_parecer, 
                                          "data":pedido.detalhamento_data.isoformat() if pedido.detalhamento_data else ""},
-                        "empenho": pedido.empenho_data,
-                        "nota_almoxarifado":pedido.nota_almoxarifado_data.isoformat() if  pedido.nota_almoxarifado_data else "",
-                        "patrimonio":pedido.patrimonio_data.isoformat() if  pedido.patrimonio_data else "",
-                        "nota_contabilidade":pedido.nota_contabilidade_data.isoformat() if pedido.nota_contabilidade_data else "",
-                        "liquidacao": pedido.liquidacao_data.isoformat() if pedido.liquidacao_data else "",
-                        "pagamento": pedido.pagamento_data.isoformat() if pedido.pagamento_data else ""                        
+                        "empenho": { "data": pedido.empenho_data.isoformat() if pedido.empenho_data else "" },
+                        "nota_almoxarifado": { "data": pedido.nota_almoxarifado_data.isoformat() if  pedido.nota_almoxarifado_data else ""},
+                        "patrimonio": { "data": pedido.patrimonio_data.isoformat() if  pedido.patrimonio_data else "" },
+                        "nota_contabilidade": { "data": pedido.nota_contabilidade_data.isoformat() if pedido.nota_contabilidade_data else "" },
+                        "liquidacao": { "data": pedido.liquidacao_data.isoformat() if pedido.liquidacao_data else "" },
+                        "pagamento":  { "data": pedido.pagamento_data.isoformat() if pedido.pagamento_data else "" }                        
                         }
 
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -276,7 +276,7 @@ class CadastraPedido(webapp2.RequestHandler):
             novo.put()
 
 class SetPedido(webapp2.RequestHandler):
-    def get(self):
+    def post(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
         if self.request.get("numero") and self.request.get("demandante") and self.request.get("data_entrada") and self.request.get("descricao") and self.request.get("email_demandante"):
                 novo = Pedido(key_name=self.request.get("numero"), 
@@ -294,7 +294,9 @@ class SetPedido(webapp2.RequestHandler):
                 if self.request.get("data_entrada"): pedido.data_entrada = datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")
                 if self.request.get("descricao"): pedido.descricao=self.request.get("descricao")
                 if self.request.get("email_demandante"): pedido.email_demandante=self.request.get("email_demandante")
+                if self.request.get("legalidade"): pedido.legalidade_parecer = True if self.request.get("legalidade") ==  "True" else False
                 pedido.put()
+        
 
 
 def searchkey(key):
@@ -362,8 +364,14 @@ class SearchPedido(webapp2.RequestHandler):
                                         }
                         dic["pedidos"].append(pedido_info)
 
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2))
+
+
+            if not users.get_current_user():
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'status':'Disconnected'}.items() + dic.items()), indent=2))
+            else:
+                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2))
 
 
 
@@ -378,16 +386,25 @@ class LegalidadeHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data_envio = dateutil.parser.parse(self.request.get("data_envio"))
-            data_retorno = dateutil.parser.parse(self.request.get("data_retorno"))
+            data_envio = self.request.get("data_envio")
+            data_retorno = self.request.get("data_retorno")
             parecer = self.request.get("parecer")
            
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
+                pedido_em_questao = searchkey(pedido) 
                 if parecer: 
-                    pedido_em_questao.legalidade_parecer = parecer
-                if data_envio: pedido_em_questao.legalidade_data_envio = data_envio
-                if data_retorno: pedido_em_questao.legalidade_data_retorno = data_retorno
+                    pedido_em_questao.legalidade_parecer = True if parecer == "True" else False
+                    pedido_em_questao.historico_info.append("Parecer de legalidade alterado")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data_envio: 
+                    pedido_em_questao.legalidade_data_envio = datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("Data de envio de legalidade alterado")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data_retorno: 
+                    pedido_em_questao.legalidade_data_retorno =  datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("Data de retorno de legalidade alterado")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -405,8 +422,12 @@ class AutorizacaoHandler(webapp2.RequestHandler):
             parecer = self.request.get("parecer")
            
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if parecer: pedido_em_questao.autorizacao_parecer = parecer
+                pedido_em_questao = searchkey(pedido) 
+                if parecer: 
+                    pedido_em_questao.autorizacao_parecer = True if parecer == "True" else False
+                    pedido_em_questao.historico_info.append("Parecer de autorizacao alterado")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -427,11 +448,24 @@ class CorretudeHandler(webapp2.RequestHandler):
             data = self.request.get("data")
            
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if descricao: pedido_em_questao.corretude_descricao = descricao
-                if quantitativo:pedido_em_questao.corretude_quantitativo = quantitativo
-                if cotacao: pedido_em_questao.corretude_cotacao = cotacao
-                if data: pedido_em_questao.corretude_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if descricao: 
+                    pedido_em_questao.corretude_descricao = True if descricao == "True" else False
+                    pedido_em_questao.historico_info.append("A corretude da descricao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if quantitativo:
+                    pedido_em_questao.corretude_quantitativo = True if quantitativo == "True" else False
+                    pedido_em_questao.historico_info.append("A corretude do quantitativo foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if cotacao: 
+                    pedido_em_questao.corretude_cotacao = True if cotacao == "True" else False
+                    pedido_em_questao.historico_info.append("A corretude da cotacao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data: 
+                    pedido_em_questao.corretude_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data da definicao de corretude foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -447,16 +481,29 @@ class MinutaHandler(webapp2.RequestHandler):
      
             pedido = self.request.get("pedido")
             parecer = self.request.get("parecer")
-            data_inicio = dateutil.parser.parse(self.request.get("data_inicio"))
-            data_envio = dateutil.parser.parse(self.request.get("data_envio"))
-            data_retorno = dateutil.parser.parse(self.request.get("data_retorno"))
+            data_inicio = self.request.get("data_inicio")
+            data_envio = self.request.get("data_envio")
+            data_retorno = self.request.get("data_retorno")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if parecer: pedido_em_questao.minuta_parecer.append(parecer)
-                if data_inicio: pedido_em_questao.minuta_data_inicio.append(data_inicio)
-                if data_envio: pedido_em_questao.minuta_data_envio.append(data_envio)
-                if data_retorno: pedido_em_questao.minuta_data_retorno.append(data_retorno)
+                pedido_em_questao = searchkey(pedido) 
+                if parecer: 
+                    pedido_em_questao.minuta_parecer.append(True if parecer == "True" else False)
+                    pedido_em_questao.historico_info.append("O parecer de elaboracao da minuta foi definido")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data_inicio: 
+                    pedido_em_questao.minuta_data_inicio.append( datetime.datetime.strptime(data_inicio, "%Y-%m-%dT%H:%M:%S"))
+                    pedido_em_questao.historico_info.append("A data de inicio de elaboracao da minuta foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data_envio: 
+                    pedido_em_questao.minuta_data_envio.append( datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S"))
+                    pedido_em_questao.historico_info.append("A data de envio de elaboracao da minuta foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data_retorno: 
+                    pedido_em_questao.minuta_data_retorno.append( datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S"))
+                    pedido_em_questao.historico_info.append("A data de retorno de elaboracao da minuta foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -472,16 +519,29 @@ class PregaoHandler(webapp2.RequestHandler):
      
             pedido = self.request.get("pedido")
             parecer = parecer = self.request.get("parecer")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
             numero = self.request.get("numero")
-            licitacao_data = dateutil.parser.parse(self.request.get("licitacao_data"))
+            licitacao_data = self.request.get("licitacao_data")
            
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if parecer: pedido_em_questao.pregao_parecer.append(parecer)
-                if data: pedido_em_questao.pregao_data.append(data)
-                if numero: pedido_em_questao.pregao_numero.append(numero)
-                if licitacao_data: pedido_em_questao.pregao_licitacao_data.append(licitacao_data)
+                pedido_em_questao = searchkey(pedido) 
+                if parecer: 
+                    pedido_em_questao.pregao_parecer.append(True if parecer == "True" else False)
+                    pedido_em_questao.historico_info.append("O parecer do pregao foi definido")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data: 
+                    pedido_em_questao.pregao_data.append(datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S"))
+                    pedido_em_questao.historico_info.append("A data do pregao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if numero: 
+                    pedido_em_questao.pregao_numero.append(numero)
+                    pedido_em_questao.historico_info.append("O numero do pregao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if licitacao_data: 
+                    pedido_em_questao.pregao_licitacao_data.append(datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S"))
+                    pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -496,11 +556,15 @@ class AdjudicacaoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.adjudicacao_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.adjudicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de adjudicacao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -515,11 +579,15 @@ class HomologacaoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.homologacao_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.homologacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de homologacao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -534,11 +602,15 @@ class PublicacaoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.publicacao_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.publicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de publicacao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -554,12 +626,19 @@ class DetalhamentoHandler(webapp2.RequestHandler):
      
             pedido = self.request.get("pedido")
             parecer = self.request.get("parecer")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if parecer: pedido_em_questao.detalhamento_parecer = parecer
-                if data: pedido_em_questao.detalhamento_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if parecer: 
+                    pedido_em_questao.detalhamento_parecer = True if parecer == "True" else False
+                    pedido_em_questao.historico_info.append("O parecer do detalhamento de credito foi definido")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                if data: 
+                    pedido_em_questao.detalhamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data do detalhamento de credito foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -574,11 +653,15 @@ class EmpenhoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.empenho_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.empenho_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de empenho foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -593,11 +676,15 @@ class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.nota_almoxarifado_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.nota_almoxarifado_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de envio da nota ao almoxarifado foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -612,11 +699,15 @@ class PatrimonioHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.patrimonio_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.patrimonio_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de envio ao patrimonio foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -631,11 +722,15 @@ class NotaContabilidadeHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.nota_contabilidade_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.nota_contabilidade_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de envio da nota a contabilidade foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -650,11 +745,15 @@ class LiquidacaoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.liquidacao_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.liquidacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de liquidacao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -669,11 +768,15 @@ class PagamentoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            data = dateutil.parser.parse(self.request.get("data"))
+            data = self.request.get("data")
      
             if pedido:
-                pedido_em_questao = Pedido.get(pedido)
-                if data: pedido_em_questao.pagamento_data = data
+                pedido_em_questao = searchkey(pedido) 
+                if data: 
+                    pedido_em_questao.pagamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                    pedido_em_questao.historico_info.append("A data de pagamento foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                 self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
@@ -682,6 +785,6 @@ class PagamentoHandler(webapp2.RequestHandler):
             self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
 
 
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler)],debug=True)
 
-
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
+#app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
