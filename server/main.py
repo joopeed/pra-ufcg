@@ -203,7 +203,22 @@ class GetPedido(webapp2.RequestHandler):
 
 
 
-
+class GetHistoricoPedido(webapp2.RequestHandler):
+      def get(self):
+              import json
+              query = self.request.get("q")
+              if query:
+                  dic = {}
+                  for pedido in db.GqlQuery("SELECT * FROM Pedido WHERE numero in ('"+query+"')"):
+                      dic = {
+                         "historico_data": [ data.isoformat() for data in pedido.historico_data ],
+                         "historico_info": pedido.historico_info,
+                         "historico_data": [ data.isoformat() for data in pedido.historico_data[::-1] ],
+                         "historico_info": pedido.historico_info[::-1],
+                          }
+ 
+                  self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                  self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2))
 
 class ListaPedidoForTable(webapp2.RequestHandler):
     def get(self):
