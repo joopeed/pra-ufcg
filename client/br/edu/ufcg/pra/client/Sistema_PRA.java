@@ -864,7 +864,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    RootPanel.get("main_bottom").add(pager);
 	    
 	    HorizontalPanel hPanel = new HorizontalPanel();
-	    
+	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
 	    final TextBox campoPesquisa = new TextBox();
 	    campoPesquisa.setSize("400px", "30px");
 	    Button botaoPesquisa = new Button("Pesquisar", new ClickHandler() {
@@ -880,7 +880,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
   		    	cadastraPanel();
 	        }});
 	    cadastrarButton.setSize("140px", "30px");
-	    hPanel.add(cadastrarButton);
+	    cadastrarPanel.add(cadastrarButton);
 	    }
 	    Button alteraLegalidadeButton = new Button("Legalidade",  new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -891,7 +891,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    alteraLegalidadeButton.setSize("100px", "30px");
 	    hPanel.add(alteraLegalidadeButton);
 	    RootPanel.get("main_top").clear();
+	    RootPanel.get("main_cadastrar").clear();
 		RootPanel.get("main_top").add(hPanel);
+		RootPanel.get("main_cadastrar").add(cadastrarPanel);
 	}
 	
 
@@ -1982,6 +1984,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    RootPanel.get("main_bottom").add(pager);
 	    
 	    HorizontalPanel hPanel = new HorizontalPanel();
+	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
 	    
 	    final TextBox campoPesquisa = new TextBox();
 	    campoPesquisa.setSize("400px", "30px");
@@ -1998,7 +2001,8 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
   		    	cadastraPanel();
 	        }});
 	    cadastrarButton.setSize("140px", "30px");
-	    hPanel.add(cadastrarButton);}
+	    cadastrarPanel.add(cadastrarButton);
+	    }
 	    /*Button alteraLegalidadeButton = new Button("Legalidade",  new ClickHandler() {
             public void onClick(ClickEvent event) {
                     RootPanel.get("main_bottom").clear();
@@ -2007,7 +2011,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    alteraLegalidadeButton.setSize("140px", "30px");
 	    hPanel.add(alteraLegalidadeButton);*/
 	    RootPanel.get("main_top").clear();
+	    RootPanel.get("main_cadastrar").clear();
 		RootPanel.get("main_top").add(hPanel);
+		RootPanel.get("main_cadastrar").add(cadastrarPanel);
 	}
 	
 	
