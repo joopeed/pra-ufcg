@@ -18,12 +18,16 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 
+
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+
 
 
 import com.google.gwt.http.client.Request;
@@ -34,7 +38,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DefaultDateTimeFormatInfo;
-
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -60,6 +63,7 @@ import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
@@ -71,6 +75,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -377,7 +382,6 @@ public class Sistema_PRA implements EntryPoint {
 	protected String status = "";
 	
 	
-	
 		  
 	/**
 	 * This is the entry point method.
@@ -425,39 +429,35 @@ public class Sistema_PRA implements EntryPoint {
 
             public void onResponseReceived(Request request, Response response) {
               if (200 == response.getStatusCode()) {
-            	 
+            	  Anchor sendAnchor;
+                  ClickHandler clickAnchor = new ClickHandler() {
+                  	public void onClick(ClickEvent event) {
+          		    	  Window.Location.replace(url);
+                  	}
+                  };
             	 User user = JsonUtils.safeEval(response.getText()).cast();
             	 status = user.getStatus();
             	 if(status.equals("Connected")){
+            		 sendAnchor = new Anchor("Logout");
             		 nameField.setText(user.getEmail());
             		 url = user.getUrl();
             	 }
-            	 else	
+            	 else{	
             		 url = user.getUrl();
-            	 
+            	 	 sendAnchor = new Anchor("Login");
+            	 }
+            	sendAnchor.addClickHandler(clickAnchor);
+                RootPanel.get("user_on_top_bar").add(sendAnchor);
+
               } else {
             	  
               }
+              
             }
           });
         } catch (RequestException e) {
-        }
-		
-        String nameButton;
-		if(status.equals("Connected")) nameButton = "Logout";
-		else nameButton = "Login";
-        	 Button sendButton = new Button(nameButton, new ClickHandler() {
-  		      public void onClick(ClickEvent event) {
-  		    	  Window.Location.replace(url);
-  		        }
-  		      });
-        	RootPanel.get("user_on_top_bar").add(sendButton);
+        }		
         
-        
-        
-
-		
-
         RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "/Permissoes");
 
         try {
