@@ -867,6 +867,13 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
 	    final TextBox campoPesquisa = new TextBox();
 	    campoPesquisa.setSize("400px", "30px");
+	    campoPesquisa.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				geraLista(campoPesquisa.getText());
+			}
+		});
 	    Button botaoPesquisa = new Button("Pesquisar", new ClickHandler() {
 		        public void onClick(ClickEvent event) { geraLista(campoPesquisa.getText()); }});
 	    botaoPesquisa.setSize("80px", "30px");
@@ -1988,6 +1995,15 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    
 	    final TextBox campoPesquisa = new TextBox();
 	    campoPesquisa.setSize("400px", "30px");
+	    campoPesquisa.addKeyDownHandler(new KeyDownHandler() {
+			
+	    	@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					 geraLista(campoPesquisa.getText()); 
+					
+				}}
+		});
 	    Button botaoPesquisa = new Button("Pesquisar", new ClickHandler() {
 		        public void onClick(ClickEvent event) { geraLista(campoPesquisa.getText()); }});
 	    botaoPesquisa.setSize("80px", "30px");
