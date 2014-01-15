@@ -120,6 +120,7 @@ class ListaPedidosForTable extends JavaScriptObject {                           
 
 	  // JSNI methods to get stock data.
 	  public final native String getStatus() /*-{ return this.status; }-*/; // (3)
+	  public final native String getCursor() /*-{ return this.cursor; }-*/; // (3)
 	  public final native Pedido[] getPedidos() /*-{ return this.pedidos; }-*/;
 
 
@@ -394,7 +395,7 @@ public class Sistema_PRA implements EntryPoint {
 			  //    new Contact("George", new Date(46, 6, 6), "1600 Pennsylvania Avenue"));
 			
 		
-		geraLista("");
+		geraLista("", "");
 		
 		HTML carregando = new HTML("<div id=\"carregando\"><center>Carregando...</center></div>");
 		RootPanel.get().add(carregando);
@@ -548,9 +549,12 @@ public class Sistema_PRA implements EntryPoint {
 	
 
 
-	private void geraLista(String search) {
-		RequestBuilder builder5 = new RequestBuilder(RequestBuilder.GET, "searchpedido?q="+search);
-
+	private void geraLista(String search, String cursor) {
+		RequestBuilder builder5;
+		if(cursor.equals("")) 
+			builder5 = new RequestBuilder(RequestBuilder.GET, "searchpedido?q="+search);
+		else
+			builder5 = new RequestBuilder(RequestBuilder.GET, "searchpedido?q="+search+"&cursor="+cursor);
         try {
           Request request = builder5.sendRequest(null, new RequestCallback() {
             
@@ -568,7 +572,7 @@ public class Sistema_PRA implements EntryPoint {
             	 final ArrayList<Pedido> listaa = new ArrayList<Pedido>();
             	 for(Pedido pedido: cada) listaa.add(pedido);
             	 
-            	 CriaExibeTable(listaa, connected);
+            	 CriaExibeTable(listaa, connected, lista.getCursor());
               	
             	 
             	 
@@ -845,9 +849,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    // Set the total row count. This isn't strictly necessary, but it affects
 	    // paging calculations, so its good habit to keep the row count up to date.
 	    table.setRowCount(listaa.size(), true);
-
+	   
 	    // Push the data into the widget.
-	    table.setRowData(0, listaa);
+	    table.setRowData(5, listaa);
 
 	    // Add it to the root panel.
 	    
@@ -858,24 +862,27 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 		
 		
 	    // Create a Pager to control the table.
-	    SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-	    SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
-	    pager.setDisplay(table);
-	    RootPanel.get("main_bottom").add(pager);
+	    // SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
+	    //SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
+	    //pager.setDisplay(table);
+	    RootPanel.get("main_bottom").add(table);
 	    
 	    HorizontalPanel hPanel = new HorizontalPanel();
 	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
+	    
 	    final TextBox campoPesquisa = new TextBox();
 	    campoPesquisa.setSize("400px", "30px");
 	    campoPesquisa.addChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				geraLista(campoPesquisa.getText());
+				
+				 
+				geraLista(campoPesquisa.getText(),"");
 			}
 		});
 	    Button botaoPesquisa = new Button("Pesquisar", new ClickHandler() {
-		        public void onClick(ClickEvent event) { geraLista(campoPesquisa.getText()); }});
+		        public void onClick(ClickEvent event) { geraLista(campoPesquisa.getText(), ""); }});
 	    botaoPesquisa.setSize("80px", "30px");
 	    hPanel.add(campoPesquisa);
 	    hPanel.add(botaoPesquisa);
@@ -908,10 +915,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 
 
 
-	private void CriaExibeTable(List<? extends Pedido> listaa, final boolean connected) {
+	private void CriaExibeTable(final ArrayList<Pedido> listaa, final boolean connected, final String cursor) {
 		
 		// Create a CellTable.
-	    CellTable<Pedido> table = new CellTable<Pedido>();
+	    final CellTable<Pedido> table = new CellTable<Pedido>();
 	    //table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 	    RootPanel.get("main_bottom").clear();
 	    RootPanel.get("main_bottom_in").clear();
@@ -1976,6 +1983,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    // Push the data into the widget.
 	    table.setRowData(0, listaa);
 
+	    
+	    table.setPageSize(listaa.size());
+	   // table.setVisibleRange(0, listaa.size());
 	    // Add it to the root panel.
 	    
 	    
@@ -1985,10 +1995,81 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 		
 		
 	    // Create a Pager to control the table.
-	    SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-	    SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
-	    pager.setDisplay(table);
-	    RootPanel.get("main_bottom").add(pager);
+	    //SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
+	    //SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
+	    //pager.setDisplay(table);
+	    RootPanel.get("main_bottom").add(table);
+	    final MaisButton mais = new MaisButton(cursor, listaa, table);
+	    /*		
+	    		//new Button("Mais Resultados");
+	    mais.addClickHandler(new ClickHandler(
+	    		) {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				
+				RequestBuilder builder5;
+				builder5 = new RequestBuilder(RequestBuilder.GET, "searchpedido?cursor="+mais.getCursorInterno());
+		        try {
+		          Request request = builder5.sendRequest(null, new RequestCallback() {
+		            
+
+					public void onError(Request request, Throwable exception) {
+		            }
+
+		            public void onResponseReceived(Request request, Response response) {
+		              if (200 == response.getStatusCode()) {
+		            	 ListaPedidosForTable lista = JsonUtils.safeEval(response.getText()).cast();
+		            	 
+		            	 boolean connected = lista.getStatus().equals("Connected")? true: false;
+		            	 Pedido[] cada = lista.getPedidos();
+		            	 
+		            	 
+		            	 mais.removeFromParent();
+		            	 RootPanel.get("main_bottom").add(new MaisButton(lista.getCursor()));
+		            	 
+		            	 
+		            	 ArrayList<Pedido> cada2 = new ArrayList<Pedido>();
+		            	 for (int i = 0; i < cada.length; i++) {
+		            		 listaa.add(cada[i]);
+						
+		            		 table.setWidth("100%");
+		     			    // Set the total row count. This isn't strictly necessary, but it affects
+		     			    // paging calculations, so its good habit to keep the row count up to date.
+		     			 table.setRowCount(listaa.size(), true);
+
+		     			    // Push the data into the widget.
+		     			 table.setRowData(0, listaa);
+		     			 	table.setPageSize(listaa.size());
+		     				//geraLista("", cursor);
+		     				
+		            	 }
+		            		 
+		              	
+		            	 
+		            	 
+		              } else {
+		            	  
+		              }
+		            }
+		          });
+		        } catch (RequestException e) {
+		        }
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			}
+		});*/
+	    RootPanel.get("main_bottom").add(mais);
 	    
 	    HorizontalPanel hPanel = new HorizontalPanel();
 	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
@@ -2000,12 +2081,12 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    	@Override
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					 geraLista(campoPesquisa.getText()); 
+					 geraLista(campoPesquisa.getText(), ""); 
 					
 				}}
 		});
 	    Button botaoPesquisa = new Button("Pesquisar", new ClickHandler() {
-		        public void onClick(ClickEvent event) { geraLista(campoPesquisa.getText()); }});
+		        public void onClick(ClickEvent event) { geraLista(campoPesquisa.getText(), ""); }});
 	    botaoPesquisa.setSize("80px", "30px");
 	    hPanel.add(campoPesquisa);
 	    hPanel.add(botaoPesquisa);
