@@ -19,7 +19,7 @@ import webapp2, datetime
 from google.appengine.ext import db
 from modelos import *
 from google.appengine.api import mail
-
+from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.api import users
 
 
@@ -203,22 +203,7 @@ class GetPedido(webapp2.RequestHandler):
 
 
 
-class GetHistoricoPedido(webapp2.RequestHandler):
-      def get(self):
-              import json
-              query = self.request.get("q")
-              if query:
-                  dic = {}
-                  for pedido in db.GqlQuery("SELECT * FROM Pedido WHERE numero in ('"+query+"')"):
-                      dic = {
-                         "historico_data": [ data.isoformat() for data in pedido.historico_data ],
-                         "historico_info": pedido.historico_info,
-                         "historico_data": [ data.isoformat() for data in pedido.historico_data[::-1] ],
-                         "historico_info": pedido.historico_info[::-1],
-                          }
- 
-                  self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                  self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2))
+
 
 class ListaPedidoForTable(webapp2.RequestHandler):
     def get(self):
@@ -268,7 +253,7 @@ class ListaPedidoForTable(webapp2.RequestHandler):
 class InitSys(webapp2.RequestHandler):
     def get(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
-            for i in range(20):
+            for i in range(50):
                 novo = Pedido(key_name="CG26388734"+str(i), demandante="Joao Pedro Ferreira de Melo Leoncio", 
                               data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
                               descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
@@ -324,8 +309,8 @@ class SearchPedido(webapp2.RequestHandler):
             import json
             dic = {"pedidos": []}
             search = self.request.get("q")
-            query = db.GqlQuery("SELECT * FROM Pedido ORDER BY data_entrada DESC")
-
+            query = Pedido.all() #db.GqlQuery("SELECT * FROM Pedido ORDER BY data_entrada DESC")
+            query.with_cursor(self.request.get('cursor',default_value=None))
             if search.lower() == 'legalidade:legal':
                 for pedido in query:
                     if pedido.legalidade_parecer:
@@ -366,7 +351,7 @@ class SearchPedido(webapp2.RequestHandler):
                         dic["pedidos"].append(pedido_info)
 
             else:
-                for pedido in query:
+                for pedido in query.fetch(10):
                     tudo = pedido.numero + pedido.demandante + pedido.descricao + pedido.data_entrada.isoformat()
                     if search.lower() in tudo.lower():
                         pedido_info = { "numero": pedido.numero, 
@@ -386,7 +371,7 @@ class SearchPedido(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Disconnected'}.items() + dic.items()), indent=2))
             else:
                  self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2))
+                 self.response.out.write(json.dumps(dict({'status':'Connected', "cursor": query.cursor()}.items() + dic.items()), indent=2))
 
 
 
