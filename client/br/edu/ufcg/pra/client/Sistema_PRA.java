@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -2587,30 +2587,33 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				VerticalPanel vPanel = new VerticalPanel();
 				final TextBox numero = new TextBox();
 				HorizontalPanel hnumero = new HorizontalPanel();
-				hnumero.add(new HTML("Numero do processo:"));
+				hnumero.add(new HTML("Numero do processo* "));
 				hnumero.add(numero);
 				final TextBox demandante = new TextBox();
 				HorizontalPanel hdemandante = new HorizontalPanel();
-				hdemandante.add(new HTML("Nome do demandante:"));
+				hdemandante.add(new HTML("Nome do demandante* "));
 				hdemandante.add(demandante);
 				final DateBox data_entrada = new DateBox();
 				HorizontalPanel hdata_entrada = new HorizontalPanel();
-				hdata_entrada.add(new HTML("Data de entrada:"));
+				hdata_entrada.add(new HTML("Data de entrada* "));
 				hdata_entrada.add(data_entrada);
 				final TextArea descricao = new TextArea();
 				HorizontalPanel hdescricao = new HorizontalPanel();
-				hdescricao.add(new HTML("Descricao:"));
+				hdescricao.add(new HTML("Descricao* "));
 				hdescricao.add(descricao);
 				final TextBox email_demandante = new TextBox();
 				HorizontalPanel hemail = new HorizontalPanel();
-				hemail.add(new HTML("Email do demandante:"));
+				hemail.add(new HTML("Email do demandante* "));
 				hemail.add(email_demandante);
 				vPanel.add(new HTML("Cadastro de Pedidos<br>"));
+				HorizontalPanel hObrigatorio = new HorizontalPanel();
+				hObrigatorio.add(new HTML("* = campos obrigatorios"));
 				vPanel.add(hnumero);
 				vPanel.add(hdemandante);
 				vPanel.add(hemail);
 				vPanel.add(hdata_entrada);
 				vPanel.add(hdescricao);
+				vPanel.add(hObrigatorio);
 				vPanel.add(new Button("Enviar", new ClickHandler() {
        		        public void onClick(ClickEvent event) {
 
