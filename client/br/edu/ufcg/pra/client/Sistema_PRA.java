@@ -2616,14 +2616,23 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				vPanel.add(hObrigatorio);
 				vPanel.add(new Button("Enviar", new ClickHandler() {
        		        public void onClick(ClickEvent event) {
-
+       		        	if(numero.getText() == "" || demandante.getText() == "" || descricao.getText() == "" || email_demandante.getText() == "" || data_entrada.getValue() == null){
+           		        	final DialogBox aviso = new DialogBox();
+           		        	aviso.setAutoHideEnabled(true);
+           		        	aviso.center();
+           		        	aviso.add(new Label("Todos os campos obrigatorios devem ser preenchidos"));
+           		        	aviso.setGlassEnabled(true);
+           		            aviso.setAnimationEnabled(true);
+           		            aviso.show();	
+       		        	}else{
        		        	DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
        		        	String parameters = "numero="+numero.getText()+
        		        			"&demandante="+demandante.getText()+
        		        			"&data_entrada="+format.format(data_entrada.getValue())+
        		        			"&descricao="+descricao.getText()+
        		        			"&email_demandante="+email_demandante.getText();
-       		        	enviaForm(parameters);}}));
+       		        	enviaForm(parameters);}}}));
+
 				RootPanel.get("main_bottom").clear();
 				RootPanel.get("main_bottom_in").clear();
 				RootPanel.get("main_bottom").add(vPanel);
