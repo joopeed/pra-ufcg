@@ -2616,7 +2616,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				vPanel.add(hObrigatorio);
 				vPanel.add(new Button("Enviar", new ClickHandler() {
        		        public void onClick(ClickEvent event) {
-       		        	if(numero.getText().equals("") || demandante.getText().equals("") || descricao.getText().equals("") || email_demandante.getText().equals("") || data_entrada.getValue() == null){
+       		        	if(numero.getText() == "" || demandante.getText() == "" || descricao.getText() == "" || email_demandante.getText() == "" || data_entrada.getValue() == null){
            		        	final DialogBox aviso = new DialogBox();
            		        	aviso.setAutoHideEnabled(true);
            		        	aviso.center();
