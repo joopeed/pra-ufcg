@@ -1921,7 +1921,8 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 		             //DateTimeFormat datef =  new DateTimeFormat("dd-MM-YYYY", info) {};
 		             //Date teste = datef.parse("31-10-2013");
 		             DateBox dateBox = new DateBox();
-		             dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
+		             dateBox.setFormat(new DateBox.DefaultFormat (DateTimeFormat.getFormat("dd/MM/yyyy HH:mm:ss"))); 
+		             //dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
 					// dateBox.setValue(teste);
 		             final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
 		             try {  
