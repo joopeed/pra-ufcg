@@ -1,4 +1,4 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -856,7 +856,8 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    // Add it to the root panel.
 	    
 	    
-	    RootPanel.get("main_bottom").add(table);
+	    //RootPanel.get("main_bottom").add(table);
+	    
 	   // RootPanel.get("main_bottom").add(exampleBar1);
 	  
 		
@@ -865,8 +866,6 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    // SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 	    //SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
 	    //pager.setDisplay(table);
-	    RootPanel.get("main_bottom").add(table);
-	    
 	    HorizontalPanel hPanel = new HorizontalPanel();
 	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
 	    
@@ -1009,7 +1008,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	              	 final Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
 	              	 VerticalPanel vPanel = new VerticalPanel();
 	              	 DecoratorPanel decPanel = new DecoratorPanel();
-			         Grid g = new Grid(30, 2);
+			         Grid grande = new Grid(6, 2);
+			         //DADOS BASICOS
+			         Grid g = new Grid(5, 2);
 			         g.setWidget(0 , 0, new Label("Numero do pedido:"));
 			         g.setWidget(0 , 1, new Label(pedido.getNumero()));
 			       //  dialogContents.add(new Label("Numero do pedido:"+ ));
@@ -1020,16 +1021,6 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         g.setWidget(3 , 0, new Label("Descrição do pedido: "));
 			         g.setWidget(3 , 1, createTextBox("descricao",pedido.getDescricao(), pedido.getNumero()));
 			         g.setWidget(4 , 0, new Label("Data de entrada: "));
-			          
-			         String historico = "<h3>Hist&oacute;rico de alteracoes no pedido</h3><br>";
-			         
-			         for(int i = 0; i < pedido.getHistoricoData().length; i++){
-			        	 String data = pedido.getHistoricoData()[i];
-			             DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-			             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
-			        	 historico += format2.format(format.parse(data.substring(0, 19))) + " " + pedido.getHistoricoInfo()[i] + "<br>";
-			         
-			         }
 			         DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
 			         final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
 			         g.setWidget(4, 1, criaDatePicker(pedido.getData(), new ValueChangeHandler<Date>() {
@@ -1061,6 +1052,27 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 								
 							}
 						}));
+			          
+			         
+			         
+			         DecoratorPanel decSessao = new DecoratorPanel();
+			         VerticalPanel tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Dados basicos</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(0, 0, decSessao);
+			         
+			         g = new Grid(5, 2); 
+			         
+			         //HISTORICO
+			         String historico = "<h3>Hist&oacute;rico de alteracoes no pedido</h3><br>";
+			         for(int i = 0; i < pedido.getHistoricoData().length; i++){
+			        	 String data = pedido.getHistoricoData()[i];
+			             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+			             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
+			        	 historico += format2.format(format1.parse(data.substring(0, 19))) + " " + pedido.getHistoricoInfo()[i] + "<br>";
+			         
+			         }
 			         /*
 			         final ListBox lb = new ListBox();
                      lb.addItem("legal");
@@ -1084,12 +1096,12 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
                     HorizontalPanel corretudeDescricao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getDescricao(), "descricao", "Correta", "Incorreta");
                     HorizontalPanel corretudeQuantitativo = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getQuantitativo(), "quantitativo", "Correta", "Incorreta");
                     HorizontalPanel corretudeCotacao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getCotacao(), "cotacao", "Correta", "Incorreta");
-			         g.setWidget(5 , 0, new Label("Parecer de legalidade: "));
-			         g.setWidget(5 , 1, legalidade);
-			         g.setWidget(6 , 0, new Label("Data de envio da legalidade: "));
+			         g.setWidget(0 , 0, new Label("Parecer de legalidade: "));
+			         g.setWidget(0 , 1, legalidade);
+			         g.setWidget(1 , 0, new Label("Data de envio da legalidade: "));
 			          
 			         
-			         g.setWidget(6, 1, criaDatePicker(pedido.getLegalidade().getDataEnvio(), new ValueChangeHandler<Date>() {
+			         g.setWidget(1, 1, criaDatePicker(pedido.getLegalidade().getDataEnvio(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1119,10 +1131,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
-			         g.setWidget(7 , 0, new Label("Data de retorno da legalidade: "));
+			         g.setWidget(2 , 0, new Label("Data de retorno da legalidade: "));
 			          
 			         
-			         g.setWidget(7, 1, criaDatePicker(pedido.getLegalidade().getDataRetorno(), new ValueChangeHandler<Date>() {
+			         g.setWidget(2, 1, criaDatePicker(pedido.getLegalidade().getDataRetorno(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1153,9 +1165,30 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 			         
 			         
-			         g.setWidget(8 , 0, new Label("Parecer de Autorizacao: "));
-			         g.setWidget(8 , 1, autorizacao);
-			         g.setWidget(9 , 0, new Label("Parecer da corretude: "));
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Legalidade</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(0, 1, decSessao);
+			         
+			         g = new Grid(2, 2); 
+			         
+			         //AUTORIZACAO
+			         g.setWidget(0 , 0, new Label("Parecer de Autorizacao: "));
+			         g.setWidget(0 , 1, autorizacao);
+			         
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Autorização</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(1, 0, decSessao);
+			         
+			         g = new Grid(2, 2); 
+			         
+			         //CORRETUDE
+			         g.setWidget(0 , 0, new Label("Parecer da corretude: "));
 			         HorizontalPanel hl = new HorizontalPanel();
 			         VerticalPanel v1 = new VerticalPanel();
 			         v1.add(new Label("Descricao:"));
@@ -1170,12 +1203,11 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         hl.add(v1);
 			         hl.add(v2);
 			         hl.add(v3);
-			         g.setWidget(9 , 1, hl);
-			        
-			         g.setWidget(10 , 0, new Label("Data de definição da corretude: "));
+			         g.setWidget(0 , 1, hl);
+			         g.setWidget(1 , 0, new Label("Data de definição da corretude: "));
 			          
 			         
-			         g.setWidget(10, 1, criaDatePicker(pedido.getCorretude().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(1, 1, criaDatePicker(pedido.getCorretude().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1205,19 +1237,26 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Corretude</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(1, 1, decSessao);
 			         
+			         g = new Grid(4, 2); 
 			         
-			         
+			         //MINUTA DO EDITAL
 			         int indiceMinuta = pedido.getMinuta().indiceAtual();
 			         
 			         HorizontalPanel minuta = createRadioGroup(pedido, "MinutaHandler", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
-			         g.setWidget(11 , 0, new Label("Parecer da Minuta: "));
-			         g.setWidget(11 , 1, minuta);
+			         g.setWidget(0 , 0, new Label("Parecer da Minuta: "));
+			         g.setWidget(0 , 1, minuta);
 			         
-			         g.setWidget(12 , 0, new Label("Data de inicio de elaboracao da minuta: "));
+			         g.setWidget(1 , 0, new Label("Data de inicio de elaboracao da minuta: "));
 			          
 			         
-			         g.setWidget(12, 1, criaDatePicker(pedido.getMinuta().getDataInicio(indiceMinuta), new ValueChangeHandler<Date>() {
+			         g.setWidget(1, 1, criaDatePicker(pedido.getMinuta().getDataInicio(indiceMinuta), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1249,10 +1288,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         
 			         
 			         
-			         g.setWidget(13 , 0, new Label("Data de envio de elaboracao da minuta: "));
+			         g.setWidget(2 , 0, new Label("Data de envio da minuta: "));
 			          
 			         
-			         g.setWidget(13, 1, criaDatePicker(pedido.getMinuta().getDataEnvio(indiceMinuta), new ValueChangeHandler<Date>() {
+			         g.setWidget(2, 1, criaDatePicker(pedido.getMinuta().getDataEnvio(indiceMinuta), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1282,10 +1321,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
-			         g.setWidget(14 , 0, new Label("Data de retorno de elaboracao da minuta: "));
+			         g.setWidget(3 , 0, new Label("Data de retorno: "));
 			          
 			         
-			         g.setWidget(14, 1, criaDatePicker(pedido.getMinuta().getDataRetorno(indiceMinuta), new ValueChangeHandler<Date>() {
+			         g.setWidget(3, 1, criaDatePicker(pedido.getMinuta().getDataRetorno(indiceMinuta), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1316,17 +1355,58 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 
 			        
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Minuta do edital</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(2, 0, decSessao);
 			         
+			         g = new Grid(4, 2); 
+			         
+			         
+			         //PREGAO
 			         int indicePregao = pedido.getPregao().indiceAtual();
 			        
-			         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", pedido.getPregao().getParecer(indicePregao), "parecer", "Legal", "Ilegal");
-			         g.setWidget(15 , 0, new Label("Parecer do Pregao: "));
-			         g.setWidget(15 , 1, pregao);
+			         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", pedido.getPregao().getParecer(indicePregao), "parecer", "Comprado", "Não comprado");
+			         
+			         
+			         g.setWidget(0 , 0, new Label("Numero do pregao: "));
+			         final TextBox t = new TextBox();
+			         t.setText(pedido.getPregao().getNumero(indicePregao));
+			         t.addChangeHandler(new ChangeHandler() {
+						
+						@Override
+						public void onChange(ChangeEvent event) {
+							RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&numero="+ t.getText());
+			                try {
+			    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+			    	             
+			    	  			public void onError(Request request, Throwable exception) {
+			    	              }
+
+			    	              public void onResponseReceived(Request request, Response response) {
+			    	                if (200 == response.getStatusCode()) {
+			    	              	 
+			    	                } else {
+			    	              	  
+			    	                }
+			    	              }
+
+			    	            });
+			    	          } catch (RequestException e) {
+			    	          }
+						
+						}
+					});
+			         g.setWidget(0, 1, t);
+			         
 			        
-			         g.setWidget(16 , 0, new Label("Data de pregao: "));
+			        
+			        // g.setWidget(16 , 0, new Label("Data de pregao: "));
 			          
 			         
-			         g.setWidget(16, 1, criaDatePicker(pedido.getPregao().getData(indicePregao), new ValueChangeHandler<Date>() {
+			        /* g.setWidget(16, 1, criaDatePicker(pedido.getPregao().getData(indicePregao), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1356,41 +1436,15 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
-			         g.setWidget(17 , 0, new Label("Numero do pregao: "));
-			         final TextBox t = new TextBox();
-			         t.setText(pedido.getPregao().getNumero(indicePregao));
-			         t.addChangeHandler(new ChangeHandler() {
-						
-						@Override
-						public void onChange(ChangeEvent event) {
-							RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&numero="+ t.getText());
-			                try {
-			    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-			    	             
-			    	  			public void onError(Request request, Throwable exception) {
-			    	              }
-
-			    	              public void onResponseReceived(Request request, Response response) {
-			    	                if (200 == response.getStatusCode()) {
-			    	              	 
-			    	                } else {
-			    	              	  
-			    	                }
-			    	              }
-
-			    	            });
-			    	          } catch (RequestException e) {
-			    	          }
-						
-						}
-					});
-			         g.setWidget(17, 1, t);
 			         
+			         */
+			         g.setWidget(1 , 0, new Label("Parecer do Pregao: "));
+			         g.setWidget(1 , 1, pregao);
 			        
-			         g.setWidget(18 , 0, new Label("Data de licitacao do pregao: "));
+			         g.setWidget(2 , 0, new Label("Data de abertura do pregao: "));
 			          
 			         
-			         g.setWidget(18, 1, criaDatePicker(pedido.getPregao().getLicitacaoData(indicePregao), new ValueChangeHandler<Date>() {
+			         g.setWidget(2, 1, criaDatePicker(pedido.getPregao().getLicitacaoData(indicePregao), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1420,11 +1474,20 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         		
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Pregao</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(2, 1, decSessao);
 			         
-			         g.setWidget(19 , 0, new Label("Data de adjudicacao: "));
+			         g = new Grid(3, 2); 
+			         
+			         //ADJUDICACAO
+			         g.setWidget(0 , 0, new Label("Data de adjudicacao: "));
 			          
 			         
-			         g.setWidget(19, 1, criaDatePicker(pedido.getAdjudicacao().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(0, 1, criaDatePicker(pedido.getAdjudicacao().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1453,12 +1516,14 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 								
 							}
 						}));
-			         		
 			         
-			         g.setWidget(20 , 0, new Label("Data de homologacao: "));
+			         
+			        
+			         //HOMOLOGACAO
+			         g.setWidget(1 , 0, new Label("Data de homologacao: "));
 			          
 			         
-			         g.setWidget(20, 1, criaDatePicker(pedido.getHomologacao().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(1, 1, criaDatePicker(pedido.getHomologacao().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1489,10 +1554,12 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 			         
 			         
-			         g.setWidget(21	 , 0, new Label("Data de publicacao: "));
+			        // g = new Grid(1, 2); 
+			         //PUBLICACAO
+			         g.setWidget(2 , 0, new Label("Data de publicacao: "));
 			          
 			         
-			         g.setWidget(21, 1, criaDatePicker(pedido.getPublicacao().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(2, 1, criaDatePicker(pedido.getPublicacao().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1524,14 +1591,24 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         
 			         
 			         
-			         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", pedido.getDetalhamento().getParecer(), "parecer", "Legal", "Ilegal");
-			         g.setWidget(22 , 0, new Label("Parecer do detalhamento de credito: "));
-			         g.setWidget(22 , 1, detalhamento);
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Homologacao</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(3, 0, decSessao);
 			         
-			         g.setWidget(23 , 0, new Label("Data de detalhamento de credito: "));
+			         g = new Grid(3, 2); 
+			         
+			         //DETALHAMENTO
+			         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
+			         g.setWidget(0 , 0, new Label("Parecer do detalhamento de credito: "));
+			         g.setWidget(0 , 1, detalhamento);
+			         
+			         g.setWidget(1 , 0, new Label("Data de detalhamento de credito: "));
 			          
 			         
-			         g.setWidget(23 , 1, criaDatePicker(pedido.getDetalhamento().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(1 , 1, criaDatePicker(pedido.getDetalhamento().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1561,12 +1638,20 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Credito orcamentario</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(3, 1, decSessao);
 			         
+			         g = new Grid(3, 2); 
 			         
-			         g.setWidget(24 , 0, new Label("Data de empenho: "));
+			         //EMPENHO
+			         g.setWidget(0 , 0, new Label("Data de empenho: "));
 			          
 			         
-			         g.setWidget(24 , 1, criaDatePicker(pedido.getEmpenho().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(0 , 1, criaDatePicker(pedido.getEmpenho().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1596,10 +1681,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
-			         g.setWidget(25 , 0, new Label("Data de envio da nota ao almoxarifado: "));
+			         g.setWidget(1 , 0, new Label("Data de envio do empenho ao almoxarifado: "));
 			          
 			         
-			         g.setWidget(25 , 1, criaDatePicker(pedido.getNotaAlmoxarifado().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(1 , 1, criaDatePicker(pedido.getNotaAlmoxarifado().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1630,10 +1715,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 			         
 			         
-			         g.setWidget(26 , 0, new Label("Data de envio ao patrimonio: "));
+			         g.setWidget(2 , 0, new Label("Data de envio do empenho ao patrimonio: "));
 			          
 			         
-			         g.setWidget(26 , 1, criaDatePicker(pedido.getPatrimonio().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(2 , 1, criaDatePicker(pedido.getPatrimonio().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1663,11 +1748,20 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Empenho</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(4, 0, decSessao);
 			         
-			         g.setWidget(27 , 0, new Label("Data de envio da nota a contabilidade: "));
+			         g = new Grid(3, 2); 
+			         
+			         //PAGAMENTO
+			         g.setWidget(0 , 0, new Label("Data de envio da nota a contabilidade: "));
 			          
 			         
-			         g.setWidget(27 , 1, criaDatePicker(pedido.getNotaContabilidade().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(0 , 1, criaDatePicker(pedido.getNotaContabilidade().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1698,10 +1792,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 			         
 			         
-			         g.setWidget(28 , 0, new Label("Data de liquidacao: "));
+			         g.setWidget(1 , 0, new Label("Data de liquidacao: "));
 			          
 			         
-			         g.setWidget(28 , 1, criaDatePicker(pedido.getLiquidacao().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(1 , 1, criaDatePicker(pedido.getLiquidacao().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1732,10 +1826,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 			         
 			         
-			         g.setWidget(29 , 0, new Label("Data de pagamento: "));
+			         g.setWidget(2 , 0, new Label("Data de pagamento: "));
 			          
 			         
-			         g.setWidget(29 , 1, criaDatePicker(pedido.getPagamento().getData(), new ValueChangeHandler<Date>() {
+			         g.setWidget(2 , 1, criaDatePicker(pedido.getPagamento().getData(), new ValueChangeHandler<Date>() {
 			        	 
 							@Override
 							public void onValueChange(ValueChangeEvent<Date> event) {
@@ -1765,11 +1859,19 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							}
 						}));
 			         
+			         decSessao = new DecoratorPanel();
+			         tituloSessao = new VerticalPanel();
+			         tituloSessao.add(new HTML("<h2>Pagamento</h2>"));
+			         tituloSessao.add(g);
+			         decSessao.add(tituloSessao);
+			         grande.setWidget(4, 1, decSessao);
 			         
-			         vPanel.add(g);
 			         
 			         
-			         vPanel.add(new HTML(historico));
+			         vPanel.add(grande);
+			         
+			         
+			        // vPanel.add(new HTML(historico));
 			         decPanel.setWidget(vPanel);
 			         
 			         RootPanel.get("main_bottom").clear();
@@ -1991,15 +2093,15 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	    
 	    RootPanel.get("main_bottom").add(table);
 	   // RootPanel.get("main_bottom").add(exampleBar1);
-	  
+	    
 		
 		
 	    // Create a Pager to control the table.
 	    //SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 	    //SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
 	    //pager.setDisplay(table);
-	    RootPanel.get("main_bottom").add(table);
-	    final MaisButton mais = new MaisButton(cursor, listaa, table);
+	    HTML sobra = new HTML("<br><br><br>");
+	    final MaisButton mais = new MaisButton(cursor, listaa, table, sobra);
 	    /*		
 	    		//new Button("Mais Resultados");
 	    mais.addClickHandler(new ClickHandler(
@@ -2069,8 +2171,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				
 			}
 		});*/
-	    RootPanel.get("main_bottom").add(mais);
 	    
+	    RootPanel.get("main_bottom").add(mais);
+	   // RootPanel.get("main_bottom").add(new HTML("<br><br><br>"));
 	    HorizontalPanel hPanel = new HorizontalPanel();
 	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
 	    
@@ -2616,6 +2719,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				vPanel.add(hObrigatorio);
 				vPanel.add(new Button("Enviar", new ClickHandler() {
        		        public void onClick(ClickEvent event) {
+
        		        	if(numero.getText().equals("") || demandante.getText().equals("") || descricao.getText().equals("") || email_demandante.getText().equals("") || data_entrada.getValue() == null){
            		        	final DialogBox aviso = new DialogBox();
            		        	aviso.setAutoHideEnabled(true);
@@ -2633,6 +2737,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
        		        			"&email_demandante="+email_demandante.getText();
        		        	enviaForm(parameters);}}}));
 
+       		        	
 				RootPanel.get("main_bottom").clear();
 				RootPanel.get("main_bottom_in").clear();
 				RootPanel.get("main_bottom").add(vPanel);
