@@ -92,7 +92,14 @@ h1 {
 	top: 15%;
 	left: 0%;
 	width: 100%;
-	position: absolute;	
+	position: absolute;
+	text-align:center
+}
+#main_bottom_end{
+        position: absolute;
+        background-color: black;
+	height: 50%;
+	width: 100%;
 }
 #main_bottom_in{
 	top: 0%;

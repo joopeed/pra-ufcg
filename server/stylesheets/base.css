@@ -95,6 +95,12 @@ h1 {
 	position: absolute;
 	text-align:center
 }
+#main_bottom_end{
+        position: inherit;
+        background-color: black;
+	height: 50%;
+	width: 100%;
+}
 #main_bottom_in{
 	top: 0%;
 	left: 4%;
