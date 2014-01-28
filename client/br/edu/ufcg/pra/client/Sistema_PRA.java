@@ -27,6 +27,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.bcel.generic.RETURN;
+
 
 
 
@@ -284,6 +286,35 @@ class PagamentoDados extends JavaScriptObject {                              // 
     public final native String getData() /*-{ return this.data; }-*/;
 }
 
+class Historico extends JavaScriptObject {                              // (1)
+    // Overlay types always have protected, zero argument constructors.
+    protected Historico() {}  
+    
+    public final native HistoricoDados getHistorico() /*-{ return this.historico; }-*/;
+}
+
+
+class HistoricoDados extends JavaScriptObject {
+	
+	protected HistoricoDados() {}
+	
+	public final native String[] getData() /*-{ return this.data; }-*/;
+	public final native String[] getInfo() /*-{ return this.info; }-*/;
+	public final native String[] getUser() /*-{ return this.user; }-*/;
+
+	public final int size() {
+		return getUser().length;
+	}
+}
+
+class Temp {
+	public static HistoricoDados temp;
+	public Temp(HistoricoDados temp) {
+		this.temp = temp;
+	}
+}
+
+
 class Pedido extends JavaScriptObject {                              // (1)
     // Overlay types always have protected, zero argument constructors.
     protected Pedido() {}                                              // (2)
@@ -294,6 +325,7 @@ class Pedido extends JavaScriptObject {                              // (1)
     public final native String getEmail() /*-{ return this.email_demandante; }-*/;
     public final native String getLocal() /*-{ return this.local; }-*/;
     public final native String getData() /*-{ return this.data_entrada; }-*/;
+    
     public final String getDataFormatada() {
          DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
          DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
@@ -302,20 +334,7 @@ class Pedido extends JavaScriptObject {                              // (1)
     
     public final native String getDescricao() /*-{ return this.descricao; }-*/;
 
-    public final native String[] getHistoricoData() /*-{ return this.historico_data; }-*/;
-    
-    /*public final String[] getHistoricoDataFormatada() {
-    	String[] formatados = new String[getHistoricoData().length];
-    	String[] desformatados = getHistoricoData();
-    	DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-    	DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
-    	for(int i = 0; i < desformatados.length; i++)
-        	formatados[i] = format2.format(format.parse(desformatados[i]));
-    	return formatados;
-    	
-    }*/
-    
-    public final native String[] getHistoricoInfo() /*-{ return this.historico_info; }-*/;
+   
     
     public final native LegalidadeDados getLegalidade() /*-{ return this.legalidade; }-*/;
     
@@ -346,6 +365,37 @@ class Pedido extends JavaScriptObject {                              // (1)
     public final native LiquidacaoDados getLiquidacao() /*-{ return this.liquidacao; }-*/;
 
     public final native PagamentoDados getPagamento() /*-{ return this.pagamento; }-*/;
+
+	public final HistoricoDados getHistorico() {
+		 RequestBuilder builder5 = new RequestBuilder(RequestBuilder.GET, "gethistorico?q="+getNumero());
+
+		 try {
+			Request request = builder5.sendRequest(null, new RequestCallback() {
+
+				@Override
+				public void onResponseReceived(Request request, Response response) {
+					if (200 == response.getStatusCode()) {
+						Historico historico = JsonUtils.safeEval(response.getText()).cast();
+						
+						new Temp(historico.getHistorico());
+						
+			         	 }
+					
+				}
+
+				@Override
+				public void onError(Request request, Throwable exception) {
+					// TODO Auto-generated method stub
+					
+				}
+				 
+			 });
+		} catch (RequestException e) {
+			
+		}
+		return Temp.temp;
+	}
+	
   }
 
 class Pedido2 extends JavaScriptObject {                              // (1)
@@ -1064,15 +1114,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         
 			         g = new Grid(5, 2); 
 			         
-			         //HISTORICO
-			         String historico = "<h3>Hist&oacute;rico de alteracoes no pedido</h3><br>";
-			         for(int i = 0; i < pedido.getHistoricoData().length; i++){
-			        	 String data = pedido.getHistoricoData()[i];
-			             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-			             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
-			        	 historico += format2.format(format1.parse(data.substring(0, 19))) + " " + pedido.getHistoricoInfo()[i] + "<br>";
 			         
-			         }
 			         /*
 			         final ListBox lb = new ListBox();
                      lb.addItem("legal");
@@ -1867,15 +1909,28 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         grande.setWidget(4, 1, decSessao);
 			         
 			         
-			         
+			        // grande.setWidth("100%");
 			         vPanel.add(grande);
 			         
 			         
-			        // vPanel.add(new HTML(historico));
+			       //HISTORICO
+			         String historico = "<h3>Hist&oacute;rico de alteracoes no pedido: "+pedido.getHistorico().getData().length+"</h3><br>";
+			         for(int i = 0; i < pedido.getHistorico().size(); i++){
+			        	 String data = pedido.getHistorico().getData()[i];
+			             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+			             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
+			        	 historico += format2.format(format1.parse(data.substring(0, 19))) + " " + pedido.getHistorico().getInfo()[i] + " por " + pedido.getHistorico().getUser()[i] + "<br>";
+			         }
+			         
+			         
+			         vPanel.add(new HTML(historico));
 			         decPanel.setWidget(vPanel);
 			         
 			         RootPanel.get("main_bottom").clear();
 	              	 RootPanel.get("main_bottom_in").add(decPanel);
+	              	RootPanel.get("main_top").clear();
+			         RootPanel.get("main_cadastrar").clear();
+			         RootPanel.get("main_top").add(barrinha(pedido));
 	              	 
 	                } else {
 	              	  
