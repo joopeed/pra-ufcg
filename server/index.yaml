@@ -36,3 +36,10 @@ indexes:
   - name: demandante
   - name: descricao
   - name: numero
+
+- kind: Pedido
+  properties:
+  - name: numero
+  - name: historico_data
+  - name: historico_info
+  - name: historico_user

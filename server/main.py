@@ -139,6 +139,24 @@ class ListaPedido(webapp2.RequestHandler):
 
 
 
+class GetHistorico(webapp2.RequestHandler):
+    def get(self):
+            import json
+            query = self.request.get("q")
+            if query:
+                dic = {}
+                for pedido in db.GqlQuery("SELECT historico_data, historico_info, historico_user FROM Pedido WHERE numero in ('"+query+"')"):
+                    dic = {
+                        "historico":{
+                                "data": [ data.isoformat() for data in pedido.historico_data[::-1] ],
+                                "info": pedido.historico_info[::-1],
+                                "user": pedido.historico_user[::-1]
+                           }                    
+                        }
+
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2)) 
+
 
 
 
@@ -164,8 +182,6 @@ class GetPedido(webapp2.RequestHandler):
                         "data_entrada": pedido.data_entrada.isoformat(),
                         "email_demandante": pedido.email_demandante,
                         "local": pedido.local,
-                        "historico_data": [ data.isoformat() for data in pedido.historico_data[::-1] ],
-                        "historico_info": pedido.historico_info[::-1],
                         "legalidade": { 
                                     "parecer": pedido.legalidade_parecer, 
                                     "data_envio": pedido.legalidade_data_envio.isoformat() if pedido.legalidade_data_envio else "", 
@@ -261,6 +277,7 @@ class InitSys(webapp2.RequestHandler):
                               email_demandante="joopeeds@gmail.com")
                 novo.historico_info.append("Pedido criado no sistema")
                 novo.historico_data.append(datetime.datetime.now())
+                novo.historico_user.append(users.get_current_user().email())
                 novo.put()
 
 
@@ -287,6 +304,7 @@ class SetPedido(webapp2.RequestHandler):
                               email_demandante=self.request.get("email_demandante"))
                 novo.historico_info.append("Pedido criado no sistema")
                 novo.historico_data.append(datetime.datetime.now())
+                novo.historico_user.append(users.get_current_user().email())
                 novo.put()
         elif self.request.get("numero"):
                 pedido = searchkey(self.request.get("numero"))
@@ -402,15 +420,18 @@ class LegalidadeHandler(webapp2.RequestHandler):
                     pedido_em_questao.legalidade_parecer = True if parecer == "True" else False
                     pedido_em_questao.historico_info.append("Parecer de legalidade alterado")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de legalidade do seu pedido foi alterado")
                 if data_envio: 
                     pedido_em_questao.legalidade_data_envio = datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("Data de envio de legalidade alterado")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if data_retorno: 
                     pedido_em_questao.legalidade_data_retorno =  datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("Data de retorno de legalidade alterado")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -434,6 +455,7 @@ class AutorizacaoHandler(webapp2.RequestHandler):
                     pedido_em_questao.autorizacao_parecer = True if parecer == "True" else False
                     pedido_em_questao.historico_info.append("Parecer de autorizacao alterado")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de autorizacao do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
@@ -461,19 +483,26 @@ class CorretudeHandler(webapp2.RequestHandler):
                     pedido_em_questao.corretude_descricao = True if descricao == "True" else False
                     pedido_em_questao.historico_info.append("A corretude da descricao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
                 if quantitativo:
                     pedido_em_questao.corretude_quantitativo = True if quantitativo == "True" else False
                     pedido_em_questao.historico_info.append("A corretude do quantitativo foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
                 if cotacao: 
                     pedido_em_questao.corretude_cotacao = True if cotacao == "True" else False
                     pedido_em_questao.historico_info.append("A corretude da cotacao foi definida")
+                    pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
                 if data: 
                     pedido_em_questao.corretude_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data da definicao de corretude foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    notifica(pedido_em_questao, "A data de corretude do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -500,19 +529,23 @@ class MinutaHandler(webapp2.RequestHandler):
                     pedido_em_questao.minuta_parecer.append(True if parecer == "True" else False)
                     pedido_em_questao.historico_info.append("O parecer de elaboracao da minuta foi definido")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status da elaboracao da minuta do seu pedido foi alterado")
                 if data_inicio: 
                     pedido_em_questao.minuta_data_inicio.append( datetime.datetime.strptime(data_inicio, "%Y-%m-%dT%H:%M:%S"))
                     pedido_em_questao.historico_info.append("A data de inicio de elaboracao da minuta foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if data_envio: 
                     pedido_em_questao.minuta_data_envio.append( datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S"))
                     pedido_em_questao.historico_info.append("A data de envio de elaboracao da minuta foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if data_retorno: 
                     pedido_em_questao.minuta_data_retorno.append( datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S"))
                     pedido_em_questao.historico_info.append("A data de retorno de elaboracao da minuta foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -540,18 +573,22 @@ class PregaoHandler(webapp2.RequestHandler):
                     pedido_em_questao.historico_info.append("O parecer do pregao foi definido")
                     notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if data: 
                     pedido_em_questao.pregao_data.append(datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S"))
                     pedido_em_questao.historico_info.append("A data do pregao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if numero: 
                     pedido_em_questao.pregao_numero.append(numero)
                     pedido_em_questao.historico_info.append("O numero do pregao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if licitacao_data: 
                     pedido_em_questao.pregao_licitacao_data.append(datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S"))
                     pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -575,6 +612,7 @@ class AdjudicacaoHandler(webapp2.RequestHandler):
                     pedido_em_questao.adjudicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de adjudicacao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de adjudicacao do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
@@ -599,6 +637,7 @@ class HomologacaoHandler(webapp2.RequestHandler):
                     pedido_em_questao.homologacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de homologacao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de homologacao do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
@@ -623,6 +662,7 @@ class PublicacaoHandler(webapp2.RequestHandler):
                     pedido_em_questao.publicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de publicacao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de publicacao do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
@@ -648,11 +688,14 @@ class DetalhamentoHandler(webapp2.RequestHandler):
                     pedido_em_questao.detalhamento_parecer = True if parecer == "True" else False
                     pedido_em_questao.historico_info.append("O parecer do detalhamento de credito foi definido")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
+                  
                     notifica(pedido_em_questao, "O status de detalhamento de credito do seu pedido foi alterado")
                 if data: 
                     pedido_em_questao.detalhamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data do detalhamento de credito foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -676,6 +719,7 @@ class EmpenhoHandler(webapp2.RequestHandler):
                     pedido_em_questao.empenho_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de empenho foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de empenho do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
@@ -700,6 +744,7 @@ class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
                     pedido_em_questao.nota_almoxarifado_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de envio da nota ao almoxarifado foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -723,6 +768,7 @@ class PatrimonioHandler(webapp2.RequestHandler):
                     pedido_em_questao.patrimonio_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de envio ao patrimonio foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -746,6 +792,8 @@ class NotaContabilidadeHandler(webapp2.RequestHandler):
                     pedido_em_questao.nota_contabilidade_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de envio da nota a contabilidade foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -769,6 +817,7 @@ class LiquidacaoHandler(webapp2.RequestHandler):
                     pedido_em_questao.liquidacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de liquidacao foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de liquidacao do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
@@ -793,6 +842,7 @@ class PagamentoHandler(webapp2.RequestHandler):
                     pedido_em_questao.pagamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                     pedido_em_questao.historico_info.append("A data de pagamento foi definida")
                     pedido_em_questao.historico_data.append(datetime.datetime.now())
+                    pedido_em_questao.historico_user.append(users.get_current_user().email())
                     notifica(pedido_em_questao, "O status de pagamento do seu pedido foi alterado")
                 pedido_em_questao.put()
             else:
@@ -803,6 +853,6 @@ class PagamentoHandler(webapp2.RequestHandler):
             self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
 
 
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler)],debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler)],debug=True)
 
 #app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)

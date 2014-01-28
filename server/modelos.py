@@ -1,5 +1,6 @@
 import webapp2, datetime
 from google.appengine.ext import db
+from google.appengine.api.users import User
 
 class Usuario(db.Model):
     usuario_google = db.UserProperty(required=True)
@@ -17,6 +18,7 @@ class Pedido(db.Model):
 
     historico_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
     historico_info = db.StringListProperty(str, indexed=True, default=[]) 
+    historico_user = db.StringListProperty(str, indexed=True, default=[]) 
 
     legalidade_parecer = db.BooleanProperty()
     legalidade_data_envio = db.DateTimeProperty()
