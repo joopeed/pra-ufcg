@@ -145,7 +145,7 @@ class GetHistorico(webapp2.RequestHandler):
             query = self.request.get("q")
             if query:
                 dic = {}
-                for pedido in db.GqlQuery("SELECT historico_data, historico_info, historico_user FROM Pedido WHERE numero in ('"+query+"')"):
+                for pedido in db.GqlQuery("SELECT * FROM Pedido WHERE numero in ('"+query+"')"):
                     dic = {
                         "historico":{
                                 "data": [ data.isoformat() for data in pedido.historico_data[::-1] ],
