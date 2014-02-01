@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -681,7 +681,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	        return object.getNumero();
 	      }
 	    };
-	    table.addColumn(addressColumn, "Numero");
+	    table.addColumn(addressColumn, "Número");
 
 
 	    // Add a text column to show the address.
@@ -691,7 +691,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	        return object.getDescricao().substring(0, 20);
 	      }
 	    };
-	    table.addColumn(descricaoColumn, "Descricao");	
+	    table.addColumn(descricaoColumn, "Descrição");	
 
 
 	    // Add a text column to show the address.
@@ -1007,7 +1007,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	        return object.getNumero();
 	      }
 	    };
-	    table.addColumn(addressColumn, "Numero");
+	    table.addColumn(addressColumn, "Número");
 
 
 	    // Add a text column to show the address.
@@ -1017,7 +1017,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	        return object.getDescricao().substring(0, 20);
 	      }
 	    };
-	    table.addColumn(descricaoColumn, "Descricao");	
+	    table.addColumn(descricaoColumn, "Descrição");	
 
 
 	    // Add a text column to show the address.
@@ -1069,7 +1069,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         Grid grande = new Grid(6, 2);
 			         //DADOS BASICOS
 			         Grid g = new Grid(5, 2);
-			         g.setWidget(0 , 0, new Label("Numero do pedido:"));
+			         g.setWidget(0 , 0, new Label("Número do pedido:"));
 			         g.setWidget(0 , 1, new Label(pedido.getNumero()));
 			       //  dialogContents.add(new Label("Numero do pedido:"+ ));
 			         g.setWidget(1 , 0, new Label("Nome do demandante:"));
@@ -1115,7 +1115,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         
 			         DecoratorPanel decSessao = new DecoratorPanel();
 			         VerticalPanel tituloSessao = new VerticalPanel();
-			         tituloSessao.add(new HTML("<h2>Dados basicos</h2>"));
+			         tituloSessao.add(new HTML("<h2>Dados básicos</h2>"));
 			         tituloSessao.add(g);
 			         decSessao.add(tituloSessao);
 			         grande.setWidget(0, 0, decSessao);
@@ -1225,7 +1225,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         g = new Grid(2, 2); 
 			         
 			         //AUTORIZACAO
-			         g.setWidget(0 , 0, new Label("Parecer de Autorizacao: "));
+			         g.setWidget(0 , 0, new Label("Parecer de Autorização: "));
 			         g.setWidget(0 , 1, autorizacao);
 			         
 			         decSessao = new DecoratorPanel();
@@ -1241,13 +1241,13 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         g.setWidget(0 , 0, new Label("Parecer da corretude: "));
 			         HorizontalPanel hl = new HorizontalPanel();
 			         VerticalPanel v1 = new VerticalPanel();
-			         v1.add(new Label("Descricao:"));
+			         v1.add(new Label("Descrição:"));
 			         v1.add(corretudeDescricao);
 			         VerticalPanel v2 = new VerticalPanel();
 			         v2.add(new Label("Quantitativo:"));
 			         v2.add(corretudeQuantitativo);
 			         VerticalPanel v3 = new VerticalPanel();
-			         v3.add(new Label("Cotacao:"));
+			         v3.add(new Label("Cotação:"));
 			         v3.add(corretudeCotacao);
 			         hl.setBorderWidth(1);
 			         hl.add(v1);
@@ -1303,7 +1303,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         g.setWidget(0 , 0, new Label("Parecer da Minuta: "));
 			         g.setWidget(0 , 1, minuta);
 			         
-			         g.setWidget(1 , 0, new Label("Data de inicio de elaboracao da minuta: "));
+			         g.setWidget(1 , 0, new Label("Data de início de elaboração da minuta: "));
 			          
 			         
 			         g.setWidget(1, 1, criaDatePicker(pedido.getMinuta().getDataInicio(indiceMinuta), new ValueChangeHandler<Date>() {
@@ -1421,7 +1421,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", pedido.getPregao().getParecer(indicePregao), "parecer", "Comprado", "Não comprado");
 			         
 			         
-			         g.setWidget(0 , 0, new Label("Numero do pregao: "));
+			         g.setWidget(0 , 0, new Label("Número do pregão: "));
 			         final TextBox t = new TextBox();
 			         t.setText(pedido.getPregao().getNumero(indicePregao));
 			         t.addChangeHandler(new ChangeHandler() {
@@ -1488,10 +1488,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         
 			         
 			         */
-			         g.setWidget(1 , 0, new Label("Parecer do Pregao: "));
+			         g.setWidget(1 , 0, new Label("Parecer do Pregão: "));
 			         g.setWidget(1 , 1, pregao);
 			        
-			         g.setWidget(2 , 0, new Label("Data de abertura do pregao: "));
+			         g.setWidget(2 , 0, new Label("Data de abertura do pregão: "));
 			          
 			         
 			         g.setWidget(2, 1, criaDatePicker(pedido.getPregao().getLicitacaoData(indicePregao), new ValueChangeHandler<Date>() {
@@ -1526,7 +1526,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         		
 			         decSessao = new DecoratorPanel();
 			         tituloSessao = new VerticalPanel();
-			         tituloSessao.add(new HTML("<h2>Pregao</h2>"));
+			         tituloSessao.add(new HTML("<h2>Pregão</h2>"));
 			         tituloSessao.add(g);
 			         decSessao.add(tituloSessao);
 			         grande.setWidget(2, 1, decSessao);
@@ -1652,10 +1652,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         
 			         //DETALHAMENTO
 			         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
-			         g.setWidget(0 , 0, new Label("Parecer do detalhamento de credito: "));
+			         g.setWidget(0 , 0, new Label("Parecer do detalhamento de crédito: "));
 			         g.setWidget(0 , 1, detalhamento);
 			         
-			         g.setWidget(1 , 0, new Label("Data de detalhamento de credito: "));
+			         g.setWidget(1 , 0, new Label("Data de detalhamento de crédito: "));
 			          
 			         
 			         g.setWidget(1 , 1, criaDatePicker(pedido.getDetalhamento().getData(), new ValueChangeHandler<Date>() {
@@ -1690,7 +1690,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			         
 			         decSessao = new DecoratorPanel();
 			         tituloSessao = new VerticalPanel();
-			         tituloSessao.add(new HTML("<h2>Credito orcamentario</h2>"));
+			         tituloSessao.add(new HTML("<h2>Crédito orçamentário</h2>"));
 			         tituloSessao.add(g);
 			         decSessao.add(tituloSessao);
 			         grande.setWidget(3, 1, decSessao);
@@ -1765,7 +1765,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 			         
 			         
-			         g.setWidget(2 , 0, new Label("Data de envio do empenho ao patrimonio: "));
+			         g.setWidget(2 , 0, new Label("Data de envio do empenho ao patrimônio: "));
 			          
 			         
 			         g.setWidget(2 , 1, criaDatePicker(pedido.getPatrimonio().getData(), new ValueChangeHandler<Date>() {
@@ -1842,7 +1842,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}));
 			         
 			         
-			         g.setWidget(1 , 0, new Label("Data de liquidacao: "));
+			         g.setWidget(1 , 0, new Label("Data de liquidação: "));
 			          
 			         
 			         g.setWidget(1 , 1, criaDatePicker(pedido.getLiquidacao().getData(), new ValueChangeHandler<Date>() {
@@ -2156,7 +2156,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	       	         dialogBox.setWidget(dialogContents);
 	       	         // Add some text to the top of the dialog
 	       	         dialogContents.add(barra);
-	       	         dialogContents.add(new Label("Numero do pedido: "+todo.getNumero()));
+	       	         dialogContents.add(new Label("Número do pedido: "+todo.getNumero()));
 	       	         dialogContents.add(new Label("Nome do demandante: "+todo.getDemandante()));
 	       	         dialogContents.add(new Label("Email do demandante: "+todo.getEmail()));
 	       	         dialogContents.add(new Label("Data de entrada: "+todo.getDataFormatada()));
@@ -2800,7 +2800,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				VerticalPanel vPanel = new VerticalPanel();
 				final TextBox numero = new TextBox();
 				HorizontalPanel hnumero = new HorizontalPanel();
-				hnumero.add(new HTML("Numero do processo* "));
+				hnumero.add(new HTML("Número do processo* "));
 				hnumero.add(numero);
 				final TextBox demandante = new TextBox();
 				HorizontalPanel hdemandante = new HorizontalPanel();
@@ -2812,7 +2812,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				hdata_entrada.add(data_entrada);
 				final TextArea descricao = new TextArea();
 				HorizontalPanel hdescricao = new HorizontalPanel();
-				hdescricao.add(new HTML("Descricao* "));
+				hdescricao.add(new HTML("Descrição* "));
 				hdescricao.add(descricao);
 				final TextBox email_demandante = new TextBox();
 				HorizontalPanel hemail = new HorizontalPanel();
@@ -2820,7 +2820,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				hemail.add(email_demandante);
 				vPanel.add(new HTML("Cadastro de Pedidos<br>"));
 				HorizontalPanel hObrigatorio = new HorizontalPanel();
-				hObrigatorio.add(new HTML("* = campos obrigatorios"));
+				hObrigatorio.add(new HTML("* = campos obrigatórios"));
 				vPanel.add(hnumero);
 				vPanel.add(hdemandante);
 				vPanel.add(hemail);
@@ -2834,7 +2834,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
            		        	final DialogBox aviso = new DialogBox();
            		        	aviso.setAutoHideEnabled(true);
            		        	aviso.center();
-           		        	aviso.add(new Label("Todos os campos obrigatorios devem ser preenchidos"));
+           		        	aviso.add(new Label("Todos os campos obrigatórios devem ser preenchidos"));
            		        	aviso.setGlassEnabled(true);
            		            aviso.setAnimationEnabled(true);
            		            aviso.show();	
@@ -2883,16 +2883,16 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
            
             //AUTORIZACAO
             if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Autorizacao parecer: indefinido'>2</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Autorização parecer: indefinido'>2</td>";
             }
             else if (p.getAutorizacao().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Autorizacao parecer: em andamento'>2</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Autorização parecer: em andamento'>2</td>";
             }
             else if (p.getAutorizacao().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Autorizacao parecer: autorizado'>2</td>";
+                    barraProgresso += "<td style='background-color:#33CC33' title='Autorização parecer: autorizado'>2</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#FF0000' title='Autorizacao parecer: nao autorizado'>2</td>";
+                    barraProgresso += "<td style='background-color:#FF0000' title='Autorização parecer: não autorizado'>2</td>";
             }
            
             //CORRETUDE
@@ -2911,9 +2911,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
             else {
             		String statuss = "";
                     if (p.getCorretude().getDescricao().equals("true"))
-                    	 statuss += "Corretude da descricao: correto <br>";
+                    	 statuss += "Corretude da descrição: correto <br>";
                     else
-                    	statuss += "Corretude da descricao: incorreto<br>";
+                    	statuss += "Corretude da descrição: incorreto<br>";
      
                     if (p.getCorretude().getQuantitativo().equals("true"))
                     	statuss += "Corretude do quantitativo: correto<br>";
@@ -2921,9 +2921,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
                     	statuss +="Corretude do quantitativo: incorreto<br>";
      
                     if (p.getCorretude().getCotacao().equals("true"))
-                    	statuss += "Corretude da cotacao: correto<br>";
+                    	statuss += "Corretude da cotação: correto<br>";
                     else
-                    	statuss += "Corretude da cotacao: incorreto<br>";
+                    	statuss += "Corretude da cotação: incorreto<br>";
                     barraProgresso += "<td style='background-color:#FF0000' title='"+statuss+"'>3</td>";
                  
             }
@@ -2953,12 +2953,12 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	                    barraProgresso += "<td style='background-color:#FFFF33' title='Minuta parecer: em andamento'>4</td>";
 	            }
 	            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("true")) {
-	                    barraProgresso += "<td style='background-color:#33CC33' title='Minuta parecer: de acordo<br>Data do inicio da elaboracao: " +
+	                    barraProgresso += "<td style='background-color:#33CC33' title='Minuta parecer: de acordo<br>Data do início da elaboração: " +
 	                    dataMinutaInicio + "<br>Data de envio a PJ: " + dataMinutaEnvio + "<br>Data de retorno: " +
 	                    dataMinutaRetorno + "'>4</td>";
 	            }
 	            else {
-	                    barraProgresso += "<td style='background-color:#FF0000' title='Minuta parecer: nao de acordo<br>Data do inicio da elaboracao" +
+	                    barraProgresso += "<td style='background-color:#FF0000' title='Minuta parecer: não de acordo<br>Data do início da elaboração" +
 	                    ": " + dataMinutaInicio + "<br>Data de envio a PJ: " + dataMinutaEnvio +
 	                    "<br>Data de retorno: " + dataMinutaRetorno + "'>4</td>";
 	            }
@@ -2979,17 +2979,17 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
      
             if (p.getPregao().getParecer().length > 0) {
 	            if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-	                    barraProgresso += "<td style='background-color:#999999' title='Pregao parecer: indefinido'>5</td>";
+	                    barraProgresso += "<td style='background-color:#999999' title='Pregão parecer: indefinido'>5</td>";
 	            }
 	            else if (p.getPregao().getParecer()[iParecerPregao].equals("null")) {
-	                    barraProgresso += "<td style='background-color:#FFFF33' title='Pregao parecer: em andamento'>5</td>";
+	                    barraProgresso += "<td style='background-color:#FFFF33' title='Pregão parecer: em andamento'>5</td>";
 	            }
 	            else if (p.getPregao().getParecer()[iParecerPregao].equals("true")) {
-	                    barraProgresso += "<td style='background-color:#33CC33' title='Pregao parecer: realizado<br>Data de realizacao: " +
+	                    barraProgresso += "<td style='background-color:#33CC33' title='Pregão parecer: realizado<br>Data de realizacao: " +
 	                    dataPregao + "'>5</td>";
 	            }
 	            else {
-	                    barraProgresso += "<td style='background-color:#FF0000' title='Pregao parecer: nao realizado'>5</td>";
+	                    barraProgresso += "<td style='background-color:#FF0000' title='Pregão parecer: não realizado'>5</td>";
 	            }
             }
             else {
@@ -2998,49 +2998,49 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
            
             //ADJUDICACAO
             if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
-                    barraProgresso += "<td style='background-color:#999999' title='Adjudicacao: indefinida'>6</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Adjudicação: indefinida'>6</td>";
             }
             else if (p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Adjudicacao: em andamento'>6</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Adjudicação: em andamento'>6</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Adjudicao: concluida<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Adjudicação: concluída<br>Data: " +
                     p.getAdjudicacao().getData() + "'>6</td>";
             }
      	
             //HOMOLOGACAO
             if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Homologacao: indefinida'>7</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Homologação: indefinida'>7</td>";
             }
             else if (p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Homologacao: em andamento'>7</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Homologação: em andamento'>7</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Homologacao: concluida<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Homologação: concluída<br>Data: " +
                     p.getHomologacao().getData() + "'>7</td>";
             }
      
             //PUBLICACAO
             if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Publicacao: indefinida'>8</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Publicação: indefinida'>8</td>";
             }
             else if (p.getPublicacao().getData().equals("")) {
                     barraProgresso += "<td style='background-color:#FFFF33' title='Publicacao: em andamento'>8</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Publicacao: concluida<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Publicacao: concluída<br>Data: " +
                     p.getPublicacao().getData() + "'>8</td>";
             }
             
           //LIQUIDACAO
             if (p.getLiquidacao().getData().equals("") && p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Liquidacao: indefinida'>9</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Liquidação: indefinida'>9</td>";
             }
             else if (p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Liquidacao: em andamento'>9</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Liquidação: em andamento'>9</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Liquidacao: concluida<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Liquidação: concluída<br>Data: " +
                     p.getHomologacao().getData() + "'>9</td>";
             }
      
