@@ -51,7 +51,9 @@ h1 {
     left:0px;
     background-color: #eeeeee;
 }
-
+body{
+background-color: #eeeeee
+}
 #main{
     z-index: 0;
 	top: 10%;
@@ -73,7 +75,7 @@ h1 {
 }
 #main_cadastrar{
         z-index: 3;
-        top:60%;
+        top:66%;
         left:20px;
         position: absolute;
         background-color: #8c8c8c;
