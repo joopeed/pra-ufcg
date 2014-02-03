@@ -51,7 +51,9 @@ h1 {
     left:0px;
     background-color: #eeeeee;
 }
-
+body{
+background-color: #eeeeee
+}
 #main{
     z-index: 0;
 	top: 10%;
@@ -73,7 +75,7 @@ h1 {
 }
 #main_cadastrar{
         z-index: 3;
-        top:60%;
+        top:66%;
         left:20px;
         position: absolute;
         background-color: #8c8c8c;
@@ -89,6 +91,7 @@ h1 {
     
 }
 
+
 #main_right{
 	top: 6%;
 	left: 23%;
@@ -101,7 +104,7 @@ h1 {
 	left: 0%;
 	width: 100%;
 	position: absolute;
-	text-align:center
+	text-align:center;
 }
 #main_bottom_end{
         position: inherit;
@@ -110,10 +113,10 @@ h1 {
 	width: 100%;
 }
 #main_bottom_in{
-	top: 0%;
-	left: 4%;
+        margin: 0 auto;
 	width: 50%;
-	position: absolute;	
+	position: relative;
+	text-align:center;	
 }
 
 #bottom_bar{
@@ -141,8 +144,14 @@ h1 {
 .sendButton {
   display: block;
   font-size: 28pt;
+ 
 }
 
+.teste {
+  width: 700px;
+  height: 50px;
+  background-color: #666666;
+}
 /** Most GWT widgets already have a style name defined */
 .gwt-DialogBox {
   width: 400px;

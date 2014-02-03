@@ -269,7 +269,15 @@ class ListaPedidoForTable(webapp2.RequestHandler):
 class InitSys(webapp2.RequestHandler):
     def get(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
-            for i in range(50):
+       
+        novo = Pedido(key_name="CG00000000", demandante="Joao Pedro Ferreira de Melo Leoncio", 
+                              data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
+                              descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
+                              numero="CG00000000", 
+                              email_demandante="joopeeds@gmail.com")
+        novo.minuta_parecer.append(None)
+        novo.put()
+"""           for i in range(50):
                 novo = Pedido(key_name="CG26388734"+str(i), demandante="Joao Pedro Ferreira de Melo Leoncio", 
                               data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
                               descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
@@ -279,7 +287,8 @@ class InitSys(webapp2.RequestHandler):
                 novo.historico_data.append(datetime.datetime.now())
                 novo.historico_user.append(users.get_current_user().email())
                 novo.put()
-
+"""
+       
 
 
 class CadastraPedido(webapp2.RequestHandler):
