@@ -1,4 +1,4 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -1050,12 +1050,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	       }
 	      }
 
-<<<<<<< HEAD
-	
-		private void exibeDialogBox(final Pedido selected) {
-=======
 	      		private void exibeDialogBox(final Pedido selected) {
->>>>>>> f96b744d6eaa2cbfbf5cf31d6b37b450c2368d3d
 			
 			RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+selected.getNumero());
             try {
@@ -1609,1095 +1604,6 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
        	
 	}
 	*/
-	
-	
-	
-	
-	
-    
-    private void exibeTelaCompleta(Pedido selected) {
-	         // Create the dialog box
-  	  
-  	  RequestBuilder builder5 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+selected.getNumero());
-
-        try {
-          Request request = builder5.sendRequest(null, new RequestCallback() {
-           
-			public void onError(Request request, Throwable exception) {
-            }
-
-            @SuppressWarnings("deprecation")
-			public void onResponseReceived(Request request, Response response) {
-              if (200 == response.getStatusCode()) {
-            	 final Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
-            	 VerticalPanel vPanel = new VerticalPanel();
-            	 DecoratorPanel decPanel = new DecoratorPanel();
-		         Grid grande = new Grid(6, 2);
-		         //DADOS BASICOS
-		         Grid g = new Grid(5, 2);
-		         g.setWidget(0 , 0, new Label("Número do pedido:"));
-		         g.setWidget(0 , 1, new Label(pedido.getNumero()));
-		       //  dialogContents.add(new Label("Numero do pedido:"+ ));
-		         g.setWidget(1 , 0, new Label("Nome do demandante:"));
-		         g.setWidget(1 , 1, createTextBox( "demandante", pedido.getDemandante(), pedido.getNumero()));
-		         g.setWidget(2 , 0, new Label("Email do demandante: "));
-		         g.setWidget(2 , 1, createTextBox("email_demandante",pedido.getEmail(), pedido.getNumero()));
-		         g.setWidget(3 , 0, new Label("Descrição do pedido: "));
-		         g.setWidget(3 , 1, createTextBox("descricao",pedido.getDescricao(), pedido.getNumero()));
-		         g.setWidget(4 , 0, new Label("Data de entrada: "));
-		         DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
-		         final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-		         g.setWidget(4, 1, criaDatePicker(pedido.getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.POST, "setpedido?numero="+pedido.getNumero()+"&data_entrada="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		          
-		         
-		         
-		         DecoratorPanel decSessao = new DecoratorPanel();
-		         VerticalPanel tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Dados básicos</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(0, 0, decSessao);
-		         
-		         g = new Grid(5, 2); 
-		         
-		         
-		         /*
-		         final ListBox lb = new ListBox();
-               lb.addItem("legal");
-               lb.addItem("ilegal");
-               lb.addChangeHandler(new ChangeHandler() {
-						
-						@Override
-						public void onChange(ChangeEvent event) {
-							if (lb.getItemText(lb.getSelectedIndex()).equals("legal"))
-								AlteraEstado("parecer=True", pedido.getNumero());
-	                        else if (lb.getItemText(lb.getSelectedIndex()).equals("ilegal"))
-	                        	AlteraEstado("parecer=False", pedido.getNumero());
-						}
-					});
-               //Set as dropdown
-               lb.setVisibleItemCount(lb.getItemCount());
-               lb.setSelectedIndex(pedido.getLegalidade().getParecer().equals("false")?1:0);
-              	*/
-              HorizontalPanel legalidade = createRadioGroup(pedido, "LegalidadeHandler", pedido.getLegalidade().getParecer(), "parecer", "Legal", "Ilegal");
-              HorizontalPanel autorizacao = createRadioGroup(pedido, "AutorizacaoHandler", pedido.getAutorizacao().getParecer(), "parecer", "Legal", "Ilegal");
-              HorizontalPanel corretudeDescricao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getDescricao(), "descricao", "Correta", "Incorreta");
-              HorizontalPanel corretudeQuantitativo = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getQuantitativo(), "quantitativo", "Correta", "Incorreta");
-              HorizontalPanel corretudeCotacao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getCotacao(), "cotacao", "Correta", "Incorreta");
-		         g.setWidget(0 , 0, new Label("Parecer de legalidade: "));
-		         g.setWidget(0 , 1, legalidade);
-		         g.setWidget(1 , 0, new Label("Data de envio da legalidade: "));
-		          
-		         
-		         g.setWidget(1, 1, criaDatePicker(pedido.getLegalidade().getDataEnvio(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_envio="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         g.setWidget(2 , 0, new Label("Data de retorno da legalidade: "));
-		          
-		         
-		         g.setWidget(2, 1, criaDatePicker(pedido.getLegalidade().getDataRetorno(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Legalidade</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(0, 1, decSessao);
-		         
-		         g = new Grid(2, 2); 
-		         
-		         //AUTORIZACAO
-		         g.setWidget(0 , 0, new Label("Parecer de Autorização: "));
-		         g.setWidget(0 , 1, autorizacao);
-		         
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Autorização</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(1, 0, decSessao);
-		         
-		         g = new Grid(2, 2); 
-		         
-		         //CORRETUDE
-		         g.setWidget(0 , 0, new Label("Parecer da corretude: "));
-		         HorizontalPanel hl = new HorizontalPanel();
-		         VerticalPanel v1 = new VerticalPanel();
-		         v1.add(new Label("Descrição:"));
-		         v1.add(corretudeDescricao);
-		         VerticalPanel v2 = new VerticalPanel();
-		         v2.add(new Label("Quantitativo:"));
-		         v2.add(corretudeQuantitativo);
-		         VerticalPanel v3 = new VerticalPanel();
-		         v3.add(new Label("Cotação:"));
-		         v3.add(corretudeCotacao);
-		         hl.setBorderWidth(1);
-		         hl.add(v1);
-		         hl.add(v2);
-		         hl.add(v3);
-		         g.setWidget(0 , 1, hl);
-		         g.setWidget(1 , 0, new Label("Data de definição da corretude: "));
-		          
-		         
-		         g.setWidget(1, 1, criaDatePicker(pedido.getCorretude().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "CorretudeHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Corretude</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(1, 1, decSessao);
-		         
-		         g = new Grid(4, 2); 
-		         
-		         //MINUTA DO EDITAL
-		         int indiceMinuta = pedido.getMinuta().indiceAtual();
-		         
-		         HorizontalPanel minuta = createRadioGroup(pedido, "MinutaHandler", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
-		         g.setWidget(0 , 0, new Label("Parecer da Minuta: "));
-		         g.setWidget(0 , 1, minuta);
-		         
-		         g.setWidget(1 , 0, new Label("Data de início de elaboração da minuta: "));
-		          
-		         
-		         g.setWidget(1, 1, criaDatePicker(pedido.getMinuta().getDataInicio(indiceMinuta), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		         
-		         g.setWidget(2 , 0, new Label("Data de envio da minuta: "));
-		          
-		         
-		         g.setWidget(2, 1, criaDatePicker(pedido.getMinuta().getDataEnvio(indiceMinuta), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "MinutaHandler?pedido="+pedido.getNumero()+"&data_envio="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         g.setWidget(3 , 0, new Label("Data de retorno: "));
-		          
-		         
-		         g.setWidget(3, 1, criaDatePicker(pedido.getMinuta().getDataRetorno(indiceMinuta), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "MinutaHandler?pedido="+pedido.getNumero()+"&data_retorno="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-
-		        
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Minuta do edital</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(2, 0, decSessao);
-		         
-		         g = new Grid(4, 2); 
-		         
-		         
-		         //PREGAO
-		         int indicePregao = pedido.getPregao().indiceAtual();
-		        
-		         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", pedido.getPregao().getParecer(indicePregao), "parecer", "Comprado", "Não comprado");
-		         
-		         
-		         g.setWidget(0 , 0, new Label("Número do pregão: "));
-		         final TextBox t = new TextBox();
-		         t.setText(pedido.getPregao().getNumero(indicePregao));
-		         t.addChangeHandler(new ChangeHandler() {
-					
-					@Override
-					public void onChange(ChangeEvent event) {
-						RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&numero="+ t.getText());
-		                try {
-		    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-		    	             
-		    	  			public void onError(Request request, Throwable exception) {
-		    	              }
-
-		    	              public void onResponseReceived(Request request, Response response) {
-		    	                if (200 == response.getStatusCode()) {
-		    	              	 
-		    	                } else {
-		    	              	  
-		    	                }
-		    	              }
-
-		    	            });
-		    	          } catch (RequestException e) {
-		    	          }
-					
-					}
-				});
-		         g.setWidget(0, 1, t);
-		         
-		        
-		        
-		        // g.setWidget(16 , 0, new Label("Data de pregao: "));
-		          
-		         
-		        /* g.setWidget(16, 1, criaDatePicker(pedido.getPregao().getData(indicePregao), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		         */
-		         g.setWidget(1 , 0, new Label("Parecer do Pregão: "));
-		         g.setWidget(1 , 1, pregao);
-		        
-		         g.setWidget(2 , 0, new Label("Data de abertura do pregão: "));
-		          
-		         
-		         g.setWidget(2, 1, criaDatePicker(pedido.getPregao().getLicitacaoData(indicePregao), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         		
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Pregão</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(2, 1, decSessao);
-		         
-		         g = new Grid(3, 2); 
-		         
-		         //ADJUDICACAO
-		         g.setWidget(0 , 0, new Label("Data de adjudicacao: "));
-		          
-		         
-		         g.setWidget(0, 1, criaDatePicker(pedido.getAdjudicacao().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		        
-		         //HOMOLOGACAO
-		         g.setWidget(1 , 0, new Label("Data de homologacao: "));
-		          
-		         
-		         g.setWidget(1, 1, criaDatePicker(pedido.getHomologacao().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		        // g = new Grid(1, 2); 
-		         //PUBLICACAO
-		         g.setWidget(2 , 0, new Label("Data de publicacao: "));
-		          
-		         
-		         g.setWidget(2, 1, criaDatePicker(pedido.getPublicacao().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		         
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Homologacao</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(3, 0, decSessao);
-		         
-		         g = new Grid(3, 2); 
-		         
-		         //DETALHAMENTO
-		         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
-		         g.setWidget(0 , 0, new Label("Parecer do detalhamento de crédito: "));
-		         g.setWidget(0 , 1, detalhamento);
-		         
-		         g.setWidget(1 , 0, new Label("Data de detalhamento de crédito: "));
-		          
-		         
-		         g.setWidget(1 , 1, criaDatePicker(pedido.getDetalhamento().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Crédito orçamentário</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(3, 1, decSessao);
-		         
-		         g = new Grid(3, 2); 
-		         
-		         //EMPENHO
-		         g.setWidget(0 , 0, new Label("Data de empenho: "));
-		          
-		         
-		         g.setWidget(0 , 1, criaDatePicker(pedido.getEmpenho().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "EmpenhoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         g.setWidget(1 , 0, new Label("Data de envio do empenho ao almoxarifado: "));
-		          
-		         
-		         g.setWidget(1 , 1, criaDatePicker(pedido.getNotaAlmoxarifado().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "NotaAlmoxarifadoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		         g.setWidget(2 , 0, new Label("Data de envio do empenho ao patrimônio: "));
-		          
-		         
-		         g.setWidget(2 , 1, criaDatePicker(pedido.getPatrimonio().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Empenho</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(4, 0, decSessao);
-		         
-		         g = new Grid(3, 2); 
-		         
-		         //PAGAMENTO
-		         g.setWidget(0 , 0, new Label("Data de envio da nota a contabilidade: "));
-		          
-		         
-		         g.setWidget(0 , 1, criaDatePicker(pedido.getNotaContabilidade().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		         g.setWidget(1 , 0, new Label("Data de liquidação: "));
-		          
-		         
-		         g.setWidget(1 , 1, criaDatePicker(pedido.getLiquidacao().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         
-		         g.setWidget(2 , 0, new Label("Data de pagamento: "));
-		          
-		         
-		         g.setWidget(2 , 1, criaDatePicker(pedido.getPagamento().getData(), new ValueChangeHandler<Date>() {
-		        	 
-						@Override
-						public void onValueChange(ValueChangeEvent<Date> event) {
-							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PagamentoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
-				                try {
-				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-				    	             
-				    	  			public void onError(Request request, Throwable exception) {
-				    	              }
-
-				    	              public void onResponseReceived(Request request, Response response) {
-				    	                if (200 == response.getStatusCode()) {
-				    	              	 
-				    	                } else {
-				    	              	  
-				    	                }
-				    	              }
-
-				    	            });
-				    	          } catch (RequestException e) {
-				    	          }
-							
-							
-							
-							
-							
-						}
-					}));
-		         
-		         decSessao = new DecoratorPanel();
-		         tituloSessao = new VerticalPanel();
-		         tituloSessao.add(new HTML("<h2>Pagamento</h2>"));
-		         tituloSessao.add(g);
-		         decSessao.add(tituloSessao);
-		         grande.setWidget(4, 1, decSessao);
-		         
-		        // grande.setWidth("100%");
-		         vPanel.add(grande);
-		         Tree to = new Tree();
-		        // HTML title = new HTML();
-		        // final TreeItem root = new TreeItem(title);
-		         
-		         TreeItem item = to.addTextItem("Histórico de alterações no pedido");
-
-		         // Temporarily add an item so we can expand this node
-		         item.addTextItem("");
-		         
-		       //HISTORICO
-		        //to.addItem(root);
-		        // final TreeItem item = new TreeItem();
-		         //root.addItem(item);
-		         to.addOpenHandler(new OpenHandler<TreeItem>() {
-					
-					@Override
-					public void onOpen(OpenEvent<TreeItem> event) {
-						TreeItem item = event.getTarget();
-				        if (item.getChildCount() == 1) {
-				          // Close the item immediately
-				          item.setState(false, false);
-
-				         
-				          String historico = "";
-					         for(int i = 0; i < pedido.getHistorico().size(); i++){
-					        	 String data = pedido.getHistorico().getData()[i];
-					             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-					             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
-					        	 historico += format2.format(format1.parse(data.substring(0, 19))) + " " + pedido.getHistorico().getInfo()[i] + " por " + pedido.getHistorico().getUser()[i] + "<br>";
-					        
-					         }
-					         historico += "<br><br><br>";
-					         
-					         item.addItem(new TreeItem(new HTML(historico)));
-
-				          // Remove the temporary item when we finish loading
-				          item.getChild(0).remove();
-
-				          // Reopen the item
-				          item.setState(true, false);
-				        }
-						
-						/*
-						if(open.equals(root))  {
-							String historico = "";
-					         for(int i = 0; i < pedido.getHistorico().size(); i++){
-					        	 String data = pedido.getHistorico().getData()[i];
-					             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-					             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
-					        	 historico += format2.format(format1.parse(data.substring(0, 19))) + " " + pedido.getHistorico().getInfo()[i] + " por " + pedido.getHistorico().getUser()[i] + "<br>";
-					        
-					         }
-					         historico += "<br><br><br>";
-					         
-							item.setWidget(new HTML(historico));
-							}*/
-					}
-				});			         
-		         vPanel.add(to);
-		         vPanel.add(new HTML("<br><br><br>"));
-		         decPanel.setWidget(vPanel);
-		        
-		         RootPanel.get("main_bottom").clear();
-            	 RootPanel.get("main_bottom_in").add(decPanel);
-            	RootPanel.get("main_top").clear();
-		         RootPanel.get("main_cadastrar").clear();
-		         RootPanel.get("main_top").add(barrinha(pedido));
-            	 
-              } else {
-            	  
-              }
-            }
-
-			private HorizontalPanel createRadioGroup(final Pedido pedido, final String handler, String atual, final String dado, String valorVerdade, String valorFalso) {
-				HorizontalPanel vp = new HorizontalPanel();
-               RadioButton radioLegal = new RadioButton(handler, valorVerdade);
-               radioLegal.addClickHandler(new ClickHandler(){
-               		                @Override
-               		                public void onClick(ClickEvent event) {
-               		                	AlteraEstado(dado+"=True", pedido.getNumero(), handler);
-               	                }
-               	            });
-               RadioButton radioIlegal = new RadioButton(handler, valorFalso);
-               radioIlegal.addClickHandler(new ClickHandler(){
-	                @Override
-	                public void onClick(ClickEvent event) {
-	                	AlteraEstado(dado+"=False", pedido.getNumero(), handler);
-               }
-               });
-               if(atual.equals("null") || atual == null || atual.equals("")){
-              	 radioLegal.setValue(false);
-              	 radioIlegal.setValue(false);
-               }
-               else if(atual.equals("false")){
-              	 radioLegal.setValue(false);
-              	 radioIlegal.setValue(true);
-               }else{
-              	 radioLegal.setValue(true);
-              	 radioIlegal.setValue(false);
-               }
-               vp.add(radioIlegal);
-               vp.add(radioLegal);
-				return vp;
-			}
-
-			private DateBox criaDatePicker(String dataAtual, ValueChangeHandler<Date> valueChangeHandler) {
-				DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
-	             
-	            //DefaultDateTimeFormatInfo info = new DefaultDateTimeFormatInfo();
-	             //DateTimeFormat datef =  new DateTimeFormat("dd-MM-YYYY", info) {};
-	             //Date teste = datef.parse("31-10-2013");
-	             DateBox dateBox = new DateBox();
-	             dateBox.setFormat(new DateBox.DefaultFormat (DateTimeFormat.getFormat("dd/MM/yyyy HH:mm:ss"))); 
-	             //dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
-				// dateBox.setValue(teste);
-	             final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-	             try {  
-	               Date selDate = (Date)format.parse(dataAtual); 
-	               dateBox.getDatePicker().setValue(selDate, true);
-	             } catch(Exception pe){
-	              // setting current date
-	            	 dateBox.getDatePicker().setValue(null, true);
-	             }
-	            // final Label teste =  new Label(format.format(dateBox.getValue()));
-	             //dialogContents.add(teste);
-	             //dateBox.setValue(new Date(2013, 12, 31));
-	             dateBox.addValueChangeHandler(valueChangeHandler);
-				return dateBox;
-			}
-
-			private TextBox createTextBox( final String parameter,  String text, final String numPedido) {
-				 
-				final TextBox tal = new TextBox();
-		         tal.setText(text);
-		         tal.setReadOnly(true);
-		         tal.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						tal.setReadOnly(false);
-					}
-				});
-		         tal.addChangeHandler(new ChangeHandler() {
-					
-					@Override
-					public void onChange(ChangeEvent event) {
-			                tal.setReadOnly(true);
-			                RequestBuilder builder6 = new RequestBuilder(RequestBuilder.POST, "setpedido?numero="+numPedido+"&"+parameter+"="+tal.getText());
-			                try {
-			    	            Request request = builder6.sendRequest(null, new RequestCallback() {
-			    	             
-			    	  			public void onError(Request request, Throwable exception) {
-			    	              }
-
-			    	              public void onResponseReceived(Request request, Response response) {
-			    	                if (200 == response.getStatusCode()) {
-			    	              	 
-			    	                } else {
-			    	              	  
-			    	                }
-			    	              }
-
-			    	            });
-			    	          } catch (RequestException e) {
-			    	          }
-			                
-			                
-			                
-			                
-			                
-			                
-			                
-			                
-			                
-			            
-					}
-				});
-		         return tal;
-			}
-          });
-        } catch (RequestException e) {
-        }
-  	  
-  	  
-  	  
-  	  
-  	  
-		}  
-    
-    
-    
-  private void AlteraEstado(String parameter, String numPedido, String handler){
-  	
-  	 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, handler+"?pedido="+numPedido+"&"+parameter);
-       try {
-           Request request = builder6.sendRequest(null, new RequestCallback() {
-            
- 			public void onError(Request request, Throwable exception) {
-             }
-
-             public void onResponseReceived(Request request, Response response) {
-               if (200 == response.getStatusCode()) {
-             	 
-               } else {
-             	  
-               }
-             }
-
-           });
-         } catch (RequestException e) {
-         }
-       
-  }   
-    
 
 	private VerticalPanel pedidosPanel() {
 		final VerticalPanel vPanel = new VerticalPanel();
@@ -2809,46 +1715,6 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 		 
 		
 					
-<<<<<<< HEAD
-				VerticalPanel vPanel = new VerticalPanel();
-				final TextBox numero = new TextBox();
-				numero.setWidth("150");
-				HorizontalPanel hnumero = new HorizontalPanel();
-				hnumero.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				hnumero.add(new HTML("Número do processo* "));
-				hnumero.add(numero);
-				final TextBox demandante = new TextBox();
-				demandante.setWidth("150");
-				HorizontalPanel hdemandante = new HorizontalPanel();
-				hdemandante.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				hdemandante.add(new HTML("Nome do demandante* "));
-				hdemandante.add(demandante);
-				final DateBox data_entrada = new DateBox();
-				data_entrada.setWidth("150");
-				HorizontalPanel hdata_entrada = new HorizontalPanel();
-				hdata_entrada.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				hdata_entrada.add(new HTML("Data de entrada* "));
-				hdata_entrada.add(data_entrada);
-				final TextArea descricao = new TextArea();
-				descricao.setWidth("150");
-				HorizontalPanel hdescricao = new HorizontalPanel();
-				hdescricao.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				hdescricao.add(new HTML("Descrição* "));
-				hdescricao.add(descricao);
-				final TextBox email_demandante = new TextBox();
-				email_demandante.setWidth("150");
-				HorizontalPanel hemail = new HorizontalPanel();
-				hemail.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				hemail.add(new HTML("Email do demandante* "));
-				hemail.add(email_demandante);
-				vPanel.add(new HTML("Cadastro de Pedidos<br>"));
-				HorizontalPanel hObrigatorio = new HorizontalPanel();
-				hObrigatorio.add(new HTML("* = campos obrigatórios"));
-				vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				vPanel.add(hnumero);
-				vPanel.add(hdemandante);
-				vPanel.add(hemail);
-=======
 		VerticalPanel vPanel = new VerticalPanel();
 			final TextBox numero = new TextBox();
             numero.setWidth("250");
@@ -2887,7 +1753,6 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 			vPanel.add(hnumero);
 			vPanel.add(hdemandante);
 			vPanel.add(hemail);
->>>>>>> f96b744d6eaa2cbfbf5cf31d6b37b450c2368d3d
 				vPanel.add(hdata_entrada);
 				vPanel.add(hdescricao);
 				vPanel.add(hObrigatorio);
@@ -2898,7 +1763,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
            		        	final DialogBox aviso = new DialogBox();
            		        	aviso.setAutoHideEnabled(true);
            		        	aviso.center();
-           		        	aviso.add(new Label("Todos os campos obrigatórios devem ser preenchidos"));
+           		        	aviso.add(new Label("Todos os campos obrigatorios devem ser preenchidos"));
            		        	aviso.setGlassEnabled(true);
            		            aviso.setAnimationEnabled(true);
            		            aviso.show();	
@@ -2947,16 +1812,16 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
            
             //AUTORIZACAO
             if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Autorização parecer: indefinido'>2</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Autorizacao parecer: indefinido'>2</td>";
             }
             else if (p.getAutorizacao().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Autorização parecer: em andamento'>2</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Autorizacao parecer: em andamento'>2</td>";
             }
             else if (p.getAutorizacao().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Autorização parecer: autorizado'>2</td>";
+                    barraProgresso += "<td style='background-color:#33CC33' title='Autorizacao parecer: autorizado'>2</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#FF0000' title='Autorização parecer: não autorizado'>2</td>";
+                    barraProgresso += "<td style='background-color:#FF0000' title='Autorizacao parecer: nao autorizado'>2</td>";
             }
            
             //CORRETUDE
@@ -2975,9 +1840,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
             else {
             		String statuss = "";
                     if (p.getCorretude().getDescricao().equals("true"))
-                    	 statuss += "Corretude da descrição: correto <br>";
+                    	 statuss += "Corretude da descricao: correto <br>";
                     else
-                    	statuss += "Corretude da descrição: incorreto<br>";
+                    	statuss += "Corretude da descricao: incorreto<br>";
      
                     if (p.getCorretude().getQuantitativo().equals("true"))
                     	statuss += "Corretude do quantitativo: correto<br>";
@@ -2985,9 +1850,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
                     	statuss +="Corretude do quantitativo: incorreto<br>";
      
                     if (p.getCorretude().getCotacao().equals("true"))
-                    	statuss += "Corretude da cotação: correto<br>";
+                    	statuss += "Corretude da cotacao: correto<br>";
                     else
-                    	statuss += "Corretude da cotação: incorreto<br>";
+                    	statuss += "Corretude da cotacao: incorreto<br>";
                     barraProgresso += "<td style='background-color:#FF0000' title='"+statuss+"'>3</td>";
                  
             }
@@ -3017,12 +1882,12 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	                    barraProgresso += "<td style='background-color:#FFFF33' title='Minuta parecer: em andamento'>4</td>";
 	            }
 	            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("true")) {
-	                    barraProgresso += "<td style='background-color:#33CC33' title='Minuta parecer: de acordo<br>Data do início da elaboração: " +
+	                    barraProgresso += "<td style='background-color:#33CC33' title='Minuta parecer: de acordo<br>Data do inicio da elaboracao: " +
 	                    dataMinutaInicio + "<br>Data de envio a PJ: " + dataMinutaEnvio + "<br>Data de retorno: " +
 	                    dataMinutaRetorno + "'>4</td>";
 	            }
 	            else {
-	                    barraProgresso += "<td style='background-color:#FF0000' title='Minuta parecer: não de acordo<br>Data do início da elaboração" +
+	                    barraProgresso += "<td style='background-color:#FF0000' title='Minuta parecer: nao de acordo<br>Data do inicio da elaboracao" +
 	                    ": " + dataMinutaInicio + "<br>Data de envio a PJ: " + dataMinutaEnvio +
 	                    "<br>Data de retorno: " + dataMinutaRetorno + "'>4</td>";
 	            }
@@ -3043,17 +1908,17 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
      
             if (p.getPregao().getParecer().length > 0) {
 	            if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-	                    barraProgresso += "<td style='background-color:#999999' title='Pregão parecer: indefinido'>5</td>";
+	                    barraProgresso += "<td style='background-color:#999999' title='Pregao parecer: indefinido'>5</td>";
 	            }
 	            else if (p.getPregao().getParecer()[iParecerPregao].equals("null")) {
-	                    barraProgresso += "<td style='background-color:#FFFF33' title='Pregão parecer: em andamento'>5</td>";
+	                    barraProgresso += "<td style='background-color:#FFFF33' title='Pregao parecer: em andamento'>5</td>";
 	            }
 	            else if (p.getPregao().getParecer()[iParecerPregao].equals("true")) {
-	                    barraProgresso += "<td style='background-color:#33CC33' title='Pregão parecer: realizado<br>Data de realizacao: " +
+	                    barraProgresso += "<td style='background-color:#33CC33' title='Pregao parecer: realizado<br>Data de realizacao: " +
 	                    dataPregao + "'>5</td>";
 	            }
 	            else {
-	                    barraProgresso += "<td style='background-color:#FF0000' title='Pregão parecer: não realizado'>5</td>";
+	                    barraProgresso += "<td style='background-color:#FF0000' title='Pregao parecer: nao realizado'>5</td>";
 	            }
             }
             else {
@@ -3062,49 +1927,49 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
            
             //ADJUDICACAO
             if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
-                    barraProgresso += "<td style='background-color:#999999' title='Adjudicação: indefinida'>6</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Adjudicacao: indefinida'>6</td>";
             }
             else if (p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Adjudicação: em andamento'>6</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Adjudicacao: em andamento'>6</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Adjudicação: concluída<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Adjudicao: concluida<br>Data: " +
                     p.getAdjudicacao().getData() + "'>6</td>";
             }
      	
             //HOMOLOGACAO
             if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Homologação: indefinida'>7</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Homologacao: indefinida'>7</td>";
             }
             else if (p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Homologação: em andamento'>7</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Homologacao: em andamento'>7</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Homologação: concluída<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Homologacao: concluida<br>Data: " +
                     p.getHomologacao().getData() + "'>7</td>";
             }
      
             //PUBLICACAO
             if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Publicação: indefinida'>8</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Publicacao: indefinida'>8</td>";
             }
             else if (p.getPublicacao().getData().equals("")) {
                     barraProgresso += "<td style='background-color:#FFFF33' title='Publicacao: em andamento'>8</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Publicacao: concluída<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Publicacao: concluida<br>Data: " +
                     p.getPublicacao().getData() + "'>8</td>";
             }
             
           //LIQUIDACAO
             if (p.getLiquidacao().getData().equals("") && p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Liquidação: indefinida'>9</td>";
+                    barraProgresso += "<td style='background-color:#999999' title='Liquidacao: indefinida'>9</td>";
             }
             else if (p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Liquidação: em andamento'>9</td>";
+                    barraProgresso += "<td style='background-color:#FFFF33' title='Liquidacao: em andamento'>9</td>";
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Liquidação: concluída<br>Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33' title='Liquidacao: concluida<br>Data: " +
                     p.getHomologacao().getData() + "'>9</td>";
             }
      
