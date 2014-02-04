@@ -454,7 +454,7 @@ class LegalidadeHandler(webapp2.RequestHandler):
      
 #Autorizacao
 class AutorizacaoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -479,7 +479,7 @@ class AutorizacaoHandler(webapp2.RequestHandler):
      
 #Corretude
 class CorretudeHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -525,7 +525,7 @@ class CorretudeHandler(webapp2.RequestHandler):
      
 #Minuta
 class MinutaHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -568,7 +568,7 @@ class MinutaHandler(webapp2.RequestHandler):
      
 #Pregao
 class PregaoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -637,7 +637,7 @@ class PregaoHandler(webapp2.RequestHandler):
      
 #Adjudicacao
 class AdjudicacaoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -662,7 +662,7 @@ class AdjudicacaoHandler(webapp2.RequestHandler):
      
 #Homologacao
 class HomologacaoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -687,7 +687,7 @@ class HomologacaoHandler(webapp2.RequestHandler):
      
 #Publicacao
 class PublicacaoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -712,7 +712,7 @@ class PublicacaoHandler(webapp2.RequestHandler):
      
 #Detalhamento
 class DetalhamentoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -744,7 +744,7 @@ class DetalhamentoHandler(webapp2.RequestHandler):
      
 #Empenho
 class EmpenhoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -769,7 +769,7 @@ class EmpenhoHandler(webapp2.RequestHandler):
      
 #Nota do almoxarifado
 class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -793,7 +793,7 @@ class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
      
 #Patrimonio
 class PatrimonioHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -817,7 +817,7 @@ class PatrimonioHandler(webapp2.RequestHandler):
      
 #Nota da contabilidade
 class NotaContabilidadeHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -842,7 +842,7 @@ class NotaContabilidadeHandler(webapp2.RequestHandler):
      
 #Liquidacao
 class LiquidacaoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -867,7 +867,7 @@ class LiquidacaoHandler(webapp2.RequestHandler):
      
 #Pagamento
 class PagamentoHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
