@@ -860,7 +860,7 @@ public class Sistema_PRA implements EntryPoint {
 	    FlowPanel hPanel = new FlowPanel();
 	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
 	    
-	    hPanel.setStyleName("input-append");
+	   // hPanel.setStyleName("input-append");
 	    final TextBox campoPesquisa = new TextBox();
 	    campoPesquisa.setSize("450px", "30px");
 	    campoPesquisa.addKeyDownHandler(new KeyDownHandler() {
@@ -872,9 +872,9 @@ public class Sistema_PRA implements EntryPoint {
 					
 				}}
 		});
-	    campoPesquisa.setStyleName("span2");
-	    DOM.setElementAttribute(campoPesquisa.getElement(), "id", "appendedInputButton");
-	    Button botaoPesquisa = new Button("<i class=\"icon-search\"></i> Pesquisar", new ClickHandler() {
+	   // campoPesquisa.setStyleName("span2");
+	   // DOM.setElementAttribute(campoPesquisa.getElement(), "id", "appendedInputButton");
+	    Button botaoPesquisa = new Button("<img src=\"images/search.png\"></a> Pesquisar", new ClickHandler() {
 		        public void onClick(ClickEvent event) { 
 		        	final SimplePanel buscando =  new SimplePanel();
 		        	buscando.addStyleName("buscando");
@@ -890,8 +890,8 @@ public class Sistema_PRA implements EntryPoint {
 					};
 					timer.schedule(500);
 		        	}});
-	    botaoPesquisa.setStyleName("btn");
-	    
+	    //botaoPesquisa.setStyleName("btn");
+	    botaoPesquisa.setHeight("30px");
 	    hPanel.add(campoPesquisa);
 	    hPanel.add(botaoPesquisa);
 	    if(status.equals("Connected")){
