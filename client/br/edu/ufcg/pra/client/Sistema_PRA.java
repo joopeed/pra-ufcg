@@ -70,6 +70,7 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -80,6 +81,7 @@ import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -90,6 +92,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -854,11 +857,12 @@ public class Sistema_PRA implements EntryPoint {
 	    
 	    RootPanel.get("main_bottom").add(mais);
 	   // RootPanel.get("main_bottom").add(new HTML("<br><br><br>"));
-	    HorizontalPanel hPanel = new HorizontalPanel();
+	    FlowPanel hPanel = new FlowPanel();
 	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
 	    
+	    hPanel.setStyleName("input-append");
 	    final TextBox campoPesquisa = new TextBox();
-	    campoPesquisa.setSize("400px", "30px");
+	    campoPesquisa.setSize("450px", "30px");
 	    campoPesquisa.addKeyDownHandler(new KeyDownHandler() {
 			
 	    	@Override
@@ -868,7 +872,9 @@ public class Sistema_PRA implements EntryPoint {
 					
 				}}
 		});
-	    Button botaoPesquisa = new Button("Pesquisar", new ClickHandler() {
+	    campoPesquisa.setStyleName("span2");
+	    DOM.setElementAttribute(campoPesquisa.getElement(), "id", "appendedInputButton");
+	    Button botaoPesquisa = new Button("<i class=\"icon-search\"></i> Pesquisar", new ClickHandler() {
 		        public void onClick(ClickEvent event) { 
 		        	final SimplePanel buscando =  new SimplePanel();
 		        	buscando.addStyleName("buscando");
@@ -884,7 +890,8 @@ public class Sistema_PRA implements EntryPoint {
 					};
 					timer.schedule(500);
 		        	}});
-	    botaoPesquisa.setSize("80px", "30px");
+	    botaoPesquisa.setStyleName("btn");
+	    
 	    hPanel.add(campoPesquisa);
 	    hPanel.add(botaoPesquisa);
 	    if(status.equals("Connected")){
