@@ -91,6 +91,7 @@ background-color: #eeeeee
     
 }
 
+
 #main_right{
 	top: 6%;
 	left: 23%;
@@ -99,11 +100,12 @@ background-color: #eeeeee
 	position: absolute;	
 }
 #main_bottom{
-	top: 15%;
+	top: 11%;
 	left: 0%;
 	width: 100%;
+	padding-top:2%;
 	position: absolute;
-	text-align:center
+	text-align:center;
 }
 #main_bottom_end{
         position: inherit;
@@ -112,37 +114,42 @@ background-color: #eeeeee
 	width: 100%;
 }
 #main_bottom_in{
-	top: 0%;
-	left: 4%;
-	width: 50%;
-	position: absolute;	
+    margin: 0 auto;
+	width: 100%;
+	top:0px;
+	position: inherit;
+	text-align:center;	
 }
 
-#bottom_bar{
-        z-index: 1;
-        position: fixed;
-        top: 94%;
-        width: 100%;
-        height: 6%;
-	    left: 0px;
-        background-color: #000066;
-        font-family: courier;
-        color: white;
-}
-#bottom_bar_in{
-        z-index: 1;
-        position: absolute;
-        top: 10%;
-	    left: 10%;
-        background-color: #000066;
-        font-family: courier;
-        color: white;
-        text-align:center
-}
+
 
 .sendButton {
   display: block;
   font-size: 28pt;
+ 
+}
+
+.folha {
+padding-right:1%;
+padding-left:1%;
+	padding-top:3%;
+	top:0px;
+  width: 70%;
+  margin: 0 auto;
+  background-color: #FFFFFF;
+  
+  -moz-box-shadow: 0px 0px 8px #888;
+-webkit-box-shadow: 0px 0px 8px #888;
+box-shadow: 0px 0px 8px #888;
+  
+}
+
+.subfolha {
+ -moz-box-shadow: 0px 0px 2px #888;
+-webkit-box-shadow: 0px 0px 2px #888;
+box-shadow: 0px 0px 2px #888;
+ width: 98%;
+ padding: 1%;
 }
 
 /** Most GWT widgets already have a style name defined */

@@ -41,7 +41,7 @@ class Pedido(db.Model):
     pregao_parecer = db.ListProperty(bool, indexed=True, default=[])
     pregao_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
     pregao_numero = db.ListProperty(str, indexed=True, default=[]) 
-    pregao_licitacao_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
+    pregao_licitacao_data = db.ListProperty(datetime.datetime, indexed=True, default=[])
 
     adjudicacao_data = db.DateTimeProperty()
   

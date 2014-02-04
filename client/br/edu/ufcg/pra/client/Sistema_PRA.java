@@ -68,6 +68,7 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -89,6 +90,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
@@ -1048,8 +1050,12 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 	       }
 	      }
 
+<<<<<<< HEAD
 	
 		private void exibeDialogBox(final Pedido selected) {
+=======
+	      		private void exibeDialogBox(final Pedido selected) {
+>>>>>>> f96b744d6eaa2cbfbf5cf31d6b37b450c2368d3d
 			
 			RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+selected.getNumero());
             try {
@@ -2803,6 +2809,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 		 
 		
 					
+<<<<<<< HEAD
 				VerticalPanel vPanel = new VerticalPanel();
 				final TextBox numero = new TextBox();
 				numero.setWidth("150");
@@ -2841,6 +2848,46 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 				vPanel.add(hnumero);
 				vPanel.add(hdemandante);
 				vPanel.add(hemail);
+=======
+		VerticalPanel vPanel = new VerticalPanel();
+			final TextBox numero = new TextBox();
+            numero.setWidth("250");
+			HorizontalPanel hnumero = new HorizontalPanel();
+            hnumero.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			hnumero.add(new HTML("Número do processo* "));
+			hnumero.add(numero);
+			final TextBox demandante = new TextBox();
+            demandante.setWidth("250");
+			HorizontalPanel hdemandante = new HorizontalPanel();
+            hdemandante.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			hdemandante.add(new HTML("Nome do demandante* "));
+			hdemandante.add(demandante);
+			final DateBox data_entrada = new DateBox();
+            data_entrada.setWidth("250");
+			HorizontalPanel hdata_entrada = new HorizontalPanel();
+            hdata_entrada.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			hdata_entrada.add(new HTML("Data de entrada* "));
+			hdata_entrada.add(data_entrada);
+			final TextArea descricao = new TextArea();
+            descricao.setWidth("250");
+			HorizontalPanel hdescricao = new HorizontalPanel();
+            hdescricao.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			hdescricao.add(new HTML("Descrição* "));
+			hdescricao.add(descricao);
+			final TextBox email_demandante = new TextBox();
+            email_demandante.setWidth("250");
+			HorizontalPanel hemail = new HorizontalPanel();
+            hemail.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			hemail.add(new HTML("Email do demandante* "));
+			hemail.add(email_demandante);
+			vPanel.add(new HTML("Cadastro de Pedidos<br>"));
+			HorizontalPanel hObrigatorio = new HorizontalPanel();
+			hObrigatorio.add(new HTML("* = campos obrigatórios"));
+            vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			vPanel.add(hnumero);
+			vPanel.add(hdemandante);
+			vPanel.add(hemail);
+>>>>>>> f96b744d6eaa2cbfbf5cf31d6b37b450c2368d3d
 				vPanel.add(hdata_entrada);
 				vPanel.add(hdescricao);
 				vPanel.add(hObrigatorio);
@@ -2862,7 +2909,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
        		        			"&data_entrada="+format.format(data_entrada.getValue())+
        		        			"&descricao="+descricao.getText()+
        		        			"&email_demandante="+email_demandante.getText();
-       		        	enviaForm(parameters);}}}));
+       		        	enviaForm(parameters, numero.getText());}}}));
 
        		        	
 				RootPanel.get("main_bottom").clear();
@@ -3081,15 +3128,995 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
             }
 
 
+    private void exibeTelaCompleta(Pedido selected) {
+	         // Create the dialog box
+  	  
+  	  RequestBuilder builder5 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+selected.getNumero());
+
+        try {
+          Request request = builder5.sendRequest(null, new RequestCallback() {
+           
+			public void onError(Request request, Throwable exception) {
+            }
+
+            @SuppressWarnings("deprecation")
+			public void onResponseReceived(Request request, Response response) {
+              if (200 == response.getStatusCode()) {
+            	 final Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
+            	 VerticalPanel vPanel = new VerticalPanel();
+            	 SimplePanel folha = new SimplePanel();
+            	 folha.setStyleName("folha");
+            	 VerticalPanel pedacos = new VerticalPanel();
+            	 pedacos.setSpacing(10);
+            	 folha.add(pedacos);
+            	 RootPanel.get("main_bottom_in").add(folha);
+            	 DecoratorPanel decPanel = new DecoratorPanel();
+		         Grid grande = new Grid(6, 2);
+		         //DADOS BASICOS
+		         SubFolhaPanel subfolha = new SubFolhaPanel("Dados básicos");
+		         pedacos.add(subfolha);
+		         subfolha.add(new Label(pedido.getNumero()), "Número do pedido");
+		         subfolha.add(createTextBox("demandante", pedido.getDemandante(), pedido.getNumero()), "Nome do demandante");
+		         subfolha.add(createTextBox("email_demandante",pedido.getEmail(), pedido.getNumero()), "Email do demandante");
+		        subfolha.add(createTextBox("descricao",pedido.getDescricao(), pedido.getNumero()), "Descrição do pedido");
+		     
+		         DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
+		         final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+		        
+		          
+		         subfolha.add(criaDatePicker(pedido.getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.POST, "setpedido?numero="+pedido.getNumero()+"&data_entrada="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de entrada");
+		         
+		         //REMOVEr
+		         DecoratorPanel decSessao = new DecoratorPanel();
+		         VerticalPanel tituloSessao = new VerticalPanel();
+		         Grid g;
+		         //REMOVER
+		         
+		         g = new Grid(5, 2); 
+		         
+		         
+		         /*
+		         final ListBox lb = new ListBox();
+               lb.addItem("legal");
+               lb.addItem("ilegal");
+               lb.addChangeHandler(new ChangeHandler() {
+						
+						@Override
+						public void onChange(ChangeEvent event) {
+							if (lb.getItemText(lb.getSelectedIndex()).equals("legal"))
+								AlteraEstado("parecer=True", pedido.getNumero());
+	                        else if (lb.getItemText(lb.getSelectedIndex()).equals("ilegal"))
+	                        	AlteraEstado("parecer=False", pedido.getNumero());
+						}
+					});
+               //Set as dropdown
+               lb.setVisibleItemCount(lb.getItemCount());
+               lb.setSelectedIndex(pedido.getLegalidade().getParecer().equals("false")?1:0);
+              	*/
+              HorizontalPanel legalidade = createRadioGroup(pedido, "LegalidadeHandler", pedido.getLegalidade().getParecer(), "parecer", "Legal", "Ilegal");
+              HorizontalPanel autorizacao = createRadioGroup(pedido, "AutorizacaoHandler", pedido.getAutorizacao().getParecer(), "parecer", "Legal", "Ilegal");
+              HorizontalPanel corretudeDescricao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getDescricao(), "descricao", "Correta", "Incorreta");
+              HorizontalPanel corretudeQuantitativo = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getQuantitativo(), "quantitativo", "Correta", "Incorreta");
+              HorizontalPanel corretudeCotacao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getCotacao(), "cotacao", "Correta", "Incorreta");
+		        
+              subfolha = new SubFolhaPanel("Legalidade");
+		      pedacos.add(subfolha);
+              subfolha.add(legalidade, "Parecer de Legalidade");
+              subfolha.add(criaDatePicker(pedido.getLegalidade().getDataEnvio(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_envio="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de envio da Legalidade");
+              
+              	 subfolha.add(criaDatePicker(pedido.getLegalidade().getDataRetorno(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de retorno da Legalidade");
+		        
+              	 //AUTORIZACAO
+              	 subfolha = new SubFolhaPanel("Autorização");
+              	 pedacos.add(subfolha);
+		        
+		         subfolha.add(autorizacao, "Parecer de Autorização");
+		        
+		         subfolha = new SubFolhaPanel("Corretude");
+              	 pedacos.add(subfolha);
+              	 VerticalPanel hl = new VerticalPanel();
+		         VerticalPanel v1 = new VerticalPanel();
+		         v1.add(new Label("Descrição:"));
+		         v1.add(corretudeDescricao);
+		         VerticalPanel v2 = new VerticalPanel();
+		         v2.add(new Label("Quantitativo:"));
+		         v2.add(corretudeQuantitativo);
+		         VerticalPanel v3 = new VerticalPanel();
+		         v3.add(new Label("Cotação:"));
+		         v3.add(corretudeCotacao);
+		        // hl.setBorderWidth(1);
+		         hl.add(v1);
+		         hl.add(v2);
+		         hl.add(v3);
+		         
+		         
+		         
+		         subfolha.add(hl, "Parecer de Corretude");
+		        
+		         
+		         //CORRETUDE
+		         
+		         subfolha.add(criaDatePicker(pedido.getCorretude().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "CorretudeHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de definição da corretude");
+		        
+		       
+		         //MINUTA DO EDITAL
+		         int indiceMinuta = pedido.getMinuta().indiceAtual();
+		         
+		        
+		         HorizontalPanel minuta = createRadioGroup(pedido, "MinutaHandler", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
+		        
+		         subfolha = new SubFolhaPanel("Minuta do Edital");
+              	 pedacos.add(subfolha);
+              	 subfolha.add(minuta, "Parecer da Minuta");
+		         
+		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataInicio(indiceMinuta), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de inicio de elaboração da Minuta");
+              	 
+		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataEnvio(indiceMinuta), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "MinutaHandler?pedido="+pedido.getNumero()+"&data_envio="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de envio da Minuta");
+		        
+		         
+		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataRetorno(indiceMinuta), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "MinutaHandler?pedido="+pedido.getNumero()+"&data_retorno="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de retorno");
+		         
+		      
+		         subfolha = new SubFolhaPanel("Pregão");
+              	 pedacos.add(subfolha);
+		        
+		         
+		         //PREGAO
+		         int indicePregao = pedido.getPregao().indiceAtual();
+		        
+		         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", pedido.getPregao().getParecer(indicePregao), "parecer", "Comprado", "Não comprado");
+		         
+		         final TextBox t = new TextBox();
+		         t.setText(pedido.getPregao().getNumero(indicePregao));
+		         t.addChangeHandler(new ChangeHandler() {
+					
+					@Override
+					public void onChange(ChangeEvent event) {
+						RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&numero="+ t.getText());
+		                try {
+		    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+		    	             
+		    	  			public void onError(Request request, Throwable exception) {
+		    	              }
+
+		    	              public void onResponseReceived(Request request, Response response) {
+		    	                if (200 == response.getStatusCode()) {
+		    	              	 
+		    	                } else {
+		    	              	  
+		    	                }
+		    	              }
+
+		    	            });
+		    	          } catch (RequestException e) {
+		    	          }
+					
+					}
+				});
+		         subfolha.add(t, "Número do Pregão");
+		         
+		        
+		        
+		        // g.setWidget(16 , 0, new Label("Data de pregao: "));
+		          
+		         
+		        /* g.setWidget(16, 1, criaDatePicker(pedido.getPregao().getData(indicePregao), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}));
+		         
+		         
+		         */
+		        
+		         subfolha.add(pregao, "Parecer do Pregão");
+		         
+		         subfolha.add(criaDatePicker(pedido.getPregao().getLicitacaoData(indicePregao), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de abertura do Pregão");
+		        
+		         subfolha = new SubFolhaPanel("Adjudicação");
+              	 pedacos.add(subfolha);
+		        
+              	 
+              	 subfolha.add(criaDatePicker(pedido.getAdjudicacao().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de Adjudicação");
+		       
+              	subfolha = new SubFolhaPanel("Homologação");
+             	 pedacos.add(subfolha);
+		        
+             	 
+             	 subfolha.add(criaDatePicker(pedido.getHomologacao().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de Homologação");
+		         
+             	subfolha = new SubFolhaPanel("Publicação");
+            	 pedacos.add(subfolha);
+		        
+            	 subfolha.add(criaDatePicker(pedido.getPublicacao().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de Publicação");
+		     
+		         
+            	  
+              	subfolha = new SubFolhaPanel("Crédito Orçamentário");
+             	 pedacos.add(subfolha);
+		         
+             	 
+             
+		         //DETALHAMENTO
+		         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
+		    	 subfolha.add(detalhamento, "Parecer do Detalhamento de Crédito");
+		    	 
+		    	 subfolha.add(criaDatePicker(pedido.getDetalhamento().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de Detalhamento de Crédito");
+		         
+		         
+		    	 subfolha = new SubFolhaPanel("Empenho");
+             	 pedacos.add(subfolha);
+		         
+             	 subfolha.add(criaDatePicker(pedido.getEmpenho().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "EmpenhoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de Empenho");
+		    	 
+		         subfolha.add(criaDatePicker(pedido.getNotaAlmoxarifado().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "NotaAlmoxarifadoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}),"Data de envio do Empenho ao almoxarifado" );
+		         
+		        subfolha.add(criaDatePicker(pedido.getPatrimonio().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de envio do Empenho ao Patrimônio");
+		        
+		        subfolha = new SubFolhaPanel("Pagamento");
+            	 pedacos.add(subfolha);
+		        
+		         subfolha.add(criaDatePicker(pedido.getNotaContabilidade().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de envio da nota a Contabilidade");
+		        
+		         subfolha.add(criaDatePicker(pedido.getLiquidacao().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de Liquidação");
+		         
+		         subfolha.add(criaDatePicker(pedido.getPagamento().getData(), new ValueChangeHandler<Date>() {
+		        	 
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PagamentoHandler?pedido="+pedido.getNumero()+"&data="+format.format(event.getValue()));
+				                try {
+				    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+				    	             
+				    	  			public void onError(Request request, Throwable exception) {
+				    	              }
+
+				    	              public void onResponseReceived(Request request, Response response) {
+				    	                if (200 == response.getStatusCode()) {
+				    	              	 
+				    	                } else {
+				    	              	  
+				    	                }
+				    	              }
+
+				    	            });
+				    	          } catch (RequestException e) {
+				    	          }
+							
+							
+							
+							
+							
+						}
+					}), "Data de Pagamento" );
+		        
+		       
+		         Tree to = new Tree();
+		        // HTML title = new HTML();
+		        // final TreeItem root = new TreeItem(title);
+		         
+		         TreeItem item = to.addTextItem("Histórico de alterações no pedido");
+
+		         // Temporarily add an item so we can expand this node
+		         item.addTextItem("");
+		         
+		       //HISTORICO
+		        //to.addItem(root);
+		        // final TreeItem item = new TreeItem();
+		         //root.addItem(item);
+		         to.addOpenHandler(new OpenHandler<TreeItem>() {
+					
+					@Override
+					public void onOpen(OpenEvent<TreeItem> event) {
+						TreeItem item = event.getTarget();
+				        if (item.getChildCount() == 1) {
+				          // Close the item immediately
+				          item.setState(false, false);
+
+				         
+				          String historico = "";
+					         for(int i = 0; i < pedido.getHistorico().size(); i++){
+					        	 String data = pedido.getHistorico().getData()[i];
+					             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+					             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
+					        	 historico += format2.format(format1.parse(data.substring(0, 19))) + " " + pedido.getHistorico().getInfo()[i] + " por " + pedido.getHistorico().getUser()[i] + "<br>";
+					        
+					         }
+					         historico += "<br><br><br>";
+					         
+					         item.addItem(new TreeItem(new HTML(historico)));
+
+				          // Remove the temporary item when we finish loading
+				          item.getChild(0).remove();
+
+				          // Reopen the item
+				          item.setState(true, false);
+				        }
+						
+						/*
+						if(open.equals(root))  {
+							String historico = "";
+					         for(int i = 0; i < pedido.getHistorico().size(); i++){
+					        	 String data = pedido.getHistorico().getData()[i];
+					             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+					             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
+					        	 historico += format2.format(format1.parse(data.substring(0, 19))) + " " + pedido.getHistorico().getInfo()[i] + " por " + pedido.getHistorico().getUser()[i] + "<br>";
+					        
+					         }
+					         historico += "<br><br><br>";
+					         
+							item.setWidget(new HTML(historico));
+							}*/
+					}
+				});			
+		         
+		         pedacos.add(to);
+		         pedacos.add(new HTML("<br><br><br>"));
+		         decPanel.setWidget(vPanel);
+		         //folha.add(vPanel);
+		         RootPanel.get("main_bottom").clear();
+            	 //RootPanel.get("main_bottom_in").add(decPanel);
+            	RootPanel.get("main_top").clear();
+		         RootPanel.get("main_cadastrar").clear();
+		         RootPanel.get("main_top").add(barrinha(pedido));
+            	 
+              } else {
+            	  
+              }
+            }
+
+			private HorizontalPanel createRadioGroup(final Pedido pedido, final String handler, String atual, final String dado, String valorVerdade, String valorFalso) {
+				HorizontalPanel vp = new HorizontalPanel();
+               RadioButton radioLegal = new RadioButton(handler, valorVerdade);
+               radioLegal.addClickHandler(new ClickHandler(){
+               		                @Override
+               		                public void onClick(ClickEvent event) {
+               		                	AlteraEstado(dado+"=True", pedido.getNumero(), handler);
+               	                }
+               	            });
+               RadioButton radioIlegal = new RadioButton(handler, valorFalso);
+               radioIlegal.addClickHandler(new ClickHandler(){
+	                @Override
+	                public void onClick(ClickEvent event) {
+	                	AlteraEstado(dado+"=False", pedido.getNumero(), handler);
+               }
+               });
+               if(atual.equals("null") || atual == null || atual.equals("")){
+              	 radioLegal.setValue(false);
+              	 radioIlegal.setValue(false);
+               }
+               else if(atual.equals("false")){
+              	 radioLegal.setValue(false);
+              	 radioIlegal.setValue(true);
+               }else{
+              	 radioLegal.setValue(true);
+              	 radioIlegal.setValue(false);
+               }
+               vp.add(radioIlegal);
+               vp.add(radioLegal);
+				return vp;
+			}
+
+			private DateBox criaDatePicker(String dataAtual, ValueChangeHandler<Date> valueChangeHandler) {
+				DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
+	             
+	            //DefaultDateTimeFormatInfo info = new DefaultDateTimeFormatInfo();
+	             //DateTimeFormat datef =  new DateTimeFormat("dd-MM-YYYY", info) {};
+	             //Date teste = datef.parse("31-10-2013");
+	             DateBox dateBox = new DateBox();
+	             dateBox.setFormat(new DateBox.DefaultFormat (DateTimeFormat.getFormat("dd/MM/yyyy HH:mm:ss"))); 
+	             //dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
+				// dateBox.setValue(teste);
+	             final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+	             try {  
+	               Date selDate = (Date)format.parse(dataAtual); 
+	               dateBox.getDatePicker().setValue(selDate, true);
+	             } catch(Exception pe){
+	              // setting current date
+	            	 dateBox.getDatePicker().setValue(null, true);
+	             }
+	            // final Label teste =  new Label(format.format(dateBox.getValue()));
+	             //dialogContents.add(teste);
+	             //dateBox.setValue(new Date(2013, 12, 31));
+	             dateBox.addValueChangeHandler(valueChangeHandler);
+				return dateBox;
+			}
+
+			private TextBox createTextBox( final String parameter,  String text, final String numPedido) {
+				 
+				final TextBox tal = new TextBox();
+		         tal.setText(text);
+		         //tal.setReadOnly(true);
+		         tal.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						//tal.setReadOnly(false);
+					}
+				});
+		         tal.addChangeHandler(new ChangeHandler() {
+					
+					@Override
+					public void onChange(ChangeEvent event) {
+			                tal.setReadOnly(true);
+			                RequestBuilder builder6 = new RequestBuilder(RequestBuilder.POST, "setpedido?numero="+numPedido+"&"+parameter+"="+tal.getText());
+			                try {
+			    	            Request request = builder6.sendRequest(null, new RequestCallback() {
+			    	             
+			    	  			public void onError(Request request, Throwable exception) {
+			    	              }
+
+			    	              public void onResponseReceived(Request request, Response response) {
+			    	                if (200 == response.getStatusCode()) {
+			    	              	 
+			    	                } else {
+			    	              	  
+			    	                }
+			    	              }
+
+			    	            });
+			    	          } catch (RequestException e) {
+			    	          }
+			                
+			                
+			                
+			                
+			                
+			                
+			                
+			                
+			                
+			            
+					}
+				});
+		         return tal;
+			}
+          });
+        } catch (RequestException e) {
+        }
+  	  
+  	  
+  	  
+  	  
+  	  
+		}  
+    
+    
+    
+  private void AlteraEstado(String parameter, String numPedido, String handler){
+  	
+  	 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, handler+"?pedido="+numPedido+"&"+parameter);
+       try {
+           Request request = builder6.sendRequest(null, new RequestCallback() {
+            
+ 			public void onError(Request request, Throwable exception) {
+             }
+
+             public void onResponseReceived(Request request, Response response) {
+               if (200 == response.getStatusCode()) {
+             	 
+               } else {
+             	  
+               }
+             }
+
+           });
+         } catch (RequestException e) {
+         }
+       
+  }   
+    
+
 	
     
     
     
 		
-	public void enviaForm(String parameters) {
+	public void enviaForm(String parameters, final String numero) {
+		final DialogBox dialogBox = new DialogBox(true);
 		 try {
 		        
-		    	final DialogBox dialogBox = new DialogBox(true);
+		    	
 		    	dialogBox.setText("Aguarde");
 		    	VerticalPanel dialogContents = new VerticalPanel();
 		    	dialogBox.setWidget(dialogContents);
@@ -3113,11 +4140,12 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 
 		          public void onResponseReceived(Request request, Response response) {
 		            if (200 == response.getStatusCode()) {
-		            	dialogBox.clear();
-		            	dialogBox.add(new HTML("Enviado!"));
-		            	dialogBox.hide();
+		            	
 		            	RootPanel.get("main_bottom").clear();
 		            	RootPanel.get("main_bottom_in").clear();
+		            	
+		            	
+		            	
 		            	
 		          	 
 		            } else {
@@ -3127,6 +4155,38 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 		        });
 		      } catch (RequestException e) {
 		      }
+		dialogBox.clear();
+     	dialogBox.add(new HTML("Enviado! Carregando seu pedido recém criado...."));
+     	
+		 
+		 Timer t = new Timer() {
+		      @Override
+		      public void run() {
+		    	  RequestBuilder builder5 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+numero);
+
+		          
+		           try {
+						builder5.sendRequest(null, new RequestCallback() {
+						 
+						public void onError(Request request2, Throwable exception) {
+						  }
+
+						  @SuppressWarnings("deprecation")
+						public void onResponseReceived(Request request2, Response response) {
+						    if (200 == response.getStatusCode()) {
+						    	dialogBox.hide();
+						    	Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
+						    	exibeTelaCompleta(pedido);
+						    }
+						  }});
+					} catch (RequestException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		      }
+		    };
+		 
+        t.schedule(1000);
 	}
 	
 	
