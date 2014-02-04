@@ -196,7 +196,8 @@ class GetPedido(webapp2.RequestHandler):
                                     "data_inicio": [ data.isoformat() for data in pedido.minuta_data_inicio ], 
                                     "data_envio":  [ data.isoformat() for data in pedido.minuta_data_envio ], 
                                     "data_retorno": [ data.isoformat() for data in pedido.minuta_data_retorno ]}, 
-                        "pregao": { "parecer": pedido.pregao_parecer,
+                        "pregao": { "indice": pedido.pregao_indice,
+                                    "parecer": pedido.pregao_parecer,
                                     "data": [ data.isoformat() for data in pedido.pregao_data ],
                                     "numero": pedido.pregao_numero,
                                     "licitacao_data": [ data.isoformat() for data in pedido.pregao_licitacao_data ], 
@@ -219,7 +220,16 @@ class GetPedido(webapp2.RequestHandler):
 
 
 
-
+class AdicionaPregao(webapp2.RequestHandler):
+    def get(self):
+        import json
+        q = self.request.get("q")
+        pedido_em_questao = searchkey(q) 
+        if len(pedido_em_questao.pregao_parecer) == len(pedido_em_questao.pregao_data) == len(pedido_em_questao.pregao_numero) == len(pedido_em_questao.pregao_licitacao_data):
+                pedido_em_questao.pregao_indice += 1
+                pedido_em_questao.put()
+        self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+        self.response.out.write(json.dumps(dict({'status':'Connected', 'i':pedido_em_questao.pregao_indice, 'io':len(pedido_em_questao.pregao_licitacao_data)}.items()), indent=2)) 
 
 class ListaPedidoForTable(webapp2.RequestHandler):
     def get(self):
@@ -270,14 +280,7 @@ class InitSys(webapp2.RequestHandler):
     def get(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
        
-        novo = Pedido(key_name="CG00000000", demandante="Joao Pedro Ferreira de Melo Leoncio", 
-                              data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
-                              descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
-                              numero="CG00000000", 
-                              email_demandante="joopeeds@gmail.com")
-        novo.minuta_parecer.append(None)
-        novo.put()
-"""           for i in range(50):
+         for i in range(50):
                 novo = Pedido(key_name="CG26388734"+str(i), demandante="Joao Pedro Ferreira de Melo Leoncio", 
                               data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
                               descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
@@ -287,7 +290,7 @@ class InitSys(webapp2.RequestHandler):
                 novo.historico_data.append(datetime.datetime.now())
                 novo.historico_user.append(users.get_current_user().email())
                 novo.put()
-"""
+
        
 
 
@@ -321,7 +324,7 @@ class SetPedido(webapp2.RequestHandler):
                 if self.request.get("data_entrada"): pedido.data_entrada = datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")
                 if self.request.get("descricao"): pedido.descricao=self.request.get("descricao")
                 if self.request.get("email_demandante"): pedido.email_demandante=self.request.get("email_demandante")
-                if self.request.get("legalidade"): pedido.legalidade_parecer = True if self.request.get("legalidade") ==  "True" else False
+                #if self.request.get("legalidade"): pedido.legalidade_parecer = True if self.request.get("legalidade") ==  "True" else False
                 pedido.put()
         
 
@@ -414,7 +417,7 @@ def notifica(pedido_em_questao, mensagem):
    
 #Legalidade
 class LegalidadeHandler(webapp2.RequestHandler):
-        def get(self):
+        def post(self):
      
             import json
      
@@ -577,27 +580,53 @@ class PregaoHandler(webapp2.RequestHandler):
            
             if pedido:
                 pedido_em_questao = searchkey(pedido) 
+                i = pedido_em_questao.pregao_indice 
                 if parecer: 
-                    pedido_em_questao.pregao_parecer.append(True if parecer == "True" else False)
-                    pedido_em_questao.historico_info.append("O parecer do pregao foi definido")
-                    notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if len(pedido_em_questao.pregao_parecer) == i+1:
+                            pedido_em_questao.pregao_parecer.append(True if parecer == "True" else False)
+                            pedido_em_questao.historico_info.append("O parecer do pregao foi definido")
+                            notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    elif len(pedido_em_questao.pregao_parecer) == i+2: 
+                            pedido_em_questao.pregao_parecer[i+1] =  True if parecer == "True" else False
+                            pedido_em_questao.historico_info.append("O parecer do pregao foi definido")
+                            notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())   
                 if data: 
-                    pedido_em_questao.pregao_data.append(datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S"))
-                    pedido_em_questao.historico_info.append("A data do pregao foi definida")
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if len(pedido_em_questao.pregao_data) == i+1:
+                            pedido_em_questao.pregao_data.append(datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S"))
+                            pedido_em_questao.historico_info.append("A data do pregao foi definida")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    elif len(pedido_em_questao.pregao_data) == i+2:
+                            pedido_em_questao.pregao_data[i+1] = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                            pedido_em_questao.historico_info.append("A data do pregao foi definida")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if numero: 
-                    pedido_em_questao.pregao_numero.append(numero)
-                    pedido_em_questao.historico_info.append("O numero do pregao foi definida")
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if len(pedido_em_questao.pregao_numero) == i+1:
+                            pedido_em_questao.pregao_numero.append(numero)
+                            pedido_em_questao.historico_info.append("O numero do pregao foi definida")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    elif  len(pedido_em_questao.pregao_numero) == i+2:
+                            pedido_em_questao.pregao_numero[i+1] = numero
+                            pedido_em_questao.historico_info.append("O numero do pregao foi definida")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
                 if licitacao_data: 
-                    pedido_em_questao.pregao_licitacao_data.append(datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S"))
-                    pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida")
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if len(pedido_em_questao.pregao_licitacao_data) == i+1:
+                            pedido_em_questao.pregao_licitacao_data.append(datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S"))
+                            pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    elif len(pedido_em_questao.pregao_licitacao_data) == i+2:
+                            pedido_em_questao.pregao_licitacao_data[i+1] = datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S")
+                            pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
                 pedido_em_questao.put()
             else:
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -862,6 +891,6 @@ class PagamentoHandler(webapp2.RequestHandler):
             self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
 
 
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler)],debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/AdicionaPregao', AdicionaPregao), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler)],debug=True)
 
 #app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)

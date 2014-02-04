@@ -32,12 +32,14 @@ class Pedido(db.Model):
     corretude_data = db.DateTimeProperty()  
     
     #Listas em que um indice representa um ciclo completo de elaboracao da minuta
+    
     minuta_parecer = db.ListProperty(bool, indexed=True, default=[])
     minuta_data_inicio = db.ListProperty(datetime.datetime, indexed=True, default=[])      
     minuta_data_envio = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
     minuta_data_retorno = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
     
     #ciclo do pregao
+    pregao_indice = db.IntegerProperty(default=-1)
     pregao_parecer = db.ListProperty(bool, indexed=True, default=[])
     pregao_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
     pregao_numero = db.ListProperty(str, indexed=True, default=[]) 
