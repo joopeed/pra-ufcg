@@ -206,6 +206,11 @@ class PregaoDados extends JavaScriptObject {                              // (1)
     public final native String[] getData() /*-{ return this.data; }-*/;
     public final native String[] getNumero() /*-{ return this.numero; }-*/;
     public final native String[] getLicitacaoData() /*-{ return this.licitacao_data; }-*/;
+    public final native String getIndiceTexto() /*-{ return this.indice; }-*/;
+    
+    public final int getIndice(){
+    	return Integer.parseInt(getIndiceTexto());
+    }
     
     public final String getParecer(int i) {
     	if(i < getParecer().length && i > -1 ) return getParecer()[i];
@@ -225,7 +230,7 @@ class PregaoDados extends JavaScriptObject {                              // (1)
     }
 
 	public final int indiceAtual() {
-		return Math.max(Math.max(Math.max(getLicitacaoData().length, getNumero().length), getData().length), getParecer().length)-1;
+		return getIndice();
 	}
     
 }
@@ -2014,9 +2019,9 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
             	 VerticalPanel pedacos = new VerticalPanel();
             	 pedacos.setSpacing(10);
             	 folha.add(pedacos);
+            	 RootPanel.get("main_bottom_in").clear();
             	 RootPanel.get("main_bottom_in").add(folha);
             	 DecoratorPanel decPanel = new DecoratorPanel();
-		         Grid grande = new Grid(6, 2);
 		         //DADOS BASICOS
 		         SubFolhaPanel subfolha = new SubFolhaPanel("Dados básicos");
 		         pedacos.add(subfolha);
@@ -2059,14 +2064,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}
 					}), "Data de entrada");
 		         
-		         //REMOVEr
-		         DecoratorPanel decSessao = new DecoratorPanel();
-		         VerticalPanel tituloSessao = new VerticalPanel();
-		         Grid g;
-		         //REMOVER
-		         
-		         g = new Grid(5, 2); 
-		         
+		       
 		         
 		         /*
 		         final ListBox lb = new ListBox();
@@ -2086,11 +2084,11 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
                lb.setVisibleItemCount(lb.getItemCount());
                lb.setSelectedIndex(pedido.getLegalidade().getParecer().equals("false")?1:0);
               	*/
-              HorizontalPanel legalidade = createRadioGroup(pedido, "LegalidadeHandler", pedido.getLegalidade().getParecer(), "parecer", "Legal", "Ilegal");
-              HorizontalPanel autorizacao = createRadioGroup(pedido, "AutorizacaoHandler", pedido.getAutorizacao().getParecer(), "parecer", "Legal", "Ilegal");
-              HorizontalPanel corretudeDescricao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getDescricao(), "descricao", "Correta", "Incorreta");
-              HorizontalPanel corretudeQuantitativo = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getQuantitativo(), "quantitativo", "Correta", "Incorreta");
-              HorizontalPanel corretudeCotacao = createRadioGroup(pedido, "CorretudeHandler", pedido.getCorretude().getCotacao(), "cotacao", "Correta", "Incorreta");
+              HorizontalPanel legalidade = createRadioGroup(pedido, "LegalidadeHandler", "LegalidadeHandler", pedido.getLegalidade().getParecer(), "parecer", "Legal", "Ilegal");
+              HorizontalPanel autorizacao = createRadioGroup(pedido, "AutorizacaoHandler",  "AutorizacaoHandler",pedido.getAutorizacao().getParecer(), "parecer", "Legal", "Ilegal");
+              HorizontalPanel corretudeDescricao = createRadioGroup(pedido, "CorretudeHandler", "CorretudeDescHandler",pedido.getCorretude().getDescricao(), "descricao", "Correta", "Incorreta");
+              HorizontalPanel corretudeQuantitativo = createRadioGroup(pedido, "CorretudeHandler", "CorretudeQuantHandler",pedido.getCorretude().getQuantitativo(), "quantitativo", "Correta", "Incorreta");
+              HorizontalPanel corretudeCotacao = createRadioGroup(pedido, "CorretudeHandler", "CorretudeCotHandler",pedido.getCorretude().getCotacao(), "cotacao", "Correta", "Incorreta");
 		        
               subfolha = new SubFolhaPanel("Legalidade");
 		      pedacos.add(subfolha);
@@ -2220,7 +2218,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 		         int indiceMinuta = pedido.getMinuta().indiceAtual();
 		         
 		        
-		         HorizontalPanel minuta = createRadioGroup(pedido, "MinutaHandler", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
+		         HorizontalPanel minuta = createRadioGroup(pedido, "MinutaHandler", "Minuta", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
 		        
 		         subfolha = new SubFolhaPanel("Minuta do Edital");
               	 pedacos.add(subfolha);
@@ -2317,18 +2315,18 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 						}
 					}), "Data de retorno");
 		         
+		         int indicePregao = pedido.getPregao().indiceAtual();
+		         
+		         for(int i = 0; i <=  indicePregao+1; i++) {
 		      
 		         subfolha = new SubFolhaPanel("Pregão");
               	 pedacos.add(subfolha);
-		        
-		         
 		         //PREGAO
-		         int indicePregao = pedido.getPregao().indiceAtual();
 		        
-		         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", pedido.getPregao().getParecer(indicePregao), "parecer", "Comprado", "Não comprado");
+		         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", "Pregao", pedido.getPregao().getParecer(i), "parecer", "Comprado", "Não comprado");
 		         
 		         final TextBox t = new TextBox();
-		         t.setText(pedido.getPregao().getNumero(indicePregao));
+		         t.setText(pedido.getPregao().getNumero(i));
 		         t.addChangeHandler(new ChangeHandler() {
 					
 					@Override
@@ -2355,13 +2353,10 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 					}
 				});
 		         subfolha.add(t, "Número do Pregão");
-		         
 		        
-		        
-		        // g.setWidget(16 , 0, new Label("Data de pregao: "));
-		          
+		         subfolha.add(pregao, "Parecer do Pregão");
 		         
-		        /* g.setWidget(16, 1, criaDatePicker(pedido.getPregao().getData(indicePregao), new ValueChangeHandler<Date>() {
+		         subfolha.add(criaDatePicker(pedido.getPregao().getData(i), new ValueChangeHandler<Date>() {
 		        	 
 						@Override
 						public void onValueChange(ValueChangeEvent<Date> event) {
@@ -2389,14 +2384,11 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							
 							
 						}
-					}));
-		         
-		         
-		         */
+					}), "Data de definição do Pregão");
 		        
-		         subfolha.add(pregao, "Parecer do Pregão");
 		         
-		         subfolha.add(criaDatePicker(pedido.getPregao().getLicitacaoData(indicePregao), new ValueChangeHandler<Date>() {
+		         
+		         subfolha.add(criaDatePicker(pedido.getPregao().getLicitacaoData(i), new ValueChangeHandler<Date>() {
 		        	 
 						@Override
 						public void onValueChange(ValueChangeEvent<Date> event) {
@@ -2425,7 +2417,41 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
 							
 						}
 					}), "Data de abertura do Pregão");
-		        
+		         
+		         Button adicionaPregao = new Button("Adicionar Pregão");
+		         adicionaPregao.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						RequestBuilder builder5 = new RequestBuilder(RequestBuilder.GET, "AdicionaPregao?q="+pedido.getNumero());
+
+				          
+				           try {
+								builder5.sendRequest(null, new RequestCallback() {
+								 
+								public void onError(Request request2, Throwable exception) {
+								  }
+
+								  @SuppressWarnings("deprecation")
+								public void onResponseReceived(Request request2, Response response) {
+								    if (200 == response.getStatusCode()) {
+								    	Pedido pedido2 = JsonUtils.safeEval(response.getText()).cast();
+								    	exibeTelaCompleta(pedido2);
+								    }
+								  }});
+							} catch (RequestException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						
+					}
+				});
+		         if(i == indicePregao+1)
+		          subfolha.add(adicionaPregao);
+		         
+		         }
+		         
+		         
 		         subfolha = new SubFolhaPanel("Adjudicação");
               	 pedacos.add(subfolha);
 		        
@@ -2535,7 +2561,7 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
              	 
              
 		         //DETALHAMENTO
-		         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
+		         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", "Detalhamento", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
 		    	 subfolha.add(detalhamento, "Parecer do Detalhamento de Crédito");
 		    	 
 		    	 subfolha.add(criaDatePicker(pedido.getDetalhamento().getData(), new ValueChangeHandler<Date>() {
@@ -2830,16 +2856,16 @@ private void CriaExibeTableLegalidadeAlteravel(List<? extends Pedido> listaa, fi
               }
             }
 
-			private HorizontalPanel createRadioGroup(final Pedido pedido, final String handler, String atual, final String dado, String valorVerdade, String valorFalso) {
+			private HorizontalPanel createRadioGroup(final Pedido pedido, final String handler, String group,  String atual, final String dado, String valorVerdade, String valorFalso) {
 				HorizontalPanel vp = new HorizontalPanel();
-               RadioButton radioLegal = new RadioButton(handler, valorVerdade);
+               RadioButton radioLegal = new RadioButton(group, valorVerdade);
                radioLegal.addClickHandler(new ClickHandler(){
                		                @Override
                		                public void onClick(ClickEvent event) {
                		                	AlteraEstado(dado+"=True", pedido.getNumero(), handler);
                	                }
                	            });
-               RadioButton radioIlegal = new RadioButton(handler, valorFalso);
+               RadioButton radioIlegal = new RadioButton(group, valorFalso);
                radioIlegal.addClickHandler(new ClickHandler(){
 	                @Override
 	                public void onClick(ClickEvent event) {

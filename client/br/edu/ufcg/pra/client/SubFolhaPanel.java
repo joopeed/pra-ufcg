@@ -31,8 +31,12 @@ public class SubFolhaPanel extends SimplePanel {
 		colunas.add(coluna.get(0));
 		colunas.add(coluna.get(1));
 		linhas.add(colunas);
-		this.add(linhas);
+		super.add(linhas);
 		this.setStyleName("subfolha");
+	}
+	@Override
+	public void add(Widget w) {
+		linhas.add(w);
 	}
 	
 	public void add(Widget w, String title) {
