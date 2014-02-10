@@ -387,6 +387,9 @@ class Pedido extends JavaScriptObject {                              // (1)
     public final native PagamentoDados getPagamento() /*-{ return this.pagamento; }-*/;
 
 	public final HistoricoDados getHistorico() {
+		
+		
+		
 		 RequestBuilder builder5 = new RequestBuilder(RequestBuilder.GET, "gethistorico?q="+getNumero());
 
 		 try {
@@ -682,7 +685,7 @@ public class Sistema_PRA implements EntryPoint {
 	      @Override
 	      public String getValue(Pedido object) {
 	    	  DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-		         DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
+		         DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy");
 		         return format2.format(format.parse(object.getData())); 
 	      }
 	    };
@@ -718,7 +721,7 @@ public class Sistema_PRA implements EntryPoint {
 	                if (200 == response.getStatusCode()) {
 	                Pedido todo = JsonUtils.safeEval(response.getText()).cast();
 	                	// Window.alert("You selected: Pedido " + selected.getNumero());
-	       	         Widget barra = barrinha(todo);
+	       	         Widget barra = barrinhaSemNomes(todo);
 	       	         // Create the dialog box
 	       	         final DialogBox dialogBox = new DialogBox(true);
 	       	         dialogBox.center();
@@ -1393,31 +1396,31 @@ public class Sistema_PRA implements EntryPoint {
             numero.setWidth("250");
 			HorizontalPanel hnumero = new HorizontalPanel();
             hnumero.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			hnumero.add(new HTML("Número do processo* "));
+            hnumero.add(new HTML("<p>Número do processo:*</p>"));
 			hnumero.add(numero);
 			final TextBox demandante = new TextBox();
             demandante.setWidth("250");
 			HorizontalPanel hdemandante = new HorizontalPanel();
-            hdemandante.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			hdemandante.add(new HTML("Nome do demandante* "));
+			hdemandante.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			hdemandante.add(new HTML("<p>Nome do demandante:* </p>"));
 			hdemandante.add(demandante);
 			final DateBox data_entrada = new DateBox();
             data_entrada.setWidth("250");
 			HorizontalPanel hdata_entrada = new HorizontalPanel();
             hdata_entrada.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			hdata_entrada.add(new HTML("Data de entrada* "));
+            hdata_entrada.add(new HTML("<p>Data de entrada:* </p>"));
 			hdata_entrada.add(data_entrada);
 			final TextArea descricao = new TextArea();
             descricao.setWidth("250");
 			HorizontalPanel hdescricao = new HorizontalPanel();
             hdescricao.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			hdescricao.add(new HTML("Descrição* "));
+            hdescricao.add(new HTML("<p>Descrição:* </p>"));
 			hdescricao.add(descricao);
 			final TextBox email_demandante = new TextBox();
             email_demandante.setWidth("250");
 			HorizontalPanel hemail = new HorizontalPanel();
             hemail.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			hemail.add(new HTML("Email do demandante* "));
+            hemail.add(new HTML("<p>Email do demandante:* </p>"));
 			hemail.add(email_demandante);
 			vPanel.add(new HTML("Cadastro de Pedidos<br>"));
 			HorizontalPanel hObrigatorio = new HorizontalPanel();
@@ -1463,9 +1466,212 @@ public class Sistema_PRA implements EntryPoint {
 	}
 	
 	
+	private HTML barrinha(Pedido p) {
+        
+        String barraProgresso = "<table border='0' bordecolor='#000000' " +
+                                                         "style='background-color:#999999' width='100%' " +
+                                                         "cellpadding='10' cellspacing='1'><tr>";
+       
+        //LEGALIDADE
+        if (p.getLegalidade().getParecer().equals("null")) {
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#legalidade' id='anchorBarra' title='Legalidade parecer: em andamento'>Legalidade</a></td>";
+        }
+        else if (p.getLegalidade().getParecer().equals("true")) {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#legalidade'id='anchorBarra' title='Legalidade parecer: legal. Data de envio a PJ: " + p.getLegalidade().getDataEnvio() + " Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>Legalidade</a></td>";
+                
+        }
+        else {
+                barraProgresso += "<td style='background-color:#FF0000'><a href='#legalidade' id='anchorBarra' title='Legalidade parecer: ilegal. Data de envio a PJ: " +
+                p.getLegalidade().getDataEnvio() + " Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>Legalidade</a></td>";
+        }
+       
+        //AUTORIZACAO
+        if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
+                barraProgresso += "<td style='background-color:#999999'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: indefinido'>Autorização</a></td>";
+        }
+        else if (p.getAutorizacao().getParecer().equals("null")) {
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: em andamento'>Autorização</a></td>";
+        }
+        else if (p.getAutorizacao().getParecer().equals("true")) {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: autorizado'>Autorização</a></td>";
+        }
+        else {
+                barraProgresso += "<td style='background-color:#FF0000'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: nao autorizado'>Autorização</a></td>";
+        }
+       
+        //CORRETUDE
+        
+ 
+        if (p.getCorretude().getDescricao().equals("true") && p.getCorretude().getQuantitativo().equals("true") && p.getCorretude().getCotacao().equals("true")) {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#corretude' id='anchorBarra' title='Corretude: completo. Data da definicao: " +
+                p.getCorretude().getData() + "'>Corretude</a></td>";
+        }
+        else if ((p.getCorretude().getDescricao().equals("false") == false && p.getCorretude().getQuantitativo().equals("false") == false && p.getCorretude().getCotacao().equals("false") == false)) {
+                if (p.getAutorizacao().getParecer().equals("null"))
+                        barraProgresso += "<td style='background-color:#999999'><a href='#corretude' id='anchorBarra' title='Corretude: indefinida'>Corretude</a></td>";
+                else
+                        barraProgresso += "<td style='background-color:#FFFF33'><a href='#corretude' id='anchorBarra' title='Corretude: em andamento'>Corretude</a></td>";
+        }
+        else {
+        		String statuss = "";
+                if (p.getCorretude().getDescricao().equals("true"))
+                	 statuss += "Corretude da descricao: correto <br>";
+                else
+                	statuss += "Corretude da descricao: incorreto<br>";
+ 
+                if (p.getCorretude().getQuantitativo().equals("true"))
+                	statuss += "Corretude do quantitativo: correto<br>";
+                else
+                	statuss +="Corretude do quantitativo: incorreto<br>";
+ 
+                if (p.getCorretude().getCotacao().equals("true"))
+                	statuss += "Corretude da cotacao: correto<br>";
+                else
+                	statuss += "Corretude da cotacao: incorreto<br>";
+                barraProgresso += "<td style='background-color:#FF0000'><a href='#corretude' id='anchorBarra' title='"+statuss+"'>Corretude</a></td>";
+             
+        }
+       
+        //MINUTA
+        
+        
+        int iInicio = p.getMinuta().getDataInicio().length - 1;
+        int iEnvio = p.getMinuta().getDataEnvio().length - 1;
+        int iRetorno = p.getMinuta().getDataRetorno().length - 1;
+        int iParecerMinuta = p.getMinuta().getParecer().length - 1;
+        
+        //gambiarra {
+        String dataMinutaInicio = "";
+        if (p.getMinuta().getDataInicio().length > 0) dataMinutaInicio = p.getMinuta().getDataInicio()[iInicio];
+        String dataMinutaEnvio = "";
+        if (p.getMinuta().getDataEnvio().length > 0) dataMinutaEnvio = p.getMinuta().getDataEnvio()[iEnvio];
+        String dataMinutaRetorno = "";
+        if (p.getMinuta().getDataRetorno().length > 0) dataMinutaRetorno = p.getMinuta().getDataRetorno()[iRetorno];
+        //} gambiarra
+        
+        if (p.getMinuta().getParecer().length > 0) {
+            if (p.getMinuta().getParecer()[iParecerMinuta].equals("null") && p.getCorretude().getCotacao().equals("null")) {
+                    barraProgresso += "<td style='background-color:#999999'><a href='#minuta' id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
+            }
+            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
+                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#minuta' id='anchorBarra' title='Minuta parecer: em andamento'>Minuta</a></td>";
+            }
+            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("true")) {
+                    barraProgresso += "<td style='background-color:#33CC33'><a href='#minuta' id='anchorBarra' title='Minuta parecer: de acordo. Data do inicio da elaboracao: " +
+                    dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio + " Data de retorno: " +
+                    dataMinutaRetorno + "'>Minuta</a></td>";
+            }
+            else {
+                    barraProgresso += "<td style='background-color:#FF0000'><a href='#minuta' id='anchorBarra' title='Minuta parecer: nao de acordo. Data do inicio da elaboracao" +
+                    ": " + dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio +
+                    " Data de retorno: " + dataMinutaRetorno + "'>Minuta</a></td>";
+            }
+        }
+        else {
+        	barraProgresso += "<td style='background-color:#999999'><a href='#minuta' id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
+        }
+       
+        //PREGAO
+        
+        int iParecerPregao = p.getPregao().getParecer().length - 1;
+        int iParecerData = p.getPregao().getData().length - 1;
+        
+        //TODO gambiarra {
+        String dataPregao = "";
+        if (p.getPregao().getData().length > 0) dataPregao = p.getPregao().getData()[iParecerData];
+        //TODO } gambiarra
+ 
+        if (p.getPregao().getParecer().length > 0) {
+            if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
+                    barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
+            }
+            else if (p.getPregao().getParecer()[iParecerPregao].equals("null")) {
+                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#pregao' id='anchorBarra' title='Pregao parecer: em andamento'>Pregão</a></td>";
+            }
+            else if (p.getPregao().getParecer()[iParecerPregao].equals("true")) {
+                    barraProgresso += "<td style='background-color:#33CC33'><a href='#pregao' id='anchorBarra' title='Pregao parecer: realizado. Data de realizacao: " +
+                    dataPregao + "'>Pregão</a></td>";
+            }
+            else {
+                    barraProgresso += "<td style='background-color:#FF0000'><a href='#pregao' id='anchorBarra' title='Pregao parecer: nao realizado'>Pregão</a></td>";
+            }
+        }
+        else {
+        	barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
+        }
+       
+        //ADJUDICACAO
+        if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
+                barraProgresso += "<td style='background-color:#999999'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: indefinida'>Adjudicação</a></td>";
+        }
+        else if (p.getAdjudicacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: em andamento'>Adjudicação</a></td>";
+        }
+        else {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: concluida Data: " +
+                p.getAdjudicacao().getData() + "'>Adjudicação</a></td>";
+        }
+ 	
+        //HOMOLOGACAO
+        if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#999999'><a href='#homologacao' id='anchorBarra' title='Homologacao: indefinida'>Homologação</a></td>";
+        }
+        else if (p.getHomologacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#homologacao' id='anchorBarra' title='Homologacao: em andamento'>Homologação</a></td>";
+        }
+        else {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#homologacao' id='anchorBarra' title='Homologacao: concluida Data: " +
+                p.getHomologacao().getData() + "'>Homologação</a></td>";
+        }
+ 
+        //PUBLICACAO
+        if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#999999'><a href='#publicacao' id='anchorBarra' title='Publicacao: indefinida'>Publicação</a></td>";
+        }
+        else if (p.getPublicacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#publicacao' id='anchorBarra' title='Publicacao: em andamento'>Publicação</a></td>";
+        }
+        else {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#publicacao' id='anchorBarra' title='Publicacao: concluida Data: " +
+                p.getPublicacao().getData() + "'>Publicação</a></td>";
+        }
+        
+      //LIQUIDACAO
+        if (p.getLiquidacao().getData().equals("") && p.getPublicacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#999999'><a href='#bottom' id='anchorBarra' title='Liquidacao: indefinida'>Liquidação</a></td>";
+        }
+        else if (p.getLiquidacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#bottom' id='anchorBarra' title='Liquidacao: em andamento'>Liquidação</a></td>";
+        }
+        else {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#bottom' id='anchorBarra' title='Liquidacao: concluida Data: " +
+                p.getHomologacao().getData() + "'>Liquidação</a></td>";
+        }
+ 
+        
+      //PAGAMENTO
+        if (p.getPagamento().getData().equals("") && p.getLiquidacao().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#999999'><a href='#bottom' id='anchorBarra' title='Pagamento: indefinida'>Pagamento</a></td>";
+        }
+        else if (p.getPagamento().getData().equals("")) {
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#bottom' id='anchorBarra' title='Pagamento: em andamento'>Pagamento</a></td>";
+        }
+        else {
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#bottom' id='anchorBarra' title='Pagamento: concluido Data: " +
+                p.getHomologacao().getData() + "'>Pagamento</a></td>";
+        }
+ 
+        
+        barraProgresso += "</tr></table><br>";
+       
+        return new HTML(barraProgresso);
+        }
+
+	
+	
 	
 
-    private HTML barrinha(Pedido p) {
+    private HTML barrinhaSemNomes(Pedido p) {
                      
             String barraProgresso = "<table border='0' bordecolor='#000000' " +
                                                              "style='background-color:#999999' width='100%' " +
@@ -1796,19 +2002,23 @@ public class Sistema_PRA implements EntryPoint {
 		         
 		         for(int i = 0; i <=  indicePregao+1; i++) {
 		      
+		        	 
 		         subfolha = new SubFolhaPanel("Pregão");
+		         boolean enabled = true;
+				if(i!=indicePregao+1) enabled = false;
               	 pedacos.add(subfolha);
 		         //PREGAO
 		        
-		         HorizontalPanel pregao = createRadioGroup(pedido, "PregaoHandler", "Pregao", pedido.getPregao().getParecer(i), "parecer", "Comprado", "Não comprado");
+		         final HorizontalPanel pregao = createRadioGroup(pedido, enabled, "PregaoHandler", "Pregao"+i, pedido.getPregao().getParecer(i), "parecer", "Comprado", "Não comprado");
 		         
 		         final TextBox t = new TextBox();
+		         t.setEnabled(enabled);
 		         t.setText(pedido.getPregao().getNumero(i));
 		         t.addChangeHandler(new ChangeHandler() {
 					
 					@Override
 					public void onChange(ChangeEvent event) {
-						RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "PregaoHandler?pedido="+pedido.getNumero()+"&numero="+ t.getText());
+						RequestBuilder builder6 = new RequestBuilder(RequestBuilder.POST, "PregaoHandler?pedido="+pedido.getNumero()+"&numero="+ t.getText());
 		                try {
 		    	            Request request = builder6.sendRequest(null, new RequestCallback() {
 		    	             
@@ -1833,13 +2043,13 @@ public class Sistema_PRA implements EntryPoint {
 		        
 		         subfolha.add(pregao, "Parecer do Pregão");
 		         
-		         subfolha.add(criaDatePicker(pedido.getPregao().getData(i), "PregaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição do Pregão");
+		         subfolha.add(criaDatePicker(pedido.getPregao().getData(i), enabled,  "PregaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição do Pregão");
 		        
 		         
 		         
-		         subfolha.add(criaDatePicker(pedido.getPregao().getLicitacaoData(i), "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data="), "Data de abertura do Pregão");
+		         subfolha.add(criaDatePicker(pedido.getPregao().getLicitacaoData(i),  enabled, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data="), "Data de abertura do Pregão");
 		         
-		         Button adicionaPregao = new Button("Adicionar Pregão");
+		         final Button adicionaPregao = new Button("Adicionar Pregão");
 		         adicionaPregao.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -1867,6 +2077,22 @@ public class Sistema_PRA implements EntryPoint {
 						
 					}
 				});
+		         
+		         
+		         Timer timer = new Timer() {
+
+						@Override
+						public void run() {
+							if((!((RadioButton) pregao.getWidget(0)).getValue())) {
+								adicionaPregao.setEnabled(false);
+							} else{
+								adicionaPregao.setEnabled(true);
+							}
+
+						}
+					};
+			timer.scheduleRepeating(1000);
+		         
 		         if(i == indicePregao+1)
 		          subfolha.add(adicionaPregao);
 		         
@@ -1923,6 +2149,9 @@ public class Sistema_PRA implements EntryPoint {
 		         subfolha.add(criaDatePicker(pedido.getPagamento().getData(), "PagamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Pagamento" );
 		        
 		       
+		         subfolha = new SubFolhaHistoricoPanel(pedido);
+            	 pedacos.add(subfolha);
+		         
 		         Tree to = new Tree();
 		        // HTML title = new HTML();
 		        // final TreeItem root = new TreeItem(title);
@@ -2030,11 +2259,15 @@ public class Sistema_PRA implements EntryPoint {
             	  
               }
             }
+            
+            private HorizontalPanel createRadioGroup(final Pedido pedido, final String handler, String group,  String atual, final String dado, String valorVerdade, String valorFalso) {
+            	return createRadioGroup(pedido, true, handler, group, atual, dado, valorVerdade, valorFalso);
+            }
 
-			private HorizontalPanel createRadioGroup(final Pedido pedido, final String handler, String group,  String atual, final String dado, String valorVerdade, String valorFalso) {
+			private HorizontalPanel createRadioGroup(final Pedido pedido, boolean enabled, final String handler, String group,  String atual, final String dado, String valorVerdade, String valorFalso) {
 				final HorizontalPanel vp = new HorizontalPanel();
                RadioButton radioLegal = new RadioButton(group, valorVerdade);
-               
+               radioLegal.setEnabled(enabled);
                final SimplePanel uploading = new SimplePanel();
 			   uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 					
@@ -2049,6 +2282,7 @@ public class Sistema_PRA implements EntryPoint {
                	                }
                	            });
                RadioButton radioIlegal = new RadioButton(group, valorFalso);
+               radioIlegal.setEnabled(enabled);
                radioIlegal.addClickHandler(new ClickHandler(){
 	                @Override
 	                public void onClick(ClickEvent event) {
@@ -2072,8 +2306,11 @@ public class Sistema_PRA implements EntryPoint {
              
 				return vp;
 			}
-
 			private HorizontalPanel criaDatePicker(String dataAtual, final String parameters) {
+				return criaDatePicker(dataAtual, true, parameters);
+			}
+
+			private HorizontalPanel criaDatePicker(String dataAtual, boolean enabled, final String parameters) {
 				DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
 	             final HorizontalPanel novo = new HorizontalPanel();
 	            //DefaultDateTimeFormatInfo info = new DefaultDateTimeFormatInfo();
@@ -2082,10 +2319,10 @@ public class Sistema_PRA implements EntryPoint {
 	             final SimplePanel uploading = new SimplePanel();
 			     uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 					
-					
 	             DateBox dateBox = new DateBox();
+	             dateBox.setEnabled(enabled);
 	             novo.add(dateBox);
-	             dateBox.setFormat(new DateBox.DefaultFormat (DateTimeFormat.getFormat("dd/MM/yyyy HH:mm:ss"))); 
+	             dateBox.setFormat(new DateBox.DefaultFormat (DateTimeFormat.getFormat("dd/MM/yyyy"))); 
 	             //dateBox.setFormat(new DateBox.DefaultFormat(dateFormat));
 				// dateBox.setValue(teste);
 	             final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
