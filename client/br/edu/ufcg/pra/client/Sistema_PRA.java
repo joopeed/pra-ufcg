@@ -386,7 +386,7 @@ class Pedido extends JavaScriptObject {                              // (1)
 
     public final native PagamentoDados getPagamento() /*-{ return this.pagamento; }-*/;
 
-	public final HistoricoDados getHistorico() {
+	public final void getHistorico(final 	SimplePanel content) {
 		
 		
 		
@@ -399,9 +399,17 @@ class Pedido extends JavaScriptObject {                              // (1)
 				public void onResponseReceived(Request request, Response response) {
 					if (200 == response.getStatusCode()) {
 						Historico historico = JsonUtils.safeEval(response.getText()).cast();
-						
-						new Temp(historico.getHistorico());
-						
+						HistoricoDados dados = historico.getHistorico();
+						String historicoListagem = "";
+				        for(int i = 0; i < dados.size(); i++){
+				        	 String data = dados.getData()[i];
+				             DateTimeFormat format1 = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+				             DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy' 'HH:mm:ss");
+				        	 historicoListagem += format2.format(format1.parse(data.substring(0, 19))) + " " + dados.getInfo()[i] + " por " + dados.getUser()[i] + "<br>";
+				        
+				         }
+				        content.clear();
+				        content.add(new HTML(historicoListagem)) ;
 			         	 }
 					
 				}
@@ -416,8 +424,9 @@ class Pedido extends JavaScriptObject {                              // (1)
 		} catch (RequestException e) {
 			
 		}
-		return Temp.temp;
 	}
+
+	
 	
   }
 
@@ -2151,7 +2160,7 @@ public class Sistema_PRA implements EntryPoint {
 		       
 		         subfolha = new SubFolhaHistoricoPanel(pedido);
             	 pedacos.add(subfolha);
-		         
+		         /*
 		         Tree to = new Tree();
 		        // HTML title = new HTML();
 		        // final TreeItem root = new TreeItem(title);
@@ -2194,7 +2203,7 @@ public class Sistema_PRA implements EntryPoint {
 				          item.setState(true, false);
 				        }
 						
-						/*
+						
 						if(open.equals(root))  {
 							String historico = "";
 					         for(int i = 0; i < pedido.getHistorico().size(); i++){
@@ -2207,11 +2216,12 @@ public class Sistema_PRA implements EntryPoint {
 					         historico += "<br><br><br>";
 					         
 							item.setWidget(new HTML(historico));
-							}*/
+							}
 					}
 				});			
 		         
 		         pedacos.add(to);
+		         */
 		         pedacos.add(new HTML("<br><br><br>"));
 		         decPanel.setWidget(vPanel);
 		         //folha.add(vPanel);
