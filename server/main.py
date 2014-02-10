@@ -225,7 +225,7 @@ class AdicionaPregao(webapp2.RequestHandler):
         import json
         q = self.request.get("q")
         pedido_em_questao = searchkey(q) 
-        if len(pedido_em_questao.pregao_parecer) == len(pedido_em_questao.pregao_data) == len(pedido_em_questao.pregao_numero) == len(pedido_em_questao.pregao_licitacao_data):
+        if len(pedido_em_questao.pregao_parecer) == len(pedido_em_questao.pregao_data) == len(pedido_em_questao.pregao_numero) == len(pedido_em_questao.pregao_licitacao_data) and len(pedido_em_questao.pregao_parecer) != 0 and pedido_em_questao.pregao_parecer[-1] == False:
                 pedido_em_questao.pregao_indice += 1
                 pedido_em_questao.put()
         self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -340,6 +340,8 @@ class SearchPedido(webapp2.RequestHandler):
             dic = {"pedidos": []}
             search = self.request.get("q")
             query = Pedido.all() #db.GqlQuery("SELECT * FROM Pedido ORDER BY data_entrada DESC")
+            if search.strip() != "":
+                query.filter("numero = ", search)
             query.with_cursor(self.request.get('cursor',default_value=None))
             if search.lower() == 'legalidade:legal':
                 for pedido in query:
@@ -398,7 +400,7 @@ class SearchPedido(webapp2.RequestHandler):
 
             if not users.get_current_user():
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'status':'Disconnected'}.items() + dic.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Disconnected', "cursor": query.cursor()}.items() + dic.items()), indent=2))
             else:
                  self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                  self.response.out.write(json.dumps(dict({'status':'Connected', "cursor": query.cursor()}.items() + dic.items()), indent=2))
@@ -573,7 +575,7 @@ class PregaoHandler(webapp2.RequestHandler):
             import json
      
             pedido = self.request.get("pedido")
-            parecer = parecer = self.request.get("parecer")
+            parecer = self.request.get("parecer")
             data = self.request.get("data")
             numero = self.request.get("numero")
             licitacao_data = self.request.get("licitacao_data")
@@ -589,7 +591,8 @@ class PregaoHandler(webapp2.RequestHandler):
                             pedido_em_questao.historico_data.append(datetime.datetime.now())
                             pedido_em_questao.historico_user.append(users.get_current_user().email())
                     elif len(pedido_em_questao.pregao_parecer) == i+2: 
-                            pedido_em_questao.pregao_parecer[i+1] =  True if parecer == "True" else False
+                            #pedido_em_questao.pregao_parecer = pedido_em_questao.pregao_parecer[:-1] + [True if parecer == "True" else False]
+                            pedido_em_questao.pregao_parecer[i+1] = True if parecer == "True" else False
                             pedido_em_questao.historico_info.append("O parecer do pregao foi definido")
                             notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
                             pedido_em_questao.historico_data.append(datetime.datetime.now())

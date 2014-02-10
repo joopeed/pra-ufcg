@@ -54,8 +54,17 @@ z-index: 4;
     text-align: center;
 }
 
+p {
+ 	padding-right: 20px;
+}
 
 
+#anchorBarra{
+ 	display: block;
+ 	font-size: 15pt;
+ 	width: 100px;
+ 	height: 25px;
+}
 #carregando{
     z-index: 4;
     position: absolute;
@@ -133,6 +142,15 @@ background-color: #eeeeee
 	top:0px;
 	position: inherit;
 	text-align:center;	
+}
+#anchorBarra{
+	display: block;
+	font-size: 15pt;
+	width: 100px;
+	height: 25px;
+}
+p{
+	padding-right: 20px;
 }
 
 
