@@ -71,6 +71,8 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -104,6 +106,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DatePicker;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -332,6 +335,23 @@ class Temp {
 	public Temp(HistoricoDados temp) {
 		this.temp = temp;
 	}
+}
+
+class ExtendedDialogBox extends DialogBox {
+	ExtendedDialogBox(boolean autohide){
+		super(autohide);
+	}
+    @Override
+    protected void onPreviewNativeEvent(NativePreviewEvent event) {
+        super.onPreviewNativeEvent(event);
+        switch (event.getTypeInt()) {
+            case Event.ONKEYDOWN:
+                if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+                    hide();
+                }
+                break;
+        }
+    }
 }
 
 
@@ -701,13 +721,13 @@ public class Sistema_PRA implements EntryPoint {
 	    table.addColumn(dataColumn, "Data");
 	    
 	    //ProgressBar exampleBar1 = new ProgressBar(30, 100, 30);
-	    
+	    final NoSelectionModel<Pedido> selectionModel = new NoSelectionModel<Pedido>();
 	    // Add a selection model to handle user selection.
-	    final SingleSelectionModel<Pedido> selectionModel = new SingleSelectionModel<Pedido>();
+	    //final SingleSelectionModel<Pedido> selectionModel = new SingleSelectionModel<Pedido>();
 	    table.setSelectionModel(selectionModel);
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	      public void onSelectionChange(SelectionChangeEvent event) {
-	       Pedido selected = selectionModel.getSelectedObject();
+	       Pedido selected = selectionModel.getLastSelectedObject();
 	        if (selected != null) {
 	        	if(!connected)
 	        		exibeDialogBox(selected);
@@ -732,7 +752,7 @@ public class Sistema_PRA implements EntryPoint {
 	                	// Window.alert("You selected: Pedido " + selected.getNumero());
 	       	         Widget barra = barrinhaSemNomes(todo);
 	       	         // Create the dialog box
-	       	         final DialogBox dialogBox = new DialogBox(true);
+	       	         final ExtendedDialogBox dialogBox = new ExtendedDialogBox(true);
 	       	         dialogBox.center();
 	       	         dialogBox.setText("Detalhes do pedido");
 	       	         // Create a table to layout the content
@@ -1953,6 +1973,7 @@ public class Sistema_PRA implements EntryPoint {
               subfolha = new SubFolhaPanel("Legalidade");
 		      pedacos.add(subfolha);
               subfolha.add(legalidade, "Parecer de Legalidade");
+              subfolha.add(new Label(), "");
               subfolha.add(criaDatePicker(pedido.getLegalidade().getDataEnvio(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio da Legalidade");
               
               	 subfolha.add(criaDatePicker(pedido.getLegalidade().getDataRetorno(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno da Legalidade");
@@ -1966,14 +1987,15 @@ public class Sistema_PRA implements EntryPoint {
 		         subfolha = new SubFolhaPanel("Corretude");
               	 pedacos.add(subfolha);
               	 VerticalPanel hl = new VerticalPanel();
+              	 hl.setSpacing(8);
 		         VerticalPanel v1 = new VerticalPanel();
-		         v1.add(new Label("Descrição:"));
+		         v1.add(new Label("Descrição: "));
 		         v1.add(corretudeDescricao);
 		         VerticalPanel v2 = new VerticalPanel();
-		         v2.add(new Label("Quantitativo:"));
+		         v2.add(new Label("Quantitativo: "));
 		         v2.add(corretudeQuantitativo);
 		         VerticalPanel v3 = new VerticalPanel();
-		         v3.add(new Label("Cotação:"));
+		         v3.add(new Label("Cotação: "));
 		         v3.add(corretudeCotacao);
 		        // hl.setBorderWidth(1);
 		         hl.add(v1);
@@ -1982,9 +2004,9 @@ public class Sistema_PRA implements EntryPoint {
 		         
 		         
 		         
-		         subfolha.add(hl, "Parecer de Corretude");
+		         subfolha.add(hl, "");
 		        
-		         
+		         subfolha.add(new Label(), "");
 		         //CORRETUDE
 		         
 		         subfolha.add(criaDatePicker(pedido.getCorretude().getData(), "CorretudeHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição da corretude");
