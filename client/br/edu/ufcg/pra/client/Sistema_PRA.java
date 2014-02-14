@@ -1,5 +1,6 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -496,127 +497,165 @@ public class Sistema_PRA implements EntryPoint {
 			  //    new Contact("Joe", new Date(85, 2, 22), "22 Lance Ln"),
 			  //    new Contact("George", new Date(46, 6, 6), "1600 Pennsylvania Avenue"));
 			
+		index();
+		
+		
+		History.addValueChangeHandler(new ValueChangeHandler<String>() {
+			public void onValueChange(ValueChangeEvent<String> event) {
+				String token = event.getValue();
+				
+				try{
+					if (token.substring(0, 6).equals("pedido")){
+						String numeroPedido = token.substring(6);
+						final RequestBuilder builder3 = new RequestBuilder(RequestBuilder.GET, "/getpedido?q="+numeroPedido);
+		       		      try {
+		         		        Request request = builder3.sendRequest(null, new RequestCallback() {
+		         		          
+
+		         					public void onError(Request request, Throwable exception) {
+		         		          }
+
+		         		          public void onResponseReceived(Request request, Response response) {
+		         		            if (200 == response.getStatusCode()) {
+		         		            	//User user = JsonUtils.safeEval(response.getText()).cast();
+		         		            	Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
+		         		            	exibeTelaCompleta(pedido);
+		         		            } else {
+		         		          	  
+		         		            }
+		         		          }
+		         		        });
+		         		      } catch (RequestException e) {
+		         		      }
+						
+					} else if (token.trim().equals("cadastro")){
+						cadastraPanel();
+					}
+					else if (token.trim().equals("")){
+						index();
+					}
+					
+				} catch (IndexOutOfBoundsException e) {
+					
+				}
+			}
+		});
+		History.fireCurrentHistoryState();
+	}
+	
+	private void index() {
+
 		
 		geraLista("", "");
-		
-		HTML carregando = new HTML("<div id=\"carregando\"><center>Carregando...</center></div>");
+
+		HTML carregando = new HTML(
+				"<div id=\"carregando\"><center>Carregando...</center></div>");
 		RootPanel.get().add(carregando);
 		final Label nameField = new Label();
 		nameField.setText("");
 
 		// Add the nameField and sendButton to the RootPanel
 		// Use RootPanel.get() to get the entire body element
+		RootPanel.get("user_on_top_bar").clear();
 		RootPanel.get("user_on_top_bar").add(nameField);
-		
-		//pedidosPanel();
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, "/LoginHandler");
-		//RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, "/teste.json");
-		
-        try {
-          Request request = builder.sendRequest(null, new RequestCallback() {
-            
 
-		
+		// pedidosPanel();
 
-			public void onError(Request request, Throwable exception) {
-            }
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+				"/LoginHandler");
+		// RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+		// "/teste.json");
 
-            public void onResponseReceived(Request request, Response response) {
-              if (200 == response.getStatusCode()) {
-            	  Anchor sendAnchor;
-                  ClickHandler clickAnchor = new ClickHandler() {
-                  	public void onClick(ClickEvent event) {
-          		    	  Window.Location.replace(url);
-                  	}
-                  };
-            	 User user = JsonUtils.safeEval(response.getText()).cast();
-            	 status = user.getStatus();
-            	 if(status.equals("Connected")){
-            		 sendAnchor = new Anchor("Logout");
-            		 nameField.setText(user.getEmail());
-            		 url = user.getUrl();
-            	 }
-            	 else{	
-            		 url = user.getUrl();
-            	 	 sendAnchor = new Anchor("Login");
-            	 }
-            	sendAnchor.addClickHandler(clickAnchor);
-                RootPanel.get("user_on_top_bar").add(sendAnchor);
+		try {
+			Request request = builder.sendRequest(null, new RequestCallback() {
 
-              } else {
-            	  
-              }
-              
-            }
-          });
-        } catch (RequestException e) {
-        }		
-        
-        RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "/Permissoes");
+				public void onError(Request request, Throwable exception) {
+				}
 
-        try {
-          Request request = builder6.sendRequest(null, new RequestCallback() {
-            
+				public void onResponseReceived(Request request,
+						Response response) {
+					if (200 == response.getStatusCode()) {
+						Anchor sendAnchor;
+						ClickHandler clickAnchor = new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								Window.Location.replace(url);
+							}
+						};
+						User user = JsonUtils.safeEval(response.getText())
+								.cast();
+						status = user.getStatus();
+						if (status.equals("Connected")) {
+							sendAnchor = new Anchor("Logout");
+							nameField.setText(user.getEmail());
+							url = user.getUrl();
+						} else {
+							url = user.getUrl();
+							sendAnchor = new Anchor("Login");
+						}
+						sendAnchor.addClickHandler(clickAnchor);
+						RootPanel.get("user_on_top_bar").clear();
+						RootPanel.get("user_on_top_bar").add(sendAnchor);
 
-			private String[] listaa;
+					} else {
 
-			public void onError(Request request, Throwable exception) {
-            }
+					}
 
-            public void onResponseReceived(Request request, Response response) {
-              if (200 == response.getStatusCode()) {
-            	 ListaPermissoes lista = JsonUtils.safeEval(response.getText()).cast();
-            	 listaa = lista.getPermissoes();
-            	 HorizontalPanel hPanel = new HorizontalPanel();
-            	 final String[] listaa = lista.getPermissoes();
-              	 /*for (int i = 0; i < listaa.length; i++) {
-              		 if(listaa[i].equals("acompanhar_qualquer")||listaa[i].equals("acompanhar_proprios")){
-	              		 hPanel.add(new Button("Pedidos",  new ClickHandler() {
-	           		        public void onClick(ClickEvent event) {
-	              		    	RootPanel.get("main_right").clear();
-	              		    	RootPanel.get("main_left").clear();	
-	              		    	pedidosPanel();
-	           		        }}));
-              		} else if(listaa[i].equals("criacao")) {
-              			hPanel.add(new Button("Cadastrar pedido",  new ClickHandler() {
-	           		        public void onClick(ClickEvent event) {
-	              		    	RootPanel.get("main_right").clear();
-	              		    	RootPanel.get("main_left").clear();	
-	              		    	cadastraPanel();
-	           		        }}));
-              			
-              			
-              		} else hPanel.add(new Button(listaa[i]));
-              		
-              	 RootPanel.get("top_bar").add(hPanel);
-              	}*/
-              	
-            	 
-            	 
-              } else {
-            	  
-              }
-            }
-          });
-        } catch (RequestException e) {
-        }
-		
-        
+				}
+			});
+		} catch (RequestException e) {
+		}
 
+		RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET,
+				"/Permissoes");
+
+		try {
+			Request request = builder6.sendRequest(null, new RequestCallback() {
+
+				private String[] listaa;
+
+				public void onError(Request request, Throwable exception) {
+				}
+
+				public void onResponseReceived(Request request,
+						Response response) {
+					if (200 == response.getStatusCode()) {
+						ListaPermissoes lista = JsonUtils.safeEval(
+								response.getText()).cast();
+						listaa = lista.getPermissoes();
+						HorizontalPanel hPanel = new HorizontalPanel();
+						final String[] listaa = lista.getPermissoes();
+						/*
+						 * for (int i = 0; i < listaa.length; i++) {
+						 * if(listaa[i]
+						 * .equals("acompanhar_qualquer")||listaa[i].
+						 * equals("acompanhar_proprios")){ hPanel.add(new
+						 * Button("Pedidos", new ClickHandler() { public void
+						 * onClick(ClickEvent event) {
+						 * RootPanel.get("main_right").clear();
+						 * RootPanel.get("main_left").clear(); pedidosPanel();
+						 * }})); } else if(listaa[i].equals("criacao")) {
+						 * hPanel.add(new Button("Cadastrar pedido", new
+						 * ClickHandler() { public void onClick(ClickEvent
+						 * event) { RootPanel.get("main_right").clear();
+						 * RootPanel.get("main_left").clear(); cadastraPanel();
+						 * }}));
+						 * 
+						 * 
+						 * } else hPanel.add(new Button(listaa[i]));
+						 * 
+						 * RootPanel.get("top_bar").add(hPanel); }
+						 */
+
+					} else {
+
+					}
+				}
+			});
+		} catch (RequestException e) {
+		}
 		RootPanel.get().remove(carregando);
-		
-		
 	}
-
+	
 	private void geraLista(String search, String cursor) {
 		RequestBuilder builder5;
 		if(cursor.equals("")) 
@@ -732,7 +771,8 @@ public class Sistema_PRA implements EntryPoint {
 	        	if(!connected)
 	        		exibeDialogBox(selected);
 	        	else 
-	        		exibeTelaCompleta(selected);
+	        		History.newItem("pedido"+selected.getNumero());
+	        		//exibeTelaCompleta(selected);
 	        	    
 	       }
 	      }
@@ -931,7 +971,8 @@ public class Sistema_PRA implements EntryPoint {
 	        public void onClick(ClickEvent event) {
 	        	RootPanel.get("main_bottom").clear();
 	        	RootPanel.get("main_bottom_in").clear();
-  		    	cadastraPanel();
+	        	History.newItem("cadastro");
+  		    	//cadastraPanel();
 	        }});
 	    cadastrarButton.setSize("140px", "30px");
 	    cadastrarPanel.add(cadastrarButton);
@@ -2387,7 +2428,11 @@ public class Sistema_PRA implements EntryPoint {
 					
 					@Override
 					public void run() {
-						 
+
+						if(History.getToken().trim().equals("")){
+							this.cancel();
+							return;
+						}	 
 						
 						
 						RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+pedido.getNumero());
@@ -2414,8 +2459,8 @@ public class Sistema_PRA implements EntryPoint {
 		         
 		         autoAtualizar.scheduleRepeating(1000);
 		         
+	        	 RootPanel.get("main_top").add(barrinha(pedido));
 		         
-		         RootPanel.get("main_top").add(barrinha(pedido));
 		         buscando.removeFromParent();
 		     	
               } else {
