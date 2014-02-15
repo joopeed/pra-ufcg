@@ -530,6 +530,9 @@ public class Sistema_PRA implements EntryPoint {
 						
 					} else if (token.trim().equals("cadastro")){
 						cadastraPanel();
+					} else if (token.substring(0, 8).equals("pesquisa")){
+						String tokenBusca = token.substring(8);
+						geraLista(tokenBusca, "");
 					}
 					else if (token.trim().equals("")){
 						index();
@@ -678,6 +681,8 @@ public class Sistema_PRA implements EntryPoint {
             	 Pedido[] cada = lista.getPedidos();
             	 final ArrayList<Pedido> listaa = new ArrayList<Pedido>();
             	 for(Pedido pedido: cada) listaa.add(pedido);
+            	 
+            	 
             	 
             	 CriaExibeTable(listaa, connected, lista.getCursor());
               	
@@ -940,7 +945,8 @@ public class Sistema_PRA implements EntryPoint {
 	    	@Override
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					 geraLista(campoPesquisa.getText(), ""); 
+					History.newItem("pesquisa"+campoPesquisa.getText());
+					 //geraLista(campoPesquisa.getText(), ""); 
 					
 				}}
 		});
@@ -952,7 +958,8 @@ public class Sistema_PRA implements EntryPoint {
 		        	buscando.addStyleName("buscando");
 		        	buscando.add(new HTML("<img src=\"images/415.gif\" width=\"4%\"></a>"));
 		        	RootPanel.get().add(buscando);
-		        	geraLista(campoPesquisa.getText(), "");
+		        	History.newItem("pesquisa"+campoPesquisa.getText());
+		        	//geraLista(campoPesquisa.getText(), "");
 		        	Timer timer = new Timer() {
 						
 						@Override
@@ -2429,7 +2436,7 @@ public class Sistema_PRA implements EntryPoint {
 					@Override
 					public void run() {
 
-						if(History.getToken().trim().equals("")){
+						if(!(History.getToken().equals("pedido"+pedido.getNumero()))){
 							this.cancel();
 							return;
 						}	 
