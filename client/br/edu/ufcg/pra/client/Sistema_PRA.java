@@ -366,6 +366,7 @@ class Pedido extends JavaScriptObject {                              // (1)
     public final native String getEmail() /*-{ return this.email_demandante; }-*/;
     public final native String getLocal() /*-{ return this.local; }-*/;
     public final native String getData() /*-{ return this.data_entrada; }-*/;
+    public final native String getError() /*-{return this.error; }-*/;
     
     public final String getDataFormatada() {
          DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -519,6 +520,14 @@ public class Sistema_PRA implements EntryPoint {
 		         		            if (200 == response.getStatusCode()) {
 		         		            	//User user = JsonUtils.safeEval(response.getText()).cast();
 		         		            	Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
+		         		            	if (pedido.getError().equals("True")){
+		         		            		final ExtendedDialogBox aviso = new ExtendedDialogBox(true);
+		                   		        	aviso.center();
+		                   		        	aviso.add(new Label("Pedido nao encontrado."));
+		                   		        	aviso.setGlassEnabled(true);
+		                   		            aviso.setAnimationEnabled(true);
+		                   		            aviso.show();
+		         		            	}else
 		         		            	exibeTelaCompleta(pedido);
 		         		            } else {
 		         		          	  
@@ -1513,8 +1522,7 @@ public class Sistema_PRA implements EntryPoint {
        		        public void onClick(ClickEvent event) {
 
        		        	if(numero.getText().equals("") || demandante.getText().equals("") || descricao.getText().equals("") || email_demandante.getText().equals("") || data_entrada.getValue() == null){
-           		        	final DialogBox aviso = new DialogBox();
-           		        	aviso.setAutoHideEnabled(true);
+           		        	final ExtendedDialogBox aviso = new ExtendedDialogBox(true);
            		        	aviso.center();
            		        	aviso.add(new Label("Todos os campos obrigatorios devem ser preenchidos"));
            		        	aviso.setGlassEnabled(true);

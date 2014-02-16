@@ -175,7 +175,9 @@ class GetPedido(webapp2.RequestHandler):
             query = self.request.get("q")
             if query:
                 dic = {}
+                error = "True"
                 for pedido in db.GqlQuery("SELECT * FROM Pedido WHERE numero in ('"+query+"')"):
+                    error = "False"
                     dic = {
                         "numero": pedido.numero,
                         "demandante": pedido.demandante,
@@ -217,7 +219,7 @@ class GetPedido(webapp2.RequestHandler):
                         }
 
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'status':'Connected'}.items() + dic.items()), indent=2)) 
+                self.response.out.write(json.dumps(dict({'status':'Connected', 'error':error}.items() + dic.items()), indent=2)) 
 
 
 
