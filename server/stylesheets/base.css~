@@ -13,7 +13,7 @@ h1 {
 	z-index: 3; 
 	position: fixed; 
 	height: 18%; 
-	     
+
 	width: 100%; 
 	top: 0px;
 	left: 0px; 
@@ -86,13 +86,16 @@ background-color: #eeeeee
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;	
+    position: absolute;
+    left:0;
+    right:0;
 }
 #main_top{
 	top: 55%;
 	left: 0px;
 	width: 100%;
         padding-top: 12px;
-	height: 45%;
+	height: 60px;
 	background-color: #8c8c8c;
 	position: absolute;	
         box-shadow: 0px 3px 5px #888888;
@@ -106,14 +109,14 @@ background-color: #eeeeee
 }
 
 #rodape {
-background-color: #FFFFF;
+background-color: #FFFFFF;
 width:100%;
-height:100px;
+height:64px;
 z-index:8;
 -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    	margin-top:10.5%;
+    	margin-top:12%;
     	-moz-box-shadow: 0px 0px 8px #888;
 -webkit-box-shadow: 0px 0px 8px #888;
 box-shadow: 0px 0px 8px #888;
@@ -123,7 +126,7 @@ padding: 10px;
 
 
 #main_bottom{
-        padding-top:9%;
+        padding-top:10%;
 	width: 100%;
 	text-align:center;
 	 -webkit-box-sizing: border-box;
@@ -168,7 +171,7 @@ padding-right:1%;
 padding-left:1%;
 	padding-top:3%;
 	top:0px;
-  width: 70%;
+  width: 800px;
   margin: 0 auto;
   background-color: #FFFFFF;
   
@@ -182,7 +185,7 @@ box-shadow: 0px 0px 8px #888;
  -moz-box-shadow: 0px 0px 2px #888;
 -webkit-box-shadow: 0px 0px 2px #888;
 box-shadow: 0px 0px 2px #888;
- width: 98%;
+ width: 760px;
  padding: 1%;
 }
 
@@ -215,12 +218,13 @@ h2 {font-size:1.5em;}
   padding: 0;
   box-sizing: border-box;
   
+  
 }
 
 
 /* Form Progress */
 .progress {
-  width: 100%;
+  width: 850px;
   text-align: center;
 }
 .progress .circle {
@@ -229,21 +233,22 @@ h2 {font-size:1.5em;}
   width: 40px; height: 40px;
   border-radius: 40px;
   border: 1px solid #d5d5da;
+  box-shadow: inset 0 0 6px rgba(0,0,0,.2);
 }
 .progress .bar {
   display: inline-block;
   background: #fff;
-  width: 40px; height: 40px;
+  width: 40px; height: 50px;
   border-radius: 40px;
   border: 1px solid #d5d5da;
+  
 }
 
 
 .progress .bar {
-  position: relative;
-  width: 80px;
+  width: 45px;
   height: 6px;
-  margin: 0 -5px 2px -5px;
+  margin: 0px -5px 0px -5px;
   border-left: none;
   border-right: none;
   border-radius: 0;
@@ -254,14 +259,20 @@ h2 {font-size:1.5em;}
   height: 32px;
   line-height: 32px;
   border-radius: 32px;
-  margin-top: -11px;
+  margin-top: 2px;
   color: #b5b5ba;
   font-size: 17px;
 }
 .progress .circle .title {
+  text-align:center;
+  position: absolute;
   color: #FFFFFF;
-  margin-left:40px;
-  margin-bottom: 50px;
+  top:32px;
+  margin-left:-45px;
+  margin-top: 20px;
+}
+.progress .circle .title a {
+  color: #FFFFFF;
 }
 
 /* Done / Active */
@@ -280,13 +291,20 @@ h2 {font-size:1.5em;}
 .progress .circle.done .title {
   color: #FFFFFF;
 }
-
+.progress .circle.done .title a {
+text-decoration:none;
+  color: #FFFFFF;
+}
 .progress .circle.fail .label {
   color: #FFF;
   background: #d41a1a;
   box-shadow: inset 0 0 2px rgba(0,0,0,.2);
 }
 .progress .circle.fail .title {
+  color: #d41a1a;
+}
+.progress .circle.fail .title a{
+text-decoration:none;
   color: #d41a1a;
 }
 .progress .circle.active .label {
@@ -296,4 +314,8 @@ h2 {font-size:1.5em;}
 }
 .progress .circle.active .title {
   color: #f8e824;
+}
+.progress .circle.active .title a{
+  color: #f8e824;
+  text-decoration:none;
 }

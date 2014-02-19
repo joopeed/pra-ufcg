@@ -87,7 +87,10 @@ class LoginHandler(webapp2.RequestHandler):
             self.response.out.write(json.dumps({'status':'Disconnected', 'url': users.create_login_url('/')}))
         else:
             self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps({'status':'Connected', 'url': users.create_logout_url('/'), 'user_email': users.get_current_user().email(), 'user_nickname':           users.get_current_user().nickname(), 'user_user_id': users.get_current_user().user_id()}))        
+            self.response.out.write(json.dumps({'status':'Connected', 'url': users.create_logout_url('/'), 'user_email': users.get_current_user().email(), 'user_nickname':           users.get_current_user().nickname(), 'user_user_id': users.get_current_user().user_id()}))   
+            novo = Entrada(data=datetime.datetime.now(), user=users.get_current_user().email())
+            novo.put()
+            
 
 class ListaPedido(webapp2.RequestHandler):
     def get(self):
@@ -228,7 +231,7 @@ class AdicionaPregao(webapp2.RequestHandler):
         import json
         q = self.request.get("q")
         pedido_em_questao = searchkey(q) 
-        if len(pedido_em_questao.pregao_parecer) == len(pedido_em_questao.pregao_data) == len(pedido_em_questao.pregao_numero) == len(pedido_em_questao.pregao_licitacao_data) and len(pedido_em_questao.pregao_parecer) != 0 and pedido_em_questao.pregao_parecer[-1] == False:
+        if len(pedido_em_questao.pregao_parecer) == len(pedido_em_questao.pregao_data) == len(pedido_em_questao.pregao_numero) == len(pedido_em_questao.pregao_licitacao_data) and len(pedido_em_questao.pregao_parecer) != 0 and len(pedido_em_questao.pregao_parecer) + 1 > pedido_em_questao.pregao_indice and pedido_em_questao.pregao_parecer[-1] == False:
                 pedido_em_questao.pregao_indice += 1
                 pedido_em_questao.put()
         self.response.headers.add_header('content-type', 'application/json', charset='utf-8')

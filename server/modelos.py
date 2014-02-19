@@ -8,6 +8,11 @@ class Usuario(db.Model):
     email = db.EmailProperty(required=True)
     setor = db.StringProperty(required=True)
 
+class Entrada(db.Model):
+    data = db.DateTimeProperty(required=True)
+    user = db.StringProperty(required=True) 
+
+
 class Pedido(db.Model):
     demandante = db.StringProperty(required=True)
     data_entrada = db.DateTimeProperty(required=True)

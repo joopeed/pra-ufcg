@@ -1,0 +1,3 @@
+blacklist:
+- subnet: 150.165.98.80
+  description: a single IP address

@@ -6,6 +6,7 @@ import org.datanucleus.query.evaluator.memory.SetExpression;
 
 
 import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubFolhaPanel extends SimplePanel {
 	
     protected VerticalPanel linhas;
+    private Grid grid;
     private HorizontalPanel colunas;
     private ArrayList<VerticalPanel> coluna;
     private int ultimaColuna = 0;
@@ -47,7 +49,7 @@ public class SubFolhaPanel extends SimplePanel {
 		} else {
 			linhas.add(new HTML("<a name ='"+"bottom"+"'></a>"));
 		}
-		
+		grid = new Grid();
 		linhas.add(new HTML("<h2>"+title+"</h2>"));
 		colunas =  new HorizontalPanel();
 		//colunas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -69,6 +71,7 @@ public class SubFolhaPanel extends SimplePanel {
 	
 	@Override
 	public void add(Widget w) {
+		//w.setHeight("20px");
 		linhas.add(w);
 	}
 //	public void setEnabled(boolean enabled) {
@@ -87,8 +90,10 @@ public class SubFolhaPanel extends SimplePanel {
 		campoEtexto.setSpacing(10);
 		Label ti = new Label(title);
 		ti.setWidth("140px");
+		ti.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_RIGHT);
 		campoEtexto.add(ti);
 		w.setWidth("200px");
+		w.setHeight("25px");
 		campoEtexto.add(w);
 		coluna.get(ultimaColuna).add(campoEtexto);
 		if(ultimaColuna == 0) ultimaColuna = 1;
