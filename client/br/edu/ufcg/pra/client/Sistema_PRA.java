@@ -493,14 +493,6 @@ public class Sistema_PRA implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 
-
-			 //     new Contact("John", new Date(80, 4, 12), "123 Fourth Avenue"),
-			  //    new Contact("Joe", new Date(85, 2, 22), "22 Lance Ln"),
-			  //    new Contact("George", new Date(46, 6, 6), "1600 Pennsylvania Avenue"));
-			
-		index();
-		
-		
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				String token = event.getValue();
@@ -566,12 +558,7 @@ public class Sistema_PRA implements EntryPoint {
 		final Label nameField = new Label();
 		nameField.setText("");
 
-		// Add the nameField and sendButton to the RootPanel
-		// Use RootPanel.get() to get the entire body element
-		RootPanel.get("user_on_top_bar").clear();
-		RootPanel.get("user_on_top_bar").add(nameField);
-
-		// pedidosPanel();
+		
 
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
 				"/LoginHandler");
@@ -606,6 +593,7 @@ public class Sistema_PRA implements EntryPoint {
 						}
 						sendAnchor.addClickHandler(clickAnchor);
 						RootPanel.get("user_on_top_bar").clear();
+						RootPanel.get("user_on_top_bar").add(nameField);
 						RootPanel.get("user_on_top_bar").add(sendAnchor);
 
 					} else {
@@ -2090,6 +2078,56 @@ public class Sistema_PRA implements EntryPoint {
 
     private void exibeTelaCompleta(Pedido selected) {
 	         // Create the dialog box
+		final Label nameField = new Label();
+		nameField.setText("");
+
+		
+
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+				"/LoginHandler");
+		// RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+		// "/teste.json");
+
+		try {
+			Request request = builder.sendRequest(null, new RequestCallback() {
+
+				public void onError(Request request, Throwable exception) {
+				}
+
+				public void onResponseReceived(Request request,
+						Response response) {
+					if (200 == response.getStatusCode()) {
+						Anchor sendAnchor;
+						ClickHandler clickAnchor = new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								Window.Location.replace(url);
+							}
+						};
+						User user = JsonUtils.safeEval(response.getText())
+								.cast();
+						status = user.getStatus();
+						if (status.equals("Connected")) {
+							sendAnchor = new Anchor("Logout");
+							nameField.setText(user.getEmail());
+							url = user.getUrl();
+						} else {
+							url = user.getUrl();
+							sendAnchor = new Anchor("Login");
+						}
+						sendAnchor.addClickHandler(clickAnchor);
+						RootPanel.get("user_on_top_bar").clear();
+						RootPanel.get("user_on_top_bar").add(nameField);
+						RootPanel.get("user_on_top_bar").add(sendAnchor);
+
+					} else {
+
+					}
+
+				}
+			});
+		} catch (RequestException e) {
+		}
+
     	final SimplePanel buscando =  new SimplePanel();
     	buscando.addStyleName("buscando");
     	buscando.add(new HTML("<img src=\"images/495.gif\" width=\"4%\"></a>"));
@@ -2120,16 +2158,16 @@ public class Sistema_PRA implements EntryPoint {
 		         //DADOS BASICOS
 		         SubFolhaPanel subfolha = new SubFolhaPanel("Dados básicos");
 		         pedacos.add(subfolha);
-		         subfolha.add(new Label(pedido.getNumero()), "Número do pedido");
-		         subfolha.add(createTextBox("demandante", pedido.getDemandante(), pedido.getNumero()), "Nome do demandante");
-		         subfolha.add(createTextBox("email_demandante",pedido.getEmail(), pedido.getNumero()), "Email do demandante");
-		        subfolha.add(createTextBox("descricao",pedido.getDescricao(), pedido.getNumero()), "Descrição do pedido");
+		         subfolha.add(new Label(pedido.getNumero()), "Número do pedido: ");
+		         subfolha.add(createTextBox("demandante", pedido.getDemandante(), pedido.getNumero()), "Nome do demandante: ");
+		         subfolha.add(createTextBox("email_demandante",pedido.getEmail(), pedido.getNumero()), "Email do demandante: ");
+		        subfolha.add(createTextBox("descricao",pedido.getDescricao(), pedido.getNumero()), "Descrição do pedido: ");
 		     
 		         DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
 		         final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
 		        
 		          
-		         subfolha.add(criaDatePicker(pedido.getData(), "setpedido?numero="+pedido.getNumero()+"&data_entrada="), "Data de entrada");
+		         subfolha.add(criaDatePicker(pedido.getData(), "setpedido?numero="+pedido.getNumero()+"&data_entrada="), "Data de entrada: ");
 		         
 		       
 		         
@@ -2159,11 +2197,11 @@ public class Sistema_PRA implements EntryPoint {
 		        
               subfolha = new SubFolhaPanel("Legalidade");
 		      pedacos.add(subfolha);
-              subfolha.add(legalidade, "Parecer de Legalidade");
+              subfolha.add(legalidade, "Parecer de Legalidade: ");
               subfolha.add(new Label(), "");
-              subfolha.add(criaDatePicker(pedido.getLegalidade().getDataEnvio(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio da Legalidade");
+              subfolha.add(criaDatePicker(pedido.getLegalidade().getDataEnvio(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio da Legalidade: ");
               
-              	 subfolha.add(criaDatePicker(pedido.getLegalidade().getDataRetorno(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno da Legalidade");
+              	 subfolha.add(criaDatePicker(pedido.getLegalidade().getDataRetorno(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno da Legalidade: ");
 		        
               	 //AUTORIZACAO
               	 subfolha = new SubFolhaPanel("Autorização");
@@ -2173,48 +2211,33 @@ public class Sistema_PRA implements EntryPoint {
 		        
 		         subfolha = new SubFolhaPanel("Corretude");
               	 pedacos.add(subfolha);
-              	 VerticalPanel hl = new VerticalPanel();
-              	 hl.setSpacing(8);
-		         VerticalPanel v1 = new VerticalPanel();
-		         v1.add(new Label("Descrição: "));
-		         v1.add(corretudeDescricao);
-		         VerticalPanel v2 = new VerticalPanel();
-		         v2.add(new Label("Quantitativo: "));
-		         v2.add(corretudeQuantitativo);
-		         VerticalPanel v3 = new VerticalPanel();
-		         v3.add(new Label("Cotação: "));
-		         v3.add(corretudeCotacao);
-		        // hl.setBorderWidth(1);
-		         hl.add(v1);
-		         hl.add(v2);
-		         hl.add(v3);
-		         
-		         
-		         
-		         subfolha.add(hl, "");
-		        
-		         subfolha.add(new Label(), "");
+              	 subfolha.add(corretudeDescricao,"Descrição: ");
+              	 subfolha.add(new Label(), "");
+              	 subfolha.add(corretudeQuantitativo,"Quantitativo: ");
+             	 subfolha.add(new Label(), "");
+             	 subfolha.add(corretudeCotacao,"Cotação: ");
+             	 subfolha.add(new Label(), "");
 		         //CORRETUDE
 		         
-		         subfolha.add(criaDatePicker(pedido.getCorretude().getData(), "CorretudeHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição da corretude");
+		         subfolha.add(criaDatePicker(pedido.getCorretude().getData(), "CorretudeHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição da corretude: ");
 		        
 		       
 		         //MINUTA DO EDITAL
 		         int indiceMinuta = pedido.getMinuta().indiceAtual();
 		         
 		        
-		         HorizontalPanel minuta = createRadioGroup(pedido, "MinutaHandler", "Minuta", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
+		         HorizontalPanel minuta = createRadioGroup(pedido, "MinutaHandler", "Minuta", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal: ");
 		        
 		         subfolha = new SubFolhaPanel("Minuta do Edital");
               	 pedacos.add(subfolha);
-              	 subfolha.add(minuta, "Parecer da Minuta");
+              	 subfolha.add(minuta, "Parecer da Minuta: ");
 		         
-		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataInicio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="), "Data de inicio de elaboração da Minuta");
+		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataInicio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="), "Data de inicio de elaboração da Minuta: ");
               	 
-		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataEnvio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio da Minuta");
+		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataEnvio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio da Minuta: ");
 		        
 		         
-		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataRetorno(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno");
+		         subfolha.add(criaDatePicker(pedido.getMinuta().getDataRetorno(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno: ");
 		         
 		         int indicePregao = pedido.getPregao().indiceAtual();
 		         
@@ -2257,15 +2280,13 @@ public class Sistema_PRA implements EntryPoint {
 					
 					}
 				});
-		         subfolha.add(t, "Número do Pregão");
-		        
-		         subfolha.add(pregao, "Parecer do Pregão");
+		         subfolha.add(t, "Número do Pregão: ");
 		         
-		         subfolha.add(criaDatePicker(pedido.getPregao().getData(i), enabled,  "PregaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição do Pregão");
-		        
+		         subfolha.add(criaDatePicker(pedido.getPregao().getData(i), enabled,  "PregaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição do Pregão: ");
+
+		         subfolha.add(criaDatePicker(pedido.getPregao().getLicitacaoData(i),  enabled, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data="), "Data de abertura do Pregão: ");
 		         
-		         
-		         subfolha.add(criaDatePicker(pedido.getPregao().getLicitacaoData(i),  enabled, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data="), "Data de abertura do Pregão");
+		         subfolha.add(pregao, "Parecer do Pregão: ");
 		         
 		         final Button adicionaPregao = new Button("Adicionar Pregão");
 		         adicionaPregao.addClickHandler(new ClickHandler() {
@@ -2285,7 +2306,7 @@ public class Sistema_PRA implements EntryPoint {
 								public void onResponseReceived(Request request2, Response response) {
 								    if (200 == response.getStatusCode()) {
 								    	Pedido pedido2 = JsonUtils.safeEval(response.getText()).cast();
-								    	exibeTelaCompleta(pedido2);
+								    	History.newItem("pedido"+pedido2.getNumero());
 								    }
 								  }});
 							} catch (RequestException e) {
@@ -2321,18 +2342,18 @@ public class Sistema_PRA implements EntryPoint {
               	 pedacos.add(subfolha);
 		        
               	 
-              	 subfolha.add(criaDatePicker(pedido.getAdjudicacao().getData(), "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Adjudicação");
+              	 subfolha.add(criaDatePicker(pedido.getAdjudicacao().getData(), "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Adjudicação: ");
 		       
               	subfolha = new SubFolhaPanel("Homologação");
              	 pedacos.add(subfolha);
 		        
              	 
-             	 subfolha.add(criaDatePicker(pedido.getHomologacao().getData(), "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Homologação");
+             	 subfolha.add(criaDatePicker(pedido.getHomologacao().getData(), "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Homologação: ");
 		         
              	subfolha = new SubFolhaPanel("Publicação");
             	 pedacos.add(subfolha);
 		        
-            	 subfolha.add(criaDatePicker(pedido.getPublicacao().getData(), "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Publicação");
+            	 subfolha.add(criaDatePicker(pedido.getPublicacao().getData(), "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Publicação: ");
 		     
 		         
             	  
@@ -2343,28 +2364,28 @@ public class Sistema_PRA implements EntryPoint {
              
 		         //DETALHAMENTO
 		         HorizontalPanel detalhamento = createRadioGroup(pedido, "DetalhamentoHandler", "Detalhamento", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
-		    	 subfolha.add(detalhamento, "Parecer do Detalhamento de Crédito");
+		    	 subfolha.add(detalhamento, "Parecer do Detalhamento de Crédito: ");
 		    	 
-		    	 subfolha.add(criaDatePicker(pedido.getDetalhamento().getData(), "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Detalhamento de Crédito");
+		    	 subfolha.add(criaDatePicker(pedido.getDetalhamento().getData(), "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Detalhamento de Crédito: ");
 		         
 		         
 		    	 subfolha = new SubFolhaPanel("Empenho");
              	 pedacos.add(subfolha);
 		         
-             	 subfolha.add(criaDatePicker(pedido.getEmpenho().getData(), "EmpenhoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Empenho");
+             	 subfolha.add(criaDatePicker(pedido.getEmpenho().getData(), "EmpenhoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Empenho: ");
 		    	 
 		         subfolha.add(criaDatePicker(pedido.getNotaAlmoxarifado().getData(), "NotaAlmoxarifadoHandler?pedido="+pedido.getNumero()+"&data="),"Data de envio do Empenho ao almoxarifado" );
 		         
-		        subfolha.add(criaDatePicker(pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio do Empenho ao Patrimônio");
+		        subfolha.add(criaDatePicker(pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio do Empenho ao Patrimônio: ");
 		        
 		        subfolha = new SubFolhaPanel("Pagamento");
             	 pedacos.add(subfolha);
 		        
-		         subfolha.add(criaDatePicker(pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio da nota a Contabilidade");
+		         subfolha.add(criaDatePicker(pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio da nota a Contabilidade: ");
 		        
-		         subfolha.add(criaDatePicker(pedido.getLiquidacao().getData(), "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Liquidação");
+		         subfolha.add(criaDatePicker(pedido.getLiquidacao().getData(), "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Liquidação: ");
 		         
-		         subfolha.add(criaDatePicker(pedido.getPagamento().getData(), "PagamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Pagamento" );
+		         subfolha.add(criaDatePicker(pedido.getPagamento().getData(), "PagamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Pagamento: " );
 		        
 		       
 		         subfolha = new SubFolhaHistoricoPanel(pedido);
@@ -2784,7 +2805,7 @@ public class Sistema_PRA implements EntryPoint {
 						    if (200 == response.getStatusCode()) {
 						    	dialogBox.hide();
 						    	Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
-						    	exibeTelaCompleta(pedido);
+						    	History.newItem("pedido"+pedido.getNumero());
 						    }
 						  }});
 					} catch (RequestException e) {
@@ -2796,15 +2817,4 @@ public class Sistema_PRA implements EntryPoint {
 		 
         t.schedule(1000);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
