@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.core.client.EntryPoint;
@@ -1750,7 +1750,7 @@ public class Sistema_PRA implements EntryPoint {
 		final Label nameField = new Label();
 		nameField.setText("");
 
-
+		
 
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
 				"/LoginHandler");
@@ -2138,8 +2138,23 @@ public class Sistema_PRA implements EntryPoint {
 		         RootPanel.get("main_bottom").clear();
             	 //RootPanel.get("main_bottom_in").add(decPanel);
             	RootPanel.get("main_top").clear();
-		         RootPanel.get("main_cadastrar").clear();
 		        
+            	HorizontalPanel cadastrarPanel = new HorizontalPanel();
+        		
+       		 	Button cadastrarButton = new Button("Cadastrar pedido",  new ClickHandler() {
+       		        public void onClick(ClickEvent event) {
+       		        	RootPanel.get("main_bottom").clear();
+       		        	RootPanel.get("main_bottom_in").clear();
+       		        	History.newItem("cadastro");
+       	  		    	//cadastraPanel();
+       		        }});
+       		    cadastrarButton.setSize("140px", "30px");
+       		    cadastrarPanel.add(cadastrarButton);
+       		    
+       		    RootPanel.get("main_top").clear();
+       		    RootPanel.get("main_cadastrar").clear();
+       			RootPanel.get("main_cadastrar").add(cadastrarPanel);
+            	
 	        	 RootPanel.get("main_top").add(barrinha);
 
 		         buscando.removeFromParent();
@@ -2348,7 +2363,7 @@ public class Sistema_PRA implements EntryPoint {
   	  
   	  
   	  
-		}  
+		}
     
     
     
