@@ -535,7 +535,7 @@ public class Sistema_PRA implements EntryPoint {
 						String tokenBusca = token.substring(8);
 						geraLista(tokenBusca, "");
 					}
-					else if (token.trim().equals("")){
+					else if (token.trim().equals("") || token==null){
 						index();
 					}
 
@@ -1462,6 +1462,8 @@ public class Sistema_PRA implements EntryPoint {
 
 
 	private void cadastraPanel() {
+		
+		RootPanel.get("main_cadastrar").clear();
 
 
 
@@ -1746,6 +1748,7 @@ public class Sistema_PRA implements EntryPoint {
 
 
     private void exibeTelaCompleta(Pedido selected) {
+    	RootPanel.get("main_cadastrar").clear();
 	         // Create the dialog box
 		final Label nameField = new Label();
 		nameField.setText("");
@@ -2138,22 +2141,6 @@ public class Sistema_PRA implements EntryPoint {
 		         RootPanel.get("main_bottom").clear();
             	 //RootPanel.get("main_bottom_in").add(decPanel);
             	RootPanel.get("main_top").clear();
-		        
-            	HorizontalPanel cadastrarPanel = new HorizontalPanel();
-        		
-       		 	Button cadastrarButton = new Button("Cadastrar pedido",  new ClickHandler() {
-       		        public void onClick(ClickEvent event) {
-       		        	RootPanel.get("main_bottom").clear();
-       		        	RootPanel.get("main_bottom_in").clear();
-       		        	History.newItem("cadastro");
-       	  		    	//cadastraPanel();
-       		        }});
-       		    cadastrarButton.setSize("140px", "30px");
-       		    cadastrarPanel.add(cadastrarButton);
-       		    
-       		    RootPanel.get("main_top").clear();
-       		    RootPanel.get("main_cadastrar").clear();
-       			RootPanel.get("main_cadastrar").add(cadastrarPanel);
             	
 	        	 RootPanel.get("main_top").add(barrinha);
 
