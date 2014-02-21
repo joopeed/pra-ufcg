@@ -416,10 +416,10 @@ class SearchPedido(webapp2.RequestHandler):
 	
 
 def notifica(pedido_em_questao, mensagem):
-        mail.send_mail(sender="SISPRA@UFCG <nao-responda@pra-ufcg.appspotmail.com>",
+        mail.send_mail(sender="SAPO@UFCG <nao-responda@pra-ufcg.appspotmail.com>",
                                    to=pedido_em_questao.email_demandante,
-                                   subject="Alteracao do seu pedido no SISPRA-UFCG",
-                                   body='Caro(a) '+pedido_em_questao.demandante+':\n\n'+mensagem+'. Acesse\nhttp://pra-ufcg.appspot.com e logue usando sua conta google\npara saber mais.\n\n\nSISPRA@UFCG')
+                                   subject="Seu pedido foi modificado no SAPO@UFCG",
+                                   body='Caro(a) '+pedido_em_questao.demandante+':\n\n'+mensagem+'. Acesse\nhttp://pra-ufcg.appspot.com e logue usando sua conta google\npara saber mais.\n\n\nSAPO@UFCG')
 
 #HANDLERS DOS ESTADOS
    
