@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.core.client.EntryPoint;
@@ -553,8 +553,49 @@ public class Sistema_PRA implements EntryPoint {
 	}
 
 	private void index() {
+		
+	    FlowPanel hPanel = new FlowPanel();
 
+	   // hPanel.setStyleName("input-append");
+	    final TextBox campoPesquisa = new TextBox();
+	    campoPesquisa.setSize("450px", "30px");
+	    campoPesquisa.addKeyDownHandler(new KeyDownHandler() {
 
+	    	@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					History.newItem("pesquisa"+campoPesquisa.getText());
+					 //geraLista(campoPesquisa.getText(), ""); 
+
+				}}
+		});
+	   // campoPesquisa.setStyleName("span2");
+	   // DOM.setElementAttribute(campoPesquisa.getElement(), "id", "appendedInputButton");
+	    Button botaoPesquisa = new Button("<img src=\"images/search.png\"></a> Pesquisar", new ClickHandler() {
+		        public void onClick(ClickEvent event) { 
+		        	final SimplePanel buscando =  new SimplePanel();
+		        	buscando.addStyleName("buscando");
+		        	buscando.add(new HTML("<img src=\"images/415.gif\" width=\"4%\"></a>"));
+		        	RootPanel.get().add(buscando);
+		        	History.newItem("pesquisa"+campoPesquisa.getText());
+		        	//geraLista(campoPesquisa.getText(), "");
+		        	Timer timer = new Timer() {
+
+						@Override
+						public void run() {
+							buscando.removeFromParent();
+						}
+					};
+					timer.schedule(500);
+		        	}});
+	    //botaoPesquisa.setStyleName("btn");
+	    botaoPesquisa.setHeight("30px");
+	    hPanel.add(campoPesquisa);
+	    hPanel.add(botaoPesquisa);
+	    
+	    RootPanel.get("main_top").clear();
+		RootPanel.get("main_top").add(hPanel);
+		
 		geraLista("", "");
 
 		HTML carregando = new HTML(
@@ -592,6 +633,18 @@ public class Sistema_PRA implements EntryPoint {
 							sendAnchor = new Anchor("Logout");
 							nameField.setText(user.getEmail());
 							url = user.getUrl();
+							HorizontalPanel cadastrarPanel = new HorizontalPanel();
+							 Button cadastrarButton = new Button("Cadastrar pedido",  new ClickHandler() {
+							        public void onClick(ClickEvent event) {
+							        	RootPanel.get("main_bottom").clear();
+							        	RootPanel.get("main_bottom_in").clear();
+							        	History.newItem("cadastro");
+						  		    	//cadastraPanel();
+							        }});
+							    cadastrarButton.setSize("140px", "30px");
+							    cadastrarPanel.add(cadastrarButton);
+							    RootPanel.get("main_cadastrar").clear();
+								RootPanel.get("main_cadastrar").add(cadastrarPanel);
 						} else {
 							url = user.getUrl();
 							sendAnchor = new Anchor("Login");
@@ -936,67 +989,6 @@ public class Sistema_PRA implements EntryPoint {
 
 	    RootPanel.get("main_bottom").add(mais);
 	   // RootPanel.get("main_bottom").add(new HTML("<br><br><br>"));
-	    FlowPanel hPanel = new FlowPanel();
-	    HorizontalPanel cadastrarPanel = new HorizontalPanel();
-
-	   // hPanel.setStyleName("input-append");
-	    final TextBox campoPesquisa = new TextBox();
-	    campoPesquisa.setSize("450px", "30px");
-	    campoPesquisa.addKeyDownHandler(new KeyDownHandler() {
-
-	    	@Override
-			public void onKeyDown(KeyDownEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					History.newItem("pesquisa"+campoPesquisa.getText());
-					 //geraLista(campoPesquisa.getText(), ""); 
-
-				}}
-		});
-	   // campoPesquisa.setStyleName("span2");
-	   // DOM.setElementAttribute(campoPesquisa.getElement(), "id", "appendedInputButton");
-	    Button botaoPesquisa = new Button("<img src=\"images/search.png\"></a> Pesquisar", new ClickHandler() {
-		        public void onClick(ClickEvent event) { 
-		        	final SimplePanel buscando =  new SimplePanel();
-		        	buscando.addStyleName("buscando");
-		        	buscando.add(new HTML("<img src=\"images/415.gif\" width=\"4%\"></a>"));
-		        	RootPanel.get().add(buscando);
-		        	History.newItem("pesquisa"+campoPesquisa.getText());
-		        	//geraLista(campoPesquisa.getText(), "");
-		        	Timer timer = new Timer() {
-
-						@Override
-						public void run() {
-							buscando.removeFromParent();
-						}
-					};
-					timer.schedule(500);
-		        	}});
-	    //botaoPesquisa.setStyleName("btn");
-	    botaoPesquisa.setHeight("30px");
-	    hPanel.add(campoPesquisa);
-	    hPanel.add(botaoPesquisa);
-	    if(status.equals("Connected")){
-	    Button cadastrarButton = new Button("Cadastrar pedido",  new ClickHandler() {
-	        public void onClick(ClickEvent event) {
-	        	RootPanel.get("main_bottom").clear();
-	        	RootPanel.get("main_bottom_in").clear();
-	        	History.newItem("cadastro");
-  		    	//cadastraPanel();
-	        }});
-	    cadastrarButton.setSize("140px", "30px");
-	    cadastrarPanel.add(cadastrarButton);
-	    }
-	    /*Button alteraLegalidadeButton = new Button("Legalidade",  new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                    RootPanel.get("main_bottom").clear();
-                    geraListaLegalidade("legalidade:indefinida");
-            }});
-	    alteraLegalidadeButton.setSize("140px", "30px");
-	    hPanel.add(alteraLegalidadeButton);*/
-	    RootPanel.get("main_top").clear();
-	    RootPanel.get("main_cadastrar").clear();
-		RootPanel.get("main_top").add(hPanel);
-		RootPanel.get("main_cadastrar").add(cadastrarPanel);
 	}
 
 
