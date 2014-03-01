@@ -2166,7 +2166,7 @@ public class Sistema_PRA implements EntryPoint {
 		         int indiceMinuta = pedido.getMinuta().indiceAtual();
 
 
-		         HorizontalPanel minuta = createRadioGroup(barrinha, pedido, "MinutaHandler", "Minuta", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal: ");
+		         HorizontalPanel minuta = createRadioGroup(barrinha, pedido, "MinutaHandler", "Minuta", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
 
 		         subfolha = new SubFolhaPanel("Minuta do Edital");
               	 pedacos.add(subfolha);
@@ -2187,7 +2187,13 @@ public class Sistema_PRA implements EntryPoint {
 		         subfolha = new SubFolhaPanel("Pregão");
 		         boolean enabled = true;
 				if(i!=indicePregao+1) enabled = false;
+				
+				if (!enabled){
+					CompositeWidget comp = new CompositeWidget(subfolha,i+1);
+					pedacos.add(comp);
+				}else{				
               	 pedacos.add(subfolha);
+				}
 		         //PREGAO
 
 		         final HorizontalPanel pregao = createRadioGroup(barrinha, pedido, enabled, "PregaoHandler", "Pregao"+i, pedido.getPregao().getParecer(i), "parecer", "Comprado", "Não comprado");
@@ -2289,6 +2295,7 @@ public class Sistema_PRA implements EntryPoint {
 
 
 		         subfolha = new SubFolhaPanel("Adjudicação");
+		         
               	 pedacos.add(subfolha);
 
               	 
