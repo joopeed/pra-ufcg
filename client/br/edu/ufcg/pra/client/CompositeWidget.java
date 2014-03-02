@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,7 +15,7 @@ public class CompositeWidget extends Composite implements ClickHandler{
 		checkBox.setStyleName("checkBoxComp");
 		checkBox.setText("Mostrar Pregão");
 		subfolha.setVisible(false);
-		subfolha2 = new SubFolhaPanel(i+"º Pregão não comprado");
+		subfolha2 = new SubFolhaPanel(i+"º Pregão <span style='color:#FF0000'>não comprado</span>");
 		subfolha2.add(checkBox);
 		this.subfolha = subfolha;
 		subfolha.setWidth("745px");
