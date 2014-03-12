@@ -54,7 +54,15 @@ users.User("joopeeds@gmail.com"): [1, 21],
 users.User("jcafigueiredo@gmail.com"): [1, 21],
 users.User("daltonserey@gmail.com"): [1, 21]
 }
-    
+
+lista_admins = [users.User("leo.vital@ccc.ufcg.edu.br"),users.User("daltonserey@gmail.com"),users.User("jcafigueiredo@gmail.com"),users.User("joopeeds@gmail.com")]
+
+lista_usuarios = [users.User("eliasalmox@ufcg.edu.br"),users.User("fatima.pereira@ufcg.edu.br"),
+                 users.User("agama@reitoria.ufcg.edu.br"),users.User("dm@reitoria.ufcg.edu.br"),
+                 users.User("cpl@reitoria.ufcg.edu.br"),users.User("empenho@ufcg.edu.br"),
+                 users.User("contadorjulio@reitoria.ufcg.edu.br"),users.User("tarcisio.almox@ufcg.edu.br"),
+                 users.User("leideadriana@ufcg.edu.br"),users.User("lucilenebandeira@ufcg.edu.br")]
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         body = open("base.html").read()
@@ -422,658 +430,657 @@ def notifica(pedido_em_questao, mensagem):
 #Legalidade
 class LegalidadeHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
-            pedido = self.request.get("pedido")
-            data_envio = self.request.get("data_envio")
-            data_retorno = self.request.get("data_retorno")
-            parecer = self.request.get("parecer")
-           
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if parecer:
-                    if pedido_em_questao.legalidade_parecer == True:
-                        parecer_legalidade_anterior = "legal"
-                    elif pedido_em_questao.legalidade_parecer == False:
-                        parecer_legalidade_anterior = "ilegal"
-                    elif pedido_em_questao.legalidade_parecer == None:
-                        parecer_legalidade_anterior = "nada"
-                    pedido_em_questao.legalidade_parecer = True if parecer == "True" else False
-                    if pedido_em_questao.legalidade_parecer:
-                        parecer_legalidade_atual = "legal"
+                import json
+         
+                pedido = self.request.get("pedido")
+                data_envio = self.request.get("data_envio")
+                data_retorno = self.request.get("data_retorno")
+                parecer = self.request.get("parecer")
+                if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                    if pedido:
+                        pedido_em_questao = searchkey(pedido) 
+                        if parecer:
+                            if pedido_em_questao.legalidade_parecer == True:
+                                parecer_legalidade_anterior = "legal"
+                            elif pedido_em_questao.legalidade_parecer == False:
+                                parecer_legalidade_anterior = "ilegal"
+                            elif pedido_em_questao.legalidade_parecer == None:
+                                parecer_legalidade_anterior = "nada"
+                            pedido_em_questao.legalidade_parecer = True if parecer == "True" else False
+                            if pedido_em_questao.legalidade_parecer:
+                                parecer_legalidade_atual = "legal"
+                            else:
+                                parecer_legalidade_atual = "ilegal"                   
+                            pedido_em_questao.historico_info.append("Parecer de legalidade alterado de "+parecer_legalidade_anterior+" para "+parecer_legalidade_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                            notifica(pedido_em_questao, "O status de legalidade do seu pedido foi alterado")
+                        if data_envio:
+                            if pedido_em_questao.legalidade_data_envio == None:
+                                data_legalidade_anterior = "nenhuma"
+                            else:
+                                data_legalidade_anterior = pedido_em_questao.legalidade_data_envio.strftime("%d/%m/%Y")
+                            pedido_em_questao.legalidade_data_envio = datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S")
+                            pedido_em_questao.historico_info.append("Data de envio de legalidade alterado de "+data_legalidade_anterior+ " para "+pedido_em_questao.legalidade_data_envio.strftime("%d/%m/%Y"))
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        if data_retorno:
+                            if pedido_em_questao.legalidade_data_retorno == None:
+                                data_retorno_legalidade_anterior = "nenhuma"
+                            else:
+                                data_retorno_legalidade_anterior = pedido_em_questao.legalidade_data_retorno.strftime("%d/%m/%Y")
+                            pedido_em_questao.legalidade_data_retorno = datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S")
+                            pedido_em_questao.historico_info.append("Data de retorno de legalidade alterado de "+data_retorno_legalidade_anterior+" para "+pedido_em_questao.legalidade_data_retorno.strftime("%d/%m/%Y"))
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        pedido_em_questao.put()
                     else:
-                        parecer_legalidade_atual = "ilegal"                   
-                    pedido_em_questao.historico_info.append("Parecer de legalidade alterado de "+parecer_legalidade_anterior+" para "+parecer_legalidade_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de legalidade do seu pedido foi alterado")
-                if data_envio:
-                    if pedido_em_questao.legalidade_data_envio == None:
-                        data_legalidade_anterior = "nenhuma"
-                    else:
-                        data_legalidade_anterior = pedido_em_questao.legalidade_data_envio.strftime("%d/%m/%Y")
-                    pedido_em_questao.legalidade_data_envio = datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S")
-                    pedido_em_questao.historico_info.append("Data de envio de legalidade alterado de "+data_legalidade_anterior+ " para "+pedido_em_questao.legalidade_data_envio.strftime("%d/%m/%Y"))
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                if data_retorno:
-                    if pedido_em_questao.legalidade_data_retorno == None:
-                        data_retorno_legalidade_anterior = "nenhuma"
-                    else:
-                        data_retorno_legalidade_anterior = pedido_em_questao.legalidade_data_retorno.strftime("%d/%m/%Y")
-                    pedido_em_questao.legalidade_data_retorno = datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S")
-                    pedido_em_questao.historico_info.append("Data de retorno de legalidade alterado de "+data_retorno_legalidade_anterior+" para "+pedido_em_questao.legalidade_data_retorno.strftime("%d/%m/%Y"))
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                pedido_em_questao.put()
-            else:
-                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                        self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                        self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+             
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Autorizacao
 class AutorizacaoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
-            pedido = self.request.get("pedido")
-            parecer = self.request.get("parecer")
-           
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if parecer:
-                    if pedido_em_questao.autorizacao_parecer == True:
-                        parecer_autorizacao_anterior = "legal"
-                    elif pedido_em_questao.autorizacao_parecer == False:
-                        parecer_autorizacao_anterior = "ilegal"
-                    elif pedido_em_questao.autorizacao_parecer == None:
-                        parecer_autorizacao_anterior = "nada"
-                    pedido_em_questao.autorizacao_parecer = True if parecer == "True" else False
-                    if pedido_em_questao.autorizacao_parecer:
-                        parecer_autorizacao_atual = "legal"
+                import json
+         
+                pedido = self.request.get("pedido")
+                parecer = self.request.get("parecer")
+
+                if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                    if pedido:
+                        pedido_em_questao = searchkey(pedido) 
+                        if parecer:
+                            if pedido_em_questao.autorizacao_parecer == True:
+                                parecer_autorizacao_anterior = "legal"
+                            elif pedido_em_questao.autorizacao_parecer == False:
+                                parecer_autorizacao_anterior = "ilegal"
+                            elif pedido_em_questao.autorizacao_parecer == None:
+                                parecer_autorizacao_anterior = "nada"
+                            pedido_em_questao.autorizacao_parecer = True if parecer == "True" else False
+                            if pedido_em_questao.autorizacao_parecer:
+                                parecer_autorizacao_atual = "legal"
+                            else:
+                                parecer_autorizacao_atual = "ilegal"
+                            pedido_em_questao.historico_info.append("Parecer de autorizacao alterado de "+parecer_autorizacao_anterior+" para "+parecer_autorizacao_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                            notifica(pedido_em_questao, "O status de autorizacao do seu pedido foi alterado")
+                        pedido_em_questao.put()
                     else:
-                        parecer_autorizacao_atual = "ilegal"
-                    pedido_em_questao.historico_info.append("Parecer de autorizacao alterado de "+parecer_autorizacao_anterior+" para "+parecer_autorizacao_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de autorizacao do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
-                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                        self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                        self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+             
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Corretude
 class CorretudeHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            descricao = self.request.get("descricao")
-            quantitativo = self.request.get("quantitativo")
-            cotacao = self.request.get("cotacao")
-            data = self.request.get("data")
-           
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if descricao:
-                    if pedido_em_questao.corretude_descricao == True:
-                        corretude_descricao_anterior = "correta"
-                    elif pedido_em_questao.corretude_descricao == False:
-                        corretude_descricao_anterior = "incorreta"
-                    elif pedido_em_questao.corretude_descricao == None:
-                        corretude_descricao_anterior = "nada"
-                    pedido_em_questao.corretude_descricao = True if descricao == "True" else False
-                    if pedido_em_questao.corretude_descricao:
-                        corretude_descricao_atual = "correta"
-                    else:
-                        corretude_descricao_atual = "incorreta"
-                    pedido_em_questao.historico_info.append("A corretude da descricao foi definida de "+corretude_descricao_anterior+" para "+corretude_descricao_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
-                if quantitativo:
-                    if pedido_em_questao.corretude_quantitativo == True:
-                        corretude_quantitativo_anterior = "correta"
-                    elif pedido_em_questao.corretude_quantitativo == False:
-                        corretude_quantitativo_anterior = "incorreta"
-                    elif pedido_em_questao.corretude_quantitativo == None:
-                        corretude_quantitativo_anterior = "nada"
-                    pedido_em_questao.corretude_quantitativo = True if quantitativo == "True" else False
-                    if pedido_em_questao.corretude_quantitativo:
-                        corretude_quantitativo_atual = "correta"
-                    else:
-                        corretude_quantitativo_atual = "incorreta"
-                    pedido_em_questao.historico_info.append("A corretude do quantitativo foi definida de "+corretude_quantitativo_anterior+" para "+corretude_quantitativo_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
-                if cotacao:
-                    if pedido_em_questao.corretude_cotacao == True:
-                        corretude_cotacao_anterior = "correta"
-                    elif pedido_em_questao.corretude_cotacao == False:
-                        corretude_cotacao_anterior = "incorreta"
-                    elif pedido_em_questao.corretude_cotacao == None:
-                        corretude_cotacao_anterior = "nada"
-                    pedido_em_questao.corretude_cotacao = True if cotacao == "True" else False
-                    if pedido_em_questao.corretude_cotacao:
-                        corretude_cotacao_atual = "correta"
-                    else:
-                        corretude_cotacao_atual = "incorreta"
-                    pedido_em_questao.historico_info.append("A corretude da cotacao foi definida de "+corretude_cotacao_anterior+" para "+corretude_cotacao_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
-                if data:
-                    if pedido_em_questao.corretude_data == None:
-                        data_corretude_anterior = "nenhuma"
-                    else:
-                        data_corretude_anterior = pedido_em_questao.corretude_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.corretude_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    pedido_em_questao.historico_info.append("A data da definicao de corretude foi definida de "+data_corretude_anterior+" para "+pedido_em_questao.corretude_data.strftime("%d/%m/%Y"))
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "A data de corretude do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                descricao = self.request.get("descricao")
+                quantitativo = self.request.get("quantitativo")
+                cotacao = self.request.get("cotacao")
+                data = self.request.get("data")
+               
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if descricao:
+                        if pedido_em_questao.corretude_descricao == True:
+                            corretude_descricao_anterior = "correta"
+                        elif pedido_em_questao.corretude_descricao == False:
+                            corretude_descricao_anterior = "incorreta"
+                        elif pedido_em_questao.corretude_descricao == None:
+                            corretude_descricao_anterior = "nada"
+                        pedido_em_questao.corretude_descricao = True if descricao == "True" else False
+                        if pedido_em_questao.corretude_descricao:
+                            corretude_descricao_atual = "correta"
+                        else:
+                            corretude_descricao_atual = "incorreta"
+                        pedido_em_questao.historico_info.append("A corretude da descricao foi definida de "+corretude_descricao_anterior+" para "+corretude_descricao_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
+                    if quantitativo:
+                        if pedido_em_questao.corretude_quantitativo == True:
+                            corretude_quantitativo_anterior = "correta"
+                        elif pedido_em_questao.corretude_quantitativo == False:
+                            corretude_quantitativo_anterior = "incorreta"
+                        elif pedido_em_questao.corretude_quantitativo == None:
+                            corretude_quantitativo_anterior = "nada"
+                        pedido_em_questao.corretude_quantitativo = True if quantitativo == "True" else False
+                        if pedido_em_questao.corretude_quantitativo:
+                            corretude_quantitativo_atual = "correta"
+                        else:
+                            corretude_quantitativo_atual = "incorreta"
+                        pedido_em_questao.historico_info.append("A corretude do quantitativo foi definida de "+corretude_quantitativo_anterior+" para "+corretude_quantitativo_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
+                    if cotacao:
+                        if pedido_em_questao.corretude_cotacao == True:
+                            corretude_cotacao_anterior = "correta"
+                        elif pedido_em_questao.corretude_cotacao == False:
+                            corretude_cotacao_anterior = "incorreta"
+                        elif pedido_em_questao.corretude_cotacao == None:
+                            corretude_cotacao_anterior = "nada"
+                        pedido_em_questao.corretude_cotacao = True if cotacao == "True" else False
+                        if pedido_em_questao.corretude_cotacao:
+                            corretude_cotacao_atual = "correta"
+                        else:
+                            corretude_cotacao_atual = "incorreta"
+                        pedido_em_questao.historico_info.append("A corretude da cotacao foi definida de "+corretude_cotacao_anterior+" para "+corretude_cotacao_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de corretude do seu pedido foi alterado")
+                    if data:
+                        if pedido_em_questao.corretude_data == None:
+                            data_corretude_anterior = "nenhuma"
+                        else:
+                            data_corretude_anterior = pedido_em_questao.corretude_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.corretude_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        pedido_em_questao.historico_info.append("A data da definicao de corretude foi definida de "+data_corretude_anterior+" para "+pedido_em_questao.corretude_data.strftime("%d/%m/%Y"))
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "A data de corretude do seu pedido foi alterado")
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Minuta
 class MinutaHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            parecer = self.request.get("parecer")
-            data_inicio = self.request.get("data_inicio")
-            data_envio = self.request.get("data_envio")
-            data_retorno = self.request.get("data_retorno")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if parecer:
-                    if len(pedido_em_questao.minuta_parecer) == 0:
-                        parecer_minuta_anterior = "nada"
-                    elif pedido_em_questao.minuta_parecer[-1] == True:
-                        parecer_minuta_anterior = "legal"
-                    elif pedido_em_questao.minuta_parecer[-1] == False:
-                        parecer_minuta_anterior = "ilegal"
-                    pedido_em_questao.minuta_parecer.append(True if parecer == "True" else False)
-                    if pedido_em_questao.minuta_parecer[-1] == True:
-                        parecer_minuta_atual = "legal"
-                    else:
-                        parecer_minuta_atual = "ilegal"
-                    pedido_em_questao.historico_info.append("O parecer de elaboracao da minuta foi definido de "+parecer_minuta_anterior+" para "+parecer_minuta_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status da elaboracao da minuta do seu pedido foi alterado")
-                if data_inicio:
-                    if len(pedido_em_questao.minuta_data_inicio) == 0:
-                        data_inicio_minuta_anterior = "nenhuma"
-                    else:
-                        data_inicio_minuta_anterior = pedido_em_questao.minuta_data_inicio[-1].strftime("%d/%m/%Y")
-                    pedido_em_questao.minuta_data_inicio.append( datetime.datetime.strptime(data_inicio, "%Y-%m-%dT%H:%M:%S"))
-                    data_inicio_minuta_atual = pedido_em_questao.minuta_data_inicio[-1].strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de inicio de elaboracao da minuta foi definida de "+data_inicio_minuta_anterior+" para "+data_inicio_minuta_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                if data_envio:
-                    if len(pedido_em_questao.minuta_data_envio) == 0:
-                        data_envio_minuta_anterior = "nenhuma"
-                    else:
-                        data_envio_minuta_anterior = pedido_em_questao.minuta_data_envio[-1].strftime("%d/%m/%Y")
-                    pedido_em_questao.minuta_data_envio.append( datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S"))
-                    data_envio_minuta_atual = pedido_em_questao.minuta_data_envio[-1].strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de envio de elaboracao da minuta foi definida de "+data_envio_minuta_anterior+" para "+data_envio_minuta_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                if data_retorno:
-                    if len(pedido_em_questao.minuta_data_retorno) == 0:
-                        data_retorno_minuta_anterior = "nenhuma"
-                    else:
-                        data_retorno_minuta_anterior = pedido_em_questao.minuta_data_retorno[-1].strftime("%d/%m/%Y")
-                    pedido_em_questao.minuta_data_retorno.append( datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S"))
-                    data_retorno_minuta_atual = pedido_em_questao.minuta_data_retorno[-1].strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de retorno de elaboracao da minuta foi definida de "+data_retorno_minuta_anterior+" para "+data_retorno_minuta_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                parecer = self.request.get("parecer")
+                data_inicio = self.request.get("data_inicio")
+                data_envio = self.request.get("data_envio")
+                data_retorno = self.request.get("data_retorno")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if parecer:
+                        if len(pedido_em_questao.minuta_parecer) == 0:
+                            parecer_minuta_anterior = "nada"
+                        elif pedido_em_questao.minuta_parecer[-1] == True:
+                            parecer_minuta_anterior = "legal"
+                        elif pedido_em_questao.minuta_parecer[-1] == False:
+                            parecer_minuta_anterior = "ilegal"
+                        pedido_em_questao.minuta_parecer.append(True if parecer == "True" else False)
+                        if pedido_em_questao.minuta_parecer[-1] == True:
+                            parecer_minuta_atual = "legal"
+                        else:
+                            parecer_minuta_atual = "ilegal"
+                        pedido_em_questao.historico_info.append("O parecer de elaboracao da minuta foi definido de "+parecer_minuta_anterior+" para "+parecer_minuta_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status da elaboracao da minuta do seu pedido foi alterado")
+                    if data_inicio:
+                        if len(pedido_em_questao.minuta_data_inicio) == 0:
+                            data_inicio_minuta_anterior = "nenhuma"
+                        else:
+                            data_inicio_minuta_anterior = pedido_em_questao.minuta_data_inicio[-1].strftime("%d/%m/%Y")
+                        pedido_em_questao.minuta_data_inicio.append( datetime.datetime.strptime(data_inicio, "%Y-%m-%dT%H:%M:%S"))
+                        data_inicio_minuta_atual = pedido_em_questao.minuta_data_inicio[-1].strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de inicio de elaboracao da minuta foi definida de "+data_inicio_minuta_anterior+" para "+data_inicio_minuta_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if data_envio:
+                        if len(pedido_em_questao.minuta_data_envio) == 0:
+                            data_envio_minuta_anterior = "nenhuma"
+                        else:
+                            data_envio_minuta_anterior = pedido_em_questao.minuta_data_envio[-1].strftime("%d/%m/%Y")
+                        pedido_em_questao.minuta_data_envio.append( datetime.datetime.strptime(data_envio, "%Y-%m-%dT%H:%M:%S"))
+                        data_envio_minuta_atual = pedido_em_questao.minuta_data_envio[-1].strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de envio de elaboracao da minuta foi definida de "+data_envio_minuta_anterior+" para "+data_envio_minuta_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if data_retorno:
+                        if len(pedido_em_questao.minuta_data_retorno) == 0:
+                            data_retorno_minuta_anterior = "nenhuma"
+                        else:
+                            data_retorno_minuta_anterior = pedido_em_questao.minuta_data_retorno[-1].strftime("%d/%m/%Y")
+                        pedido_em_questao.minuta_data_retorno.append( datetime.datetime.strptime(data_retorno, "%Y-%m-%dT%H:%M:%S"))
+                        data_retorno_minuta_atual = pedido_em_questao.minuta_data_retorno[-1].strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de retorno de elaboracao da minuta foi definida de "+data_retorno_minuta_anterior+" para "+data_retorno_minuta_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Pregao
 class PregaoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            parecer = self.request.get("parecer")
-            data = self.request.get("data")
-            numero = self.request.get("numero")
-            licitacao_data = self.request.get("licitacao_data")
-           
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                i = pedido_em_questao.pregao_indice 
-                if parecer: 
-                    if len(pedido_em_questao.pregao_parecer) == i+1:
-                        parecer_pregao_anterior = "nada"
-                        pedido_em_questao.pregao_parecer.append(True if parecer == "True" else False)
-                        if pedido_em_questao.pregao_parecer[-1] == True:
-                            parecer_pregao_atual = "comprado"
-                        else:
-                            parecer_pregao_atual = "nao comprado"
-                        pedido_em_questao.historico_info.append("O parecer do pregao foi definido de "+parecer_pregao_anterior+" para "+parecer_pregao_atual)
-                        notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    elif len(pedido_em_questao.pregao_parecer) == i+2:
-                        if pedido_em_questao.pregao_parecer[-1] == True:
-                            parecer_pregao_anterior = "comprado"
-                        else:
-                            parecer_pregao_anterior = "nao comprado"
-                        pedido_em_questao.pregao_parecer = pedido_em_questao.pregao_parecer[:-1] + [True if parecer == "True" else False]
-                        if pedido_em_questao.pregao_parecer:
-                            parecer_pregao_atual= "comprado"
-                        else:
-                            parecer_pregao_atual = "nao comprado"
-                        pedido_em_questao.pregao_parecer[i+1] = True if parecer == "True" else False
-                        if pedido_em_questao.pregao_parecer[-1] == True:
-                             parecer_pregao_atual = "comprado"
-                        else:
-                             parecer_pregao_atual = "nao comprado"
-                        if pedido_em_questao.pregao_parecer[-1] == True:
-                            parecer_pregao_atual = "comprado"
-                        else:
-                            parecer_pregao_atual = "nao comprado"
-                        pedido_em_questao.historico_info.append("O parecer do pregao foi definido de "+parecer_pregao_anterior+" para "+parecer_pregao_atual)
-                        notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())   
-                if data: 
-                    if len(pedido_em_questao.pregao_data) == i+1:
-                        data_pregao_anterior = "nenhuma"
-                        pedido_em_questao.pregao_data.append(datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S"))
-                        data_pregao_atual = pedido_em_questao.pregao_data[-1].strftime("%d/%m/%Y")
-                        pedido_em_questao.historico_info.append("A data do pregao foi definida de "+data_pregao_anterior+" para "+data_pregao_atual)
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    elif len(pedido_em_questao.pregao_data) == i+2:
-                        data_pregao_anterior = pedido_em_questao.pregao_data[-1].strftime("%d/%m/%Y")
-                        pedido_em_questao.pregao_data[i+1] = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                        data_pregao_atual = pedido_em_questao.pregao_data[-1].strftime("%d/%m/%Y")
-                        pedido_em_questao.historico_info.append("A data do pregao foi definida de "+data_pregao_anterior+" para "+data_pregao_atual)
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())
-                if numero: 
-                    if len(pedido_em_questao.pregao_numero) == i+1:
-                        numero_pregao_anterior = "nenhum"
-                        pedido_em_questao.pregao_numero.append(numero)
-                        numero_pregao_atual = str(pedido_em_questao.pregao_numero[-1])
-                        pedido_em_questao.historico_info.append("O numero do pregao foi definido de "+numero_pregao_anterior+" para "+numero_pregao_atual)
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    elif len(pedido_em_questao.pregao_numero) == i+2:
-                        numero_pregao_anterior = str(pedido_em_questao.pregao_numero[-1])
-                        pedido_em_questao.pregao_numero[i+1] = numero
-                        numero_pregao_atual = str(pedido_em_questao.pregao_numero[-1])
-                        pedido_em_questao.historico_info.append("O numero do pregao foi definido de "+numero_pregao_anterior+" para "+numero_pregao_atual)
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())
-                if licitacao_data: 
-                    if len(pedido_em_questao.pregao_licitacao_data) == i+1:
-                        licitacao_data_anterior = "nenhuma"
-                        pedido_em_questao.pregao_licitacao_data.append(datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S"))
-                        licitacao_data_atual = pedido_em_questao.pregao_licitacao_data[-1].strftime("%d/%m/%Y")
-                        pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida de "+licitacao_data_anterior+" para "+licitacao_data_atual)
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    elif len(pedido_em_questao.pregao_licitacao_data) == i+2:
-                        licitacao_data_anterior = pedido_em_questao.pregao_licitacao_data[-1].strftime("%d/%m/%Y")
-                        pedido_em_questao.pregao_licitacao_data[i+1] = datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S")
-                        licitacao_data_atual = pedido_em_questao.pregao_licitacao_data[-1].strftime("%d/%m/%Y")
-                        pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida de "+licitacao_data_anterior+" para "+licitacao_data_atual)
-                        pedido_em_questao.historico_data.append(datetime.datetime.now())
-                        pedido_em_questao.historico_user.append(users.get_current_user().email())
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                parecer = self.request.get("parecer")
+                data = self.request.get("data")
+                numero = self.request.get("numero")
+                licitacao_data = self.request.get("licitacao_data")
+               
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    i = pedido_em_questao.pregao_indice 
+                    if parecer: 
+                        if len(pedido_em_questao.pregao_parecer) == i+1:
+                            parecer_pregao_anterior = "nada"
+                            pedido_em_questao.pregao_parecer.append(True if parecer == "True" else False)
+                            if pedido_em_questao.pregao_parecer[-1] == True:
+                                parecer_pregao_atual = "comprado"
+                            else:
+                                parecer_pregao_atual = "nao comprado"
+                            pedido_em_questao.historico_info.append("O parecer do pregao foi definido de "+parecer_pregao_anterior+" para "+parecer_pregao_atual)
+                            notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        elif len(pedido_em_questao.pregao_parecer) == i+2:
+                            if pedido_em_questao.pregao_parecer[-1] == True:
+                                parecer_pregao_anterior = "comprado"
+                            else:
+                                parecer_pregao_anterior = "nao comprado"
+                            pedido_em_questao.pregao_parecer = pedido_em_questao.pregao_parecer[:-1] + [True if parecer == "True" else False]
+                            if pedido_em_questao.pregao_parecer:
+                                parecer_pregao_atual= "comprado"
+                            else:
+                                parecer_pregao_atual = "nao comprado"
+                            pedido_em_questao.pregao_parecer[i+1] = True if parecer == "True" else False
+                            if pedido_em_questao.pregao_parecer[-1] == True:
+                                 parecer_pregao_atual = "comprado"
+                            else:
+                                 parecer_pregao_atual = "nao comprado"
+                            if pedido_em_questao.pregao_parecer[-1] == True:
+                                parecer_pregao_atual = "comprado"
+                            else:
+                                parecer_pregao_atual = "nao comprado"
+                            pedido_em_questao.historico_info.append("O parecer do pregao foi definido de "+parecer_pregao_anterior+" para "+parecer_pregao_atual)
+                            notifica(pedido_em_questao, "O status do pregao do seu pedido foi alterado")
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())   
+                    if data: 
+                        if len(pedido_em_questao.pregao_data) == i+1:
+                            data_pregao_anterior = "nenhuma"
+                            pedido_em_questao.pregao_data.append(datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S"))
+                            data_pregao_atual = pedido_em_questao.pregao_data[-1].strftime("%d/%m/%Y")
+                            pedido_em_questao.historico_info.append("A data do pregao foi definida de "+data_pregao_anterior+" para "+data_pregao_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        elif len(pedido_em_questao.pregao_data) == i+2:
+                            data_pregao_anterior = pedido_em_questao.pregao_data[-1].strftime("%d/%m/%Y")
+                            pedido_em_questao.pregao_data[i+1] = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                            data_pregao_atual = pedido_em_questao.pregao_data[-1].strftime("%d/%m/%Y")
+                            pedido_em_questao.historico_info.append("A data do pregao foi definida de "+data_pregao_anterior+" para "+data_pregao_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if numero: 
+                        if len(pedido_em_questao.pregao_numero) == i+1:
+                            numero_pregao_anterior = "nenhum"
+                            pedido_em_questao.pregao_numero.append(numero)
+                            numero_pregao_atual = str(pedido_em_questao.pregao_numero[-1])
+                            pedido_em_questao.historico_info.append("O numero do pregao foi definido de "+numero_pregao_anterior+" para "+numero_pregao_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        elif len(pedido_em_questao.pregao_numero) == i+2:
+                            numero_pregao_anterior = str(pedido_em_questao.pregao_numero[-1])
+                            pedido_em_questao.pregao_numero[i+1] = numero
+                            numero_pregao_atual = str(pedido_em_questao.pregao_numero[-1])
+                            pedido_em_questao.historico_info.append("O numero do pregao foi definido de "+numero_pregao_anterior+" para "+numero_pregao_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    if licitacao_data: 
+                        if len(pedido_em_questao.pregao_licitacao_data) == i+1:
+                            licitacao_data_anterior = "nenhuma"
+                            pedido_em_questao.pregao_licitacao_data.append(datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S"))
+                            licitacao_data_atual = pedido_em_questao.pregao_licitacao_data[-1].strftime("%d/%m/%Y")
+                            pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida de "+licitacao_data_anterior+" para "+licitacao_data_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        elif len(pedido_em_questao.pregao_licitacao_data) == i+2:
+                            licitacao_data_anterior = pedido_em_questao.pregao_licitacao_data[-1].strftime("%d/%m/%Y")
+                            pedido_em_questao.pregao_licitacao_data[i+1] = datetime.datetime.strptime(licitacao_data, "%Y-%m-%dT%H:%M:%S")
+                            licitacao_data_atual = pedido_em_questao.pregao_licitacao_data[-1].strftime("%d/%m/%Y")
+                            pedido_em_questao.historico_info.append("A data de licitacao do pregao foi definida de "+licitacao_data_anterior+" para "+licitacao_data_atual)
+                            pedido_em_questao.historico_data.append(datetime.datetime.now())
+                            pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Adjudicacao
 class AdjudicacaoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.adjudicacao_data == None:
-                        data_adjudicacao_anterior = "nenhuma"
-                    else:
-                        data_adjudicacao_anterior = pedido_em_questao.adjudicacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.adjudicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_adjudicacao_atual = pedido_em_questao.adjudicacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de adjudicacao foi definida de "+data_adjudicacao_anterior+" para "+data_adjudicacao_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de adjudicacao do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.adjudicacao_data == None:
+                            data_adjudicacao_anterior = "nenhuma"
+                        else:
+                            data_adjudicacao_anterior = pedido_em_questao.adjudicacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.adjudicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_adjudicacao_atual = pedido_em_questao.adjudicacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de adjudicacao foi definida de "+data_adjudicacao_anterior+" para "+data_adjudicacao_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de adjudicacao do seu pedido foi alterado")
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Homologacao
 class HomologacaoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.homologacao_data == None:
-                        data_homologacao_anterior = "nenhuma"
-                    else:
-                        data_homologacao_anterior = pedido_em_questao.homologacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.homologacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_homologacao_atual = pedido_em_questao.homologacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de homologacao foi definida de "+data_homologacao_anterior+" para "+data_homologacao_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de homologacao do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.homologacao_data == None:
+                            data_homologacao_anterior = "nenhuma"
+                        else:
+                            data_homologacao_anterior = pedido_em_questao.homologacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.homologacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_homologacao_atual = pedido_em_questao.homologacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de homologacao foi definida de "+data_homologacao_anterior+" para "+data_homologacao_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de homologacao do seu pedido foi alterado")
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Publicacao
 class PublicacaoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.publicacao_data == None:
-                        data_publicacao_anterior = "nenhuma"
-                    else:
-                        data_publicacao_anterior = pedido_em_questao.publicacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.publicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_publicacao_atual = pedido_em_questao.publicacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de publicacao foi definida de "+data_publicacao_anterior+" para "+data_publicacao_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de publicacao do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.publicacao_data == None:
+                            data_publicacao_anterior = "nenhuma"
+                        else:
+                            data_publicacao_anterior = pedido_em_questao.publicacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.publicacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_publicacao_atual = pedido_em_questao.publicacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de publicacao foi definida de "+data_publicacao_anterior+" para "+data_publicacao_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de publicacao do seu pedido foi alterado")
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Detalhamento
 class DetalhamentoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            parecer = self.request.get("parecer")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if parecer:
-                    if pedido_em_questao.detalhamento_parecer == True:
-                        parecer_detalhamento_anterior = "autorizado"
-                    elif pedido_em_questao.detalhamento_parecer == False:
-                        parecer_detalhamento_anterior = "nao autorizado"
-                    elif pedido_em_questao.detalhamento_parecer == None:
-                        parecer_detalhamento_anterior = "nada"
-                    pedido_em_questao.detalhamento_parecer = True if parecer == "True" else False
-                    if pedido_em_questao.detalhamento_parecer:
-                        parecer_detalhamento_atual = "autorizado"
-                    else:
-                        parecer_detalhamento_atual = "nao autorizado"
-                    pedido_em_questao.historico_info.append("O parecer do detalhamento de credito foi definido de "+parecer_detalhamento_anterior+" para "+parecer_detalhamento_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                  
-                    notifica(pedido_em_questao, "O status de detalhamento de credito do seu pedido foi alterado")
-                if data:
-                    if pedido_em_questao.detalhamento_data == None:
-                        data_detalhamento_anterior = "nenhuma"
-                    else:
-                        data_detalhamento_anterior = pedido_em_questao.detalhamento_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.detalhamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_detalhamento_atual = pedido_em_questao.detalhamento_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data do detalhamento de credito foi definida de "+data_detalhamento_anterior+" para "+data_detalhamento_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                parecer = self.request.get("parecer")
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if parecer:
+                        if pedido_em_questao.detalhamento_parecer == True:
+                            parecer_detalhamento_anterior = "autorizado"
+                        elif pedido_em_questao.detalhamento_parecer == False:
+                            parecer_detalhamento_anterior = "nao autorizado"
+                        elif pedido_em_questao.detalhamento_parecer == None:
+                            parecer_detalhamento_anterior = "nada"
+                        pedido_em_questao.detalhamento_parecer = True if parecer == "True" else False
+                        if pedido_em_questao.detalhamento_parecer:
+                            parecer_detalhamento_atual = "autorizado"
+                        else:
+                            parecer_detalhamento_atual = "nao autorizado"
+                        pedido_em_questao.historico_info.append("O parecer do detalhamento de credito foi definido de "+parecer_detalhamento_anterior+" para "+parecer_detalhamento_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                      
+                        notifica(pedido_em_questao, "O status de detalhamento de credito do seu pedido foi alterado")
+                    if data:
+                        if pedido_em_questao.detalhamento_data == None:
+                            data_detalhamento_anterior = "nenhuma"
+                        else:
+                            data_detalhamento_anterior = pedido_em_questao.detalhamento_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.detalhamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_detalhamento_atual = pedido_em_questao.detalhamento_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data do detalhamento de credito foi definida de "+data_detalhamento_anterior+" para "+data_detalhamento_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Empenho
 class EmpenhoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.empenho_data == None:
-                        data_empenho_anterior = "nenhuma"
-                    else:
-                        data_empenho_anterior = pedido_em_questao.empenho_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.empenho_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_empenho_atual = pedido_em_questao.empenho_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de empenho foi definida de "+data_empenho_anterior+" para "+data_empenho_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de empenho do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.empenho_data == None:
+                            data_empenho_anterior = "nenhuma"
+                        else:
+                            data_empenho_anterior = pedido_em_questao.empenho_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.empenho_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_empenho_atual = pedido_em_questao.empenho_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de empenho foi definida de "+data_empenho_anterior+" para "+data_empenho_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de empenho do seu pedido foi alterado")
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Nota do almoxarifado
 class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.nota_almoxarifado_data == None:
-                        data_almoxarifado_anterior = "nenhuma"
-                    else:
-                        data_almoxarifado_anterior = pedido_em_questao.nota_almoxarifado_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.nota_almoxarifado_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_almoxarifado_atual = pedido_em_questao.nota_almoxarifado_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de envio da nota ao almoxarifado foi definida de "+data_almoxarifado_anterior+" para "+data_almoxarifado_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.nota_almoxarifado_data == None:
+                            data_almoxarifado_anterior = "nenhuma"
+                        else:
+                            data_almoxarifado_anterior = pedido_em_questao.nota_almoxarifado_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.nota_almoxarifado_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_almoxarifado_atual = pedido_em_questao.nota_almoxarifado_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de envio da nota ao almoxarifado foi definida de "+data_almoxarifado_anterior+" para "+data_almoxarifado_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Patrimonio
 class PatrimonioHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.patrimonio_data == None:
-                        data_patrimonio_anterior = "nenhuma"
-                    else:
-                        data_patrimonio_anterior = pedido_em_questao.patrimonio_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.patrimonio_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_patrimonio_atual = pedido_em_questao.patrimonio_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de envio ao patrimonio foi definida de "+data_patrimonio_anterior+" para "+data_patrimonio_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.patrimonio_data == None:
+                            data_patrimonio_anterior = "nenhuma"
+                        else:
+                            data_patrimonio_anterior = pedido_em_questao.patrimonio_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.patrimonio_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_patrimonio_atual = pedido_em_questao.patrimonio_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de envio ao patrimonio foi definida de "+data_patrimonio_anterior+" para "+data_patrimonio_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Nota da contabilidade
 class NotaContabilidadeHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.nota_contabilidade_data == None:
-                        data_nota_anterior = "nenhuma"
-                    else:
-                        data_nota_anterior = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.nota_contabilidade_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_nota_atual = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de envio da nota a contabilidade foi definida de "+data_nota_anterior+" para "+data_nota_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.nota_contabilidade_data == None:
+                            data_nota_anterior = "nenhuma"
+                        else:
+                            data_nota_anterior = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.nota_contabilidade_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_nota_atual = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de envio da nota a contabilidade foi definida de "+data_nota_anterior+" para "+data_nota_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Liquidacao
 class LiquidacaoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.liquidacao_data == None:
-                        data_liquidacao_anterior = "nenhuma"
-                    else:
-                        data_liquidacao_anterior = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.liquidacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_liquidacao_atual = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de liquidacao foi definida de "+data_liquidacao_anterior+" para "+data_liquidacao_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de liquidacao do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.liquidacao_data == None:
+                            data_liquidacao_anterior = "nenhuma"
+                        else:
+                            data_liquidacao_anterior = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.liquidacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_liquidacao_atual = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de liquidacao foi definida de "+data_liquidacao_anterior+" para "+data_liquidacao_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de liquidacao do seu pedido foi alterado")
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Pagamento
 class PagamentoHandler(webapp2.RequestHandler):
         def post(self):
-     
-            import json
-     
             pedido = self.request.get("pedido")
-            data = self.request.get("data")
-     
-            if pedido:
-                pedido_em_questao = searchkey(pedido) 
-                if data:
-                    if pedido_em_questao.pagamento_data == None:
-                        data_pagamento_anterior = "nenhuma"
-                    else:
-                        data_pagamento_anterior = pedido_em_questao.pagamento_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.pagamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                    data_pagamento_atual = pedido_em_questao.pagamento_data.strftime("%d/%m/%Y")
-                    pedido_em_questao.historico_info.append("A data de pagamento foi definida de "+data_pagamento_anterior+" para "+data_pagamento_atual)
-                    pedido_em_questao.historico_data.append(datetime.datetime.now())
-                    pedido_em_questao.historico_user.append(users.get_current_user().email())
-                    notifica(pedido_em_questao, "O status de pagamento do seu pedido foi alterado")
-                pedido_em_questao.put()
-            else:
+            if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
+                import json
+         
+                data = self.request.get("data")
+         
+                if pedido:
+                    pedido_em_questao = searchkey(pedido) 
+                    if data:
+                        if pedido_em_questao.pagamento_data == None:
+                            data_pagamento_anterior = "nenhuma"
+                        else:
+                            data_pagamento_anterior = pedido_em_questao.pagamento_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.pagamento_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_pagamento_atual = pedido_em_questao.pagamento_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.historico_info.append("A data de pagamento foi definida de "+data_pagamento_anterior+" para "+data_pagamento_atual)
+                        pedido_em_questao.historico_data.append(datetime.datetime.now())
+                        pedido_em_questao.historico_user.append(users.get_current_user().email())
+                        notifica(pedido_em_questao, "O status de pagamento do seu pedido foi alterado")
+                    pedido_em_questao.put()
+                else:
+                    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                    self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
+         
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-                self.response.out.write(json.dumps(dict({'erro':'numero de pedido inexistente'}.items()) ))
-     
-            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
-            self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
+                self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
 
 
 app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/AdicionaPregao', AdicionaPregao), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler)],debug=True)
