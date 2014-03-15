@@ -192,6 +192,11 @@ box-shadow: 0px 0px 2px #888;
 }
 
 /** Most GWT widgets already have a style name defined */
+
+.gwt-StackPanel .gwt-StackPanelItem {
+    background: #E8E8E8;
+}
+
 .gwt-DialogBox {
   width: 400px;
 }

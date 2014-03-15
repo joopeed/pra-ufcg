@@ -2181,19 +2181,22 @@ public class Sistema_PRA implements EntryPoint {
 
 		         int indicePregao = pedido.getPregao().indiceAtual();
 
+		         StackPanel stack = new StackPanel();
+		         stack.setWidth("787px");
 		         for(int i = 0; i <=  indicePregao+1; i++) {
 
 
-		         subfolha = new SubFolhaPanel("Pregão");
+		         subfolha = new SubFolhaPanel("");
 		         boolean enabled = true;
-				if(i!=indicePregao+1) enabled = false;
-				
-				if (!enabled){
-					CompositeWidget comp = new CompositeWidget(subfolha,i+1);
-					pedacos.add(comp);
-				}else{				
-              	 pedacos.add(subfolha);
-				}
+				 if(i!=indicePregao+1){ 
+					enabled = false;
+					stack.add(subfolha,"Pregão <span style = 'color: #FF0000'>não comprado</span>",true);
+				 }else{
+					stack.add(subfolha,"Pregão atual");
+					stack.showStack(indicePregao+1);
+             				pedacos.add(stack);
+				 }
+              	 
 		         //PREGAO
 
 		         final HorizontalPanel pregao = createRadioGroup(barrinha, pedido, enabled, "PregaoHandler", "Pregao"+i, pedido.getPregao().getParecer(i), "parecer", "Comprado", "Não comprado");
