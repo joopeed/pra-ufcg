@@ -1010,7 +1010,7 @@ class NotaContabilidadeHandler(webapp2.RequestHandler):
                             data_nota_anterior = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
                         pedido_em_questao.nota_contabilidade_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                         data_nota_atual = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
-                        pedido_em_questao.historico_info.append("A data de envio da nota a contabilidade foi definida de "+data_nota_anterior+" para "+data_nota_atual)
+                        pedido_em_questao.historico_info.append("A data de recebimento provisoria foi definida de "+data_nota_anterior+" para "+data_nota_atual)
                         pedido_em_questao.historico_data.append(datetime.datetime.now())
                         pedido_em_questao.historico_user.append(users.get_current_user().email())
                         
@@ -1040,10 +1040,10 @@ class LiquidacaoHandler(webapp2.RequestHandler):
                             data_liquidacao_anterior = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
                         pedido_em_questao.liquidacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
                         data_liquidacao_atual = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
-                        pedido_em_questao.historico_info.append("A data de liquidacao foi definida de "+data_liquidacao_anterior+" para "+data_liquidacao_atual)
+                        pedido_em_questao.historico_info.append("A data de recebimento definitiva foi definida de "+data_liquidacao_anterior+" para "+data_liquidacao_atual)
                         pedido_em_questao.historico_data.append(datetime.datetime.now())
                         pedido_em_questao.historico_user.append(users.get_current_user().email())
-                        notifica(pedido_em_questao, "O status de liquidacao do seu pedido foi alterado")
+                        notifica(pedido_em_questao, "O status de recebimento do seu pedido foi alterado")
                     pedido_em_questao.put()
                 else:
                     self.response.headers.add_header('content-type', 'application/json', charset='utf-8')

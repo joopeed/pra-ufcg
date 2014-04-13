@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 
+
 import java.sql.Time;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.bcel.generic.RETURN;
+
 
 
 
@@ -99,6 +101,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
@@ -1744,34 +1747,34 @@ public class Sistema_PRA implements EntryPoint {
             
             //LEGALIDADE
             if (p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#legalidade' id='anchorBarra' title='Legalidade parecer: em andamento'>Legalidade</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Legalidade parecer: em andamento'>Legalidade</a></td>";
                     estados.add(1);
             }
             else if (p.getLegalidade().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#legalidade'id='anchorBarra' title='Legalidade parecer: legal. Data de envio a PJ: " + p.getLegalidade().getDataEnvio() + " Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>Legalidade</a></td>";
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Legalidade parecer: legal. Data de envio a PJ: " + p.getLegalidade().getDataEnvio() + " Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>Legalidade</a></td>";
                     estados.add(2);
             }
             else {
-                    barraProgresso += "<td style='background-color:#FF0000'><a href='#legalidade' id='anchorBarra' title='Legalidade parecer: ilegal. Data de envio a PJ: " +
+                    barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Legalidade parecer: ilegal. Data de envio a PJ: " +
                     p.getLegalidade().getDataEnvio() + " Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>Legalidade</a></td>";
                     estados.add(3);
             }
            
             //AUTORIZACAO
             if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: indefinido'>Autorização</a></td>";
+                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Autorizacao parecer: indefinido'>Autorização</a></td>";
                     estados.add(0);
             }
             else if (p.getAutorizacao().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: em andamento'>Autorização</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Autorizacao parecer: em andamento'>Autorização</a></td>";
                     estados.add(1);
             }
             else if (p.getAutorizacao().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: autorizado'>Autorização</a></td>";
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Autorizacao parecer: autorizado'>Autorização</a></td>";
                     estados.add(2);
             }
             else {
-                    barraProgresso += "<td style='background-color:#FF0000'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: nao autorizado'>Autorização</a></td>";
+                    barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Autorizacao parecer: nao autorizado'>Autorização</a></td>";
                     estados.add(3);
         		   }
            
@@ -1779,16 +1782,16 @@ public class Sistema_PRA implements EntryPoint {
             
      
             if (p.getCorretude().getDescricao().equals("true") && p.getCorretude().getQuantitativo().equals("true") && p.getCorretude().getCotacao().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#corretude' id='anchorBarra' title='Corretude: completo. Data da definicao: " +
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Corretude: completo. Data da definicao: " +
                     p.getCorretude().getData() + "'>Corretude</a></td>";
                     estados.add(2);
             }
             else if ((p.getCorretude().getDescricao().equals("false") == false && p.getCorretude().getQuantitativo().equals("false") == false && p.getCorretude().getCotacao().equals("false") == false)) {
                     if (p.getAutorizacao().getParecer().equals("null")) {
-                            barraProgresso += "<td style='background-color:#999999'><a href='#corretude' id='anchorBarra' title='Corretude: indefinida'>Corretude</a></td>";
+                            barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Corretude: indefinida'>Corretude</a></td>";
                             estados.add(0);
                     }else {
-                            barraProgresso += "<td style='background-color:#FFFF33'><a href='#corretude' id='anchorBarra' title='Corretude: em andamento'>Corretude</a></td>";
+                            barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Corretude: em andamento'>Corretude</a></td>";
                             estados.add(1);
                     }
             }
@@ -1808,7 +1811,7 @@ public class Sistema_PRA implements EntryPoint {
                     	statuss += "Corretude da cotacao: correto<br>";
                     else
                     	statuss += "Corretude da cotacao: incorreto<br>";
-                    barraProgresso += "<td style='background-color:#FF0000'><a href='#corretude' id='anchorBarra' title='"+statuss+"'>Corretude</a></td>";
+                    barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='"+statuss+"'>Corretude</a></td>";
                    
                     if(!(p.getCorretude().getDescricao().equals("null") || p.getCorretude().getQuantitativo().equals("null") || p.getCorretude().getCotacao().equals("null")))
                     	if((p.getCorretude().getDescricao().equals("false") || p.getCorretude().getQuantitativo().equals("false") || p.getCorretude().getCotacao().equals("false")))
@@ -1839,28 +1842,28 @@ public class Sistema_PRA implements EntryPoint {
             
             if (p.getMinuta().getParecer().length > 0) {
                 if (p.getMinuta().getParecer()[iParecerMinuta].equals("null") && p.getCorretude().getCotacao().equals("null")) {
-                        barraProgresso += "<td style='background-color:#999999'><a href='#minuta' id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
+                        barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
                         estados.add(0);
                 }
                 else if (p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-                        barraProgresso += "<td style='background-color:#FFFF33'><a href='#minuta' id='anchorBarra' title='Minuta parecer: em andamento'>Minuta</a></td>";
+                        barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Minuta parecer: em andamento'>Minuta</a></td>";
                         estados.add(1);
                 }
                 else if (p.getMinuta().getParecer()[iParecerMinuta].equals("true")) {
-                        barraProgresso += "<td style='background-color:#33CC33'><a href='#minuta' id='anchorBarra' title='Minuta parecer: de acordo. Data do inicio da elaboracao: " +
+                        barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Minuta parecer: de acordo. Data do inicio da elaboracao: " +
                         dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio + " Data de retorno: " +
                         dataMinutaRetorno + "'>Minuta</a></td>";
                         estados.add(2);
                 }
                 else {
-                        barraProgresso += "<td style='background-color:#FF0000'><a href='#minuta' id='anchorBarra' title='Minuta parecer: nao de acordo. Data do inicio da elaboracao" +
+                        barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Minuta parecer: nao de acordo. Data do inicio da elaboracao" +
                         ": " + dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio +
                         " Data de retorno: " + dataMinutaRetorno + "'>Minuta</a></td>";
                         estados.add(3);
                 }
             }
             else {
-            	barraProgresso += "<td style='background-color:#999999'><a href='#minuta' id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
+            	barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
             	estados.add(0);
             }
            
@@ -1876,100 +1879,100 @@ public class Sistema_PRA implements EntryPoint {
      
             if (p.getPregao().getParecer().length > 0) {
                 if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-                        barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
+                        barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
                         estados.add(0);
                 }
                 else if (p.getPregao().getParecer()[iParecerPregao].equals("null")) {
-                        barraProgresso += "<td style='background-color:#FFFF33'><a href='#pregao' id='anchorBarra' title='Pregao parecer: em andamento'>Pregão</a></td>";
+                        barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Pregao parecer: em andamento'>Pregão</a></td>";
                         estados.add(1);
                 }
                 else if (p.getPregao().getParecer()[iParecerPregao].equals("true")) {
-                        barraProgresso += "<td style='background-color:#33CC33'><a href='#pregao' id='anchorBarra' title='Pregao parecer: realizado. Data de realizacao: " +
+                        barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Pregao parecer: realizado. Data de realizacao: " +
                         dataPregao + "'>Pregão</a></td>";
                         estados.add(2);
                 }
                 else {
-                        barraProgresso += "<td style='background-color:#FF0000'><a href='#pregao' id='anchorBarra' title='Pregao parecer: nao realizado'>Pregão</a></td>";
+                        barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Pregao parecer: nao realizado'>Pregão</a></td>";
                         estados.add(3);
                 }
             }
             else {
-            	barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
+            	barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
             	estados.add(0);
             }
            
             //ADJUDICACAO
             if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: indefinida'>Adjudicação</a></td>";
+                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Adjudicacao: indefinida'>Adjudicação</a></td>";
                     estados.add(0);
             }
             else if (p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: em andamento'>Adjudicação</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Adjudicacao: em andamento'>Adjudicação</a></td>";
                     estados.add(1);
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: concluida Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Adjudicacao: concluida Data: " +
                     p.getAdjudicacao().getData() + "'>Adjudicação</a></td>";
                     estados.add(2);
             }
      	
             //HOMOLOGACAO
             if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#homologacao' id='anchorBarra' title='Homologacao: indefinida'>Homologação</a></td>";
+                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Homologacao: indefinida'>Homologação</a></td>";
                     estados.add(0);
             }
             else if (p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#homologacao' id='anchorBarra' title='Homologacao: em andamento'>Homologação</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Homologacao: em andamento'>Homologação</a></td>";
                     estados.add(1);
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#homologacao' id='anchorBarra' title='Homologacao: concluida Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Homologacao: concluida Data: " +
                     p.getHomologacao().getData() + "'>Homologação</a></td>";
                     estados.add(2);
             }
      
             //PUBLICACAO
             if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#publicacao' id='anchorBarra' title='Publicacao: indefinida'>Publicação</a></td>";
+                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Publicacao: indefinida'>Publicação</a></td>";
                     estados.add(0);
             }
             else if (p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#publicacao' id='anchorBarra' title='Publicacao: em andamento'>Publicação</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Publicacao: em andamento'>Publicação</a></td>";
                     estados.add(1);
             }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#publicacao' id='anchorBarra' title='Publicacao: concluida Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Publicacao: concluida Data: " +
                     p.getPublicacao().getData() + "'>Publicação</a></td>";
                     estados.add(2);
             }
             
           //LIQUIDACAO
             if (p.getLiquidacao().getData().equals("") && p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#bottom' id='anchorBarra' title='Liquidacao: indefinida'>Liquidação</a></td>";
+                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Empenho: indefinido'>Empenho</a></td>";
                     estados.add(0);
             }
             else if (p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#bottom' id='anchorBarra' title='Liquidacao: em andamento'>Liquidação</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Empenho: em andamento'>Empenho</a></td>";
                     estados.add(1);
                     }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#bottom' id='anchorBarra' title='Liquidacao: concluida Data: " +
-                    p.getHomologacao().getData() + "'>Liquidação</a></td>";
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Empenho: concluido Data: " +
+                    p.getHomologacao().getData() + "'>Empenho</a></td>";
                     estados.add(2);
                     }
      
             
           //PAGAMENTO
             if (p.getPagamento().getData().equals("") && p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#bottom' id='anchorBarra' title='Pagamento: indefinida'>Pagamento</a></td>";
+                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Pagamento: indefinida'>Pagamento</a></td>";
                     estados.add(0);
                     }
             else if (p.getPagamento().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#bottom' id='anchorBarra' title='Pagamento: em andamento'>Pagamento</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Pagamento: em andamento'>Pagamento</a></td>";
                     estados.add(1);
                     }
             else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#bottom' id='anchorBarra' title='Pagamento: concluido Data: " +
+                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Pagamento: concluido Data: " +
                     p.getHomologacao().getData() + "'>Pagamento</a></td>";
                     estados.add(2);
                     }
@@ -1980,7 +1983,7 @@ public class Sistema_PRA implements EntryPoint {
 
             String[] titles = {
             		"Legalidade", "Autorização", "Corretude", "Minuta", "Pregão", 
-            		"Adjudicação", "Homologação", "Publicação", "Liquidação", "Pagamento"	
+            		"Adjudicação", "Homologação", "Publicação", "Empenho", "Pagamento"	
             };
             String[] links = {
             		"legalidade", "autorizacao", "corretude", "minuta", "pregao", 
@@ -2001,7 +2004,7 @@ public class Sistema_PRA implements EntryPoint {
             		label = "x";
             		}
             	if(i!=0) barraProgresso += "  <span class=\"bar_2\"></span>";
-            	barraProgresso += "      <a href=\"#"+links[i]+"\" title=\""+titles[i]+"\">    <div class=\""+classe+"\">" + 
+            	barraProgresso += "      <a\" title=\""+titles[i]+"\">    <div class=\""+classe+"\">" + 
             			"    <span class=\"label\">"+label+"</span>" + 
                 		"  </div></a>";
             	
@@ -2180,9 +2183,10 @@ public class Sistema_PRA implements EntryPoint {
 		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataRetorno(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno: ");
 
 		         int indicePregao = pedido.getPregao().indiceAtual();
-
+		         
 		         StackPanel stack = new StackPanel();
 		         stack.setWidth("787px");
+		         
 		         for(int i = 0; i <=  indicePregao+1; i++) {
 
 
@@ -2194,7 +2198,7 @@ public class Sistema_PRA implements EntryPoint {
 				 }else{
 					stack.add(subfolha,"Pregão atual");
 					stack.showStack(indicePregao+1);
-             				pedacos.add(stack);
+             		pedacos.add(stack);
 				 }
               	 
 		         //PREGAO
@@ -2315,20 +2319,7 @@ public class Sistema_PRA implements EntryPoint {
 
             	 subfolha.add(criaDatePicker(barrinha, pedido.getPublicacao().getData(), "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Publicação: ");
 
-
-            	  
-              	subfolha = new SubFolhaPanel("Crédito Orçamentário");
-             	 pedacos.add(subfolha);
-
-             	 
-             
-		         //DETALHAMENTO
-		         HorizontalPanel detalhamento = createRadioGroup(barrinha, pedido, "DetalhamentoHandler", "Detalhamento", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
-		    	 subfolha.add(detalhamento, "Parecer do Detalhamento de Crédito: ");
-
-		    	 subfolha.add(criaDatePicker(barrinha, pedido.getDetalhamento().getData(), "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Detalhamento de Crédito: ");
-
-
+            	 
 		    	 subfolha = new SubFolhaPanel("Empenho");
              	 pedacos.add(subfolha);
 
@@ -2336,16 +2327,27 @@ public class Sistema_PRA implements EntryPoint {
 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaAlmoxarifado().getData(), "NotaAlmoxarifadoHandler?pedido="+pedido.getNumero()+"&data="),"Data de envio do Empenho ao almoxarifado" );
 
-		        subfolha.add(criaDatePicker(barrinha, pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio do Empenho ao Patrimônio: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio do Empenho ao Patrimônio: ");
+		         
+		         
+		         subfolha = new SubFolhaPanel("Crédito Orçamentário");
+            	 pedacos.add(subfolha);
+            
+		         //DETALHAMENTO
+		         HorizontalPanel detalhamento = createRadioGroup(barrinha, pedido, "DetalhamentoHandler", "Detalhamento", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
+		    	 subfolha.add(detalhamento, "Parecer do Detalhamento de Crédito: ");
 
-		        subfolha = new SubFolhaPanel("Pagamento");
+		    	 subfolha.add(criaDatePicker(barrinha, pedido.getDetalhamento().getData(), "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Detalhamento de Crédito: ");
+
+
+		    	 subfolha = new SubFolhaPanel("Recebimento");
             	 pedacos.add(subfolha);
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio da nota a Contabilidade: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data de recebimento provisória: ");
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getLiquidacao().getData(), "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Liquidação: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getLiquidacao().getData(), "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de recebimento definitiva: ");
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getPagamento().getData(), "PagamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Pagamento: " );
+		         //subfolha.add(criaDatePicker(barrinha, pedido.getPagamento().getData(), "PagamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Pagamento: " );
 
 
 		         subfolha = new SubFolhaHistoricoPanel(pedido);

@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import java.util.ArrayList;
 
@@ -45,7 +45,7 @@ public class SubFolhaPanel extends SimplePanel {
 		} else if (title.equals("Homologação")) {
 			linhas.add(new HTML("<a name ='"+"publicacao"+"'></a>"));
 		} else if (title.equals("Publicação")) {
-			linhas.add(new HTML("<a name ='"+"credito"+"'></a>"));
+			linhas.add(new HTML("<a name ='"+"empenho"+"'></a>"));
 		} else {
 			linhas.add(new HTML("<a name ='"+"bottom"+"'></a>"));
 		}
