@@ -1,4 +1,4 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 import java.util.ArrayList;
 
@@ -38,7 +38,7 @@ public class SubFolhaPanel extends SimplePanel {
 			linhas.add(new HTML("<a name ='"+"minuta"+"'></a>"));
 		} else if (title.equals("Minuta do Edital")) {
 			linhas.add(new HTML("<a name ='"+"pregao"+"'></a>"));
-		} else if (title.equals("Pregão")) {
+		} else if (title.equals("Prego")) {
 			linhas.add(new HTML("<a name ='"+"adjudicacao"+"'></a>"));
 		} else if (title.equals("Adjudicação")) {
 			linhas.add(new HTML("<a name ='"+"homologacao"+"'></a>"));

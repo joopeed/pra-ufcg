@@ -187,6 +187,7 @@ class GetPedido(webapp2.RequestHandler):
                     error = "False"
                     dic = {
                         "numero": pedido.numero,
+                        "tipo_pedido": pedido.tipo_pedido,
                         "demandante": pedido.demandante,
                         "descricao": pedido.descricao,
                         "data_entrada": pedido.data_entrada.isoformat(),
@@ -292,10 +293,10 @@ class InitSys(webapp2.RequestHandler):
        
          for i in range(50):
                 novo = Pedido(key_name="CG26388734"+str(i), demandante="Joao Pedro Ferreira de Melo Leoncio", 
-                              data_entrada=datetime.datetime(2005, 7, 14, 12, 30), 
+                              data_entrada=datetime.datetime(2014, 7, 14, 12, 30), 
                               descricao="Pedido de exemplo para que o sistema funcione inicialmente", 
                               numero="CG26388734"+str(i), 
-                              email_demandante="joopeeds@gmail.com")
+                              email_demandante="joopeeds@gmail.com", tipo_pedido="pregao")
                 novo.historico_info.append("Pedido criado no sistema")
                 novo.historico_data.append(datetime.datetime.now())
                 novo.historico_user.append(users.get_current_user().email())
@@ -324,6 +325,7 @@ class SetPedido(webapp2.RequestHandler):
                               descricao=self.request.get("descricao"), 
                               numero=self.request.get("numero"), 
                               email_demandante=self.request.get("email_demandante"))
+                              #tipo_pedido=self.request.get("tipo_pedido"))
                 novo.historico_info.append("Pedido criado no sistema")
                 novo.historico_data.append(datetime.datetime.now())
                 novo.historico_user.append(users.get_current_user().email())
@@ -334,7 +336,7 @@ class SetPedido(webapp2.RequestHandler):
                 if self.request.get("data_entrada"): pedido.data_entrada = datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")
                 if self.request.get("descricao"): pedido.descricao=self.request.get("descricao")
                 if self.request.get("email_demandante"): pedido.email_demandante=self.request.get("email_demandante")
-                #if self.request.get("legalidade"): pedido.legalidade_parecer = True if self.request.get("legalidade") ==  "True" else False
+                if self.request.get("tipo_pedido"): pedido.tipo_pedido=self.request.get("tipo_pedido")
                 pedido.put()
         
 

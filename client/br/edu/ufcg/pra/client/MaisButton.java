@@ -49,7 +49,7 @@ public class MaisButton extends Button {
 
 		            public void onResponseReceived(Request request, Response response) {
 		              if (200 == response.getStatusCode()) {
-		            	 ListaPedidosForTable lista = JsonUtils.safeEval(response.getText()).cast();
+		            	 RequisicaoDePedidos lista = JsonUtils.safeEval(response.getText()).cast();
 		            	 
 		            	 boolean connected = lista.getStatus().equals("Connected")? true: false;
 		            	 Pedido[] cada = lista.getPedidos();

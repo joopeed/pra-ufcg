@@ -2,83 +2,16 @@ package br.edu.ufcg.pra.client;
 
 import java.util.ArrayList;
 
-import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.datepicker.client.DateBox;
 
-public class Barrinha extends SimplePanel {
+public class BarrinhaReduzida extends Barrinha {
 
 	
-	private String pedido;
-	private SimplePanel panel;
-
-	public Barrinha(String pedido) {
-		this.pedido = pedido;
-		this.panel = new SimplePanel();
-		this.add(panel);
-		RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+pedido);
-		try {
-			Request request = builder6.sendRequest(null, new RequestCallback() {
-
-					public void onError(Request request, Throwable exception) {
-			        }
-
-			        @SuppressWarnings("deprecation")
-					public void onResponseReceived(Request request, Response response) {
-			          if (200 == response.getStatusCode()) {
-			        	 final Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
-			        	 panel.clear();
-			        	 panel.add(barrinha(pedido));
-			          }}});
-		} catch (RequestException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+public BarrinhaReduzida(String pedido) {
+		super(pedido);
 		
 	}
-	
-	public void atualizar() {
-		Timer timer = new Timer() {
-
-			@Override
-			public void run() {
-				RequestBuilder builder6 = new RequestBuilder(RequestBuilder.GET, "getpedido?q="+pedido);
-				try {
-					Request request = builder6.sendRequest(null, new RequestCallback() {
-
-							public void onError(Request request, Throwable exception) {
-					        }
-
-					        @SuppressWarnings("deprecation")
-							public void onResponseReceived(Request request, Response response) {
-					          if (200 == response.getStatusCode()) {
-					        	 final Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
-					        	 panel.clear();
-					        	 panel.add(barrinha(pedido));
-					          }}});
-				} catch (RequestException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-
-			}
-		};
-     timer.schedule(1000);
-		
-	}
-	
-	
+@Override
 protected HTML barrinha(Pedido p) {
         
         String barraProgresso = "<table border='0' bordecolor='#000000' " +
@@ -102,23 +35,7 @@ protected HTML barrinha(Pedido p) {
                 estados.add(3);
         }
        
-        //AUTORIZACAO
-        if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: indefinido'>Autorização</a></td>";
-                estados.add(0);
-        }
-        else if (p.getAutorizacao().getParecer().equals("null")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: em andamento'>Autorização</a></td>";
-                estados.add(1);
-        }
-        else if (p.getAutorizacao().getParecer().equals("true")) {
-                barraProgresso += "<td style='background-color:#33CC33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: autorizado'>Autorização</a></td>";
-                estados.add(2);
-        }
-        else {
-                barraProgresso += "<td style='background-color:#FF0000'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: nao autorizado'>Autorização</a></td>";
-                estados.add(3);
-    		   }
+       
        
         //CORRETUDE
         
@@ -165,49 +82,7 @@ protected HTML barrinha(Pedido p) {
                 
         }
        
-        //MINUTA
         
-        
-        int iInicio = p.getMinuta().getDataInicio().length - 1;
-        int iEnvio = p.getMinuta().getDataEnvio().length - 1;
-        int iRetorno = p.getMinuta().getDataRetorno().length - 1;
-        int iParecerMinuta = p.getMinuta().getParecer().length - 1;
-        
-        //gambiarra {
-        String dataMinutaInicio = "";
-        if (p.getMinuta().getDataInicio().length > 0) dataMinutaInicio = p.getMinuta().getDataInicio()[iInicio];
-        String dataMinutaEnvio = "";
-        if (p.getMinuta().getDataEnvio().length > 0) dataMinutaEnvio = p.getMinuta().getDataEnvio()[iEnvio];
-        String dataMinutaRetorno = "";
-        if (p.getMinuta().getDataRetorno().length > 0) dataMinutaRetorno = p.getMinuta().getDataRetorno()[iRetorno];
-        //} gambiarra
-        
-        if (p.getMinuta().getParecer().length > 0) {
-            if (p.getMinuta().getParecer()[iParecerMinuta].equals("null") && p.getCorretude().getCotacao().equals("null")) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#minuta' id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
-                    estados.add(0);
-            }
-            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#minuta' id='anchorBarra' title='Minuta parecer: em andamento'>Minuta</a></td>";
-                    estados.add(1);
-            }
-            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33'><a href='#minuta' id='anchorBarra' title='Minuta parecer: de acordo. Data do inicio da elaboracao: " +
-                    dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio + " Data de retorno: " +
-                    dataMinutaRetorno + "'>Minuta</a></td>";
-                    estados.add(2);
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#FF0000'><a href='#minuta' id='anchorBarra' title='Minuta parecer: nao de acordo. Data do inicio da elaboracao" +
-                    ": " + dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio +
-                    " Data de retorno: " + dataMinutaRetorno + "'>Minuta</a></td>";
-                    estados.add(3);
-            }
-        }
-        else {
-        	barraProgresso += "<td style='background-color:#999999'><a href='#minuta' id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
-        	estados.add(0);
-        }
        
         //PREGAO
         
@@ -220,7 +95,7 @@ protected HTML barrinha(Pedido p) {
         //TODO } gambiarra
  
         if (p.getPregao().getParecer().length > 0) {
-            if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
+            if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getCorretude().getDescricao().equals("null") && p.getCorretude().getQuantitativo().equals("null") && p.getCorretude().getCotacao().equals("null")) {
                     barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
                     estados.add(0);
             }
@@ -243,35 +118,8 @@ protected HTML barrinha(Pedido p) {
         	estados.add(0);
         }
        
-        //ADJUDICACAO
-        if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: indefinida'>Adjudicação</a></td>";
-                estados.add(0);
-        }
-        else if (p.getAdjudicacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: em andamento'>Adjudicação</a></td>";
-                estados.add(1);
-        }
-        else {
-                barraProgresso += "<td style='background-color:#33CC33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: concluida Data: " +
-                p.getAdjudicacao().getData() + "'>Adjudicação</a></td>";
-                estados.add(2);
-        }
  	
-        //HOMOLOGACAO
-        if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#homologacao' id='anchorBarra' title='Homologacao: indefinida'>Homologação</a></td>";
-                estados.add(0);
-        }
-        else if (p.getHomologacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#homologacao' id='anchorBarra' title='Homologacao: em andamento'>Homologação</a></td>";
-                estados.add(1);
-        }
-        else {
-                barraProgresso += "<td style='background-color:#33CC33'><a href='#homologacao' id='anchorBarra' title='Homologacao: concluida Data: " +
-                p.getHomologacao().getData() + "'>Homologação</a></td>";
-                estados.add(2);
-        }
+       
  
         //PUBLICACAO
         if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
@@ -323,12 +171,12 @@ protected HTML barrinha(Pedido p) {
         barraProgresso += "</tr></table><br>";
        
         String[] titles = {
-        		"Legalidade", "Autorização", "Corretude", "Minuta", "Pregão", 
-        		"Adjudicação", "Homologação", "Publicação", "Empenho", "Pagamento"	
+        		"Legalidade",  "Corretude",  "Pregão", 
+        		"Publicação", "Empenho", "Pagamento"	
         };
         String[] links = {
-        		"legalidade", "autorizacao", "corretude", "minuta", "pregao", 
-        		"adjudicacao", "homologacao", "publicacao", "empenho", "pagamento"	
+        		"legalidade",  "corretude",  "pregao", 
+        		"publicacao", "empenho", "pagamento"	
         };
         
         barraProgresso =  "<div class=\"progress\">";

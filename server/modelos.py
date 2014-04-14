@@ -20,6 +20,7 @@ class Pedido(db.Model):
     numero = db.StringProperty(required=True)
     email_demandante = db.StringProperty(required=True)
     local = db.StringProperty(default = "PRA/Gabinete")
+    tipo_pedido = db.StringProperty(required=True, default = "pregao")
 
     historico_data = db.ListProperty(datetime.datetime, indexed=True, default=[]) 
     historico_info = db.StringListProperty(str, indexed=True, default=[]) 

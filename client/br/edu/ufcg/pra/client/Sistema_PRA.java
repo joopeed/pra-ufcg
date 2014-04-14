@@ -1,14 +1,12 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
+
+
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -16,143 +14,73 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-
-
-
-
-
-import java.sql.Time;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
-import org.apache.bcel.generic.RETURN;
-
-
-
-
-
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DefaultDateTimeFormatInfo;
-import com.google.gwt.cell.client.DateCell;
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.dom.builder.shared.FieldSetBuilder;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.DecoratorPanel;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 
-class ListaPedidos extends JavaScriptObject {                              // (1)
-	  // Overlay types always have protected, zero argument constructors.
-	  protected ListaPedidos() {}                                              // (2)
 
+import java.util.ArrayList;
+import java.util.Date;
+
+
+
+class PermissaoDoUsuario extends JavaScriptObject {                           
+	  protected PermissaoDoUsuario() {}                                              
 	  // JSNI methods to get stock data.
-	  public final native String status() /*-{ return this.status; }-*/; // (3)
-	  public final native String[] getPedidos() /*-{ return this.pedidos; }-*/;
-
-
-	}
-
-
-class ListaPermissoes extends JavaScriptObject {                              // (1)
-	  // Overlay types always have protected, zero argument constructors.
-	  protected ListaPermissoes() {}                                              // (2)
-
-	  // JSNI methods to get stock data.
-	  public final native String status() /*-{ return this.status; }-*/; // (3)
+	  public final native String status() /*-{ return this.status; }-*/; 
 	  public final native String[] getPermissoes() /*-{ return this.permissoes; }-*/;
 
 
 	}
 
-class ListaPedidosForTable extends JavaScriptObject {                              // (1)
-	  // Overlay types always have protected, zero argument constructors.
-	  protected ListaPedidosForTable() {}                                              // (2)
+class RequisicaoDePedidos extends JavaScriptObject {                              
+	  
+	  protected RequisicaoDePedidos() {}                                             
 
 	  // JSNI methods to get stock data.
-	  public final native String getStatus() /*-{ return this.status; }-*/; // (3)
-	  public final native String getCursor() /*-{ return this.cursor; }-*/; // (3)
+	  public final native String getStatus() /*-{ return this.status; }-*/; 
+	  public final native String getCursor() /*-{ return this.cursor; }-*/; 
 	  public final native Pedido[] getPedidos() /*-{ return this.pedidos; }-*/;
 
 
 
 	}
 
-class LegalidadeDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class LegalidadeDados extends JavaScriptObject {                             
+    
     protected LegalidadeDados() {}  
     
     public final native String getParecer() /*-{ return this.parecer; }-*/;
@@ -160,15 +88,15 @@ class LegalidadeDados extends JavaScriptObject {                              //
     public final native String getDataRetorno() /*-{ return this.data_retorno; }-*/;
 } 
 
-class AutorizacaoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class AutorizacaoDados extends JavaScriptObject {                             
+    
     protected AutorizacaoDados() {}  
     
     public final native String getParecer() /*-{ return this.parecer; }-*/;
 } 
 
-class CorretudeDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class CorretudeDados extends JavaScriptObject {                             
+    
     protected CorretudeDados() {}  
     
     public final native String getDescricao() /*-{ return this.descricao; }-*/;
@@ -177,8 +105,8 @@ class CorretudeDados extends JavaScriptObject {                              // 
     public final native String getData() /*-{ return this.data; }-*/;
 } 
 
-class MinutaDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class MinutaDados extends JavaScriptObject {                             
+    
     protected MinutaDados() {}  
     
     public final native String[] getParecer() /*-{ return this.parecer; }-*/;
@@ -210,8 +138,8 @@ class MinutaDados extends JavaScriptObject {                              // (1)
     
 } 
 
-class PregaoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class PregaoDados extends JavaScriptObject {                             
+    
     protected PregaoDados() {}  
     
     public final native String[] getParecer() /*-{ return this.parecer; }-*/;
@@ -247,74 +175,74 @@ class PregaoDados extends JavaScriptObject {                              // (1)
     
 }
 
-class AdjudicacaoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class AdjudicacaoDados extends JavaScriptObject {                             
+    
     protected AdjudicacaoDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
 
-class HomologacaoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class HomologacaoDados extends JavaScriptObject {                             
+    
     protected HomologacaoDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
 
-class PublicacaoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class PublicacaoDados extends JavaScriptObject {                             
+    
     protected PublicacaoDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
-class DetalhamentoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class DetalhamentoDados extends JavaScriptObject {                             
+    
     protected DetalhamentoDados() {}  
     
     public final native String getParecer() /*-{ return this.parecer; }-*/;
     public final native String getData() /*-{ return this.data; }-*/;
 }
 
-class EmpenhoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class EmpenhoDados extends JavaScriptObject {                             
+    
     protected EmpenhoDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
-class NotaAlmoxarifadoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class NotaAlmoxarifadoDados extends JavaScriptObject {                             
+    
     protected NotaAlmoxarifadoDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
-class PatrimonioDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class PatrimonioDados extends JavaScriptObject {                             
+    
     protected PatrimonioDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
 
-class NotaContabilidadeDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class NotaContabilidadeDados extends JavaScriptObject {                             
+    
     protected NotaContabilidadeDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
-class LiquidacaoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class LiquidacaoDados extends JavaScriptObject {                             
+    
     protected LiquidacaoDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
-class PagamentoDados extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class PagamentoDados extends JavaScriptObject {                             
+    
     protected PagamentoDados() {}  
     
     public final native String getData() /*-{ return this.data; }-*/;
 }
 
-class Historico extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
+class Historico extends JavaScriptObject {                             
+    
     protected Historico() {}  
     
     public final native HistoricoDados getHistorico() /*-{ return this.historico; }-*/;
@@ -359,12 +287,13 @@ class ExtendedDialogBox extends DialogBox {
 }
 
 
-class Pedido extends JavaScriptObject {                              // (1)
-    // Overlay types always have protected, zero argument constructors.
-    protected Pedido() {}                                              // (2)
+class Pedido extends JavaScriptObject {                             
+    
+    protected Pedido() {}                                             
 
     // JSNI methods to get stock data.
-    public final native String getDemandante() /*-{ return this.demandante; }-*/; // (3)
+    public final native String getDemandante() /*-{ return this.demandante; }-*/;
+    public final native String getTipoDePedido() /*-{ return this.tipo_pedido; }-*/;
     public final native String getNumero() /*-{ return this.numero; }-*/;
     public final native String getEmail() /*-{ return this.email_demandante; }-*/;
     public final native String getLocal() /*-{ return this.local; }-*/;
@@ -451,16 +380,17 @@ class Pedido extends JavaScriptObject {                              // (1)
 		}
 	}
 
+	
 
 
   }
 
-class Pedido2 extends JavaScriptObject {                              // (1)
-	  // Overlay types always have protected, zero argument constructors.
-	  protected Pedido2() {}                                              // (2)
+class Pedido2 extends JavaScriptObject {                             
+	  
+	  protected Pedido2() {}                                             
 
 	  // JSNI methods to get stock data.
-	  public final native String getDemandante() /*-{ return this.demandante; }-*/; // (3)
+	  public final native String getDemandante() /*-{ return this.demandante; }-*/;
 	  public final native String getNumero() /*-{ return this.numero; }-*/;
 	  public final native String getDescricao() /*-{ return this.descricao; }-*/;
 	  public final native String getData() /*-{ return this.data_entrada; }-*/;
@@ -469,12 +399,12 @@ class Pedido2 extends JavaScriptObject {                              // (1)
 
 
 
-class User extends JavaScriptObject {                              // (1)
-	  // Overlay types always have protected, zero argument constructors.
-	  protected User() {}                                              // (2)
+class User extends JavaScriptObject {                             
+	  
+	  protected User() {}                                             
 
 	  // JSNI methods to get stock data.
-	  public final native String getEmail() /*-{ return this.user_email; }-*/; // (3)
+	  public final native String getEmail() /*-{ return this.user_email; }-*/;
 	  public final native String getNickname() /*-{ return this.user_nickname; }-*/;
 	  public final native String getId() /*-{ return this.user_user_id; }-*/;
 	  public final native String getStatus() /*-{ return this.status; }-*/;
@@ -680,7 +610,7 @@ public class Sistema_PRA implements EntryPoint {
 				public void onResponseReceived(Request request,
 						Response response) {
 					if (200 == response.getStatusCode()) {
-						ListaPermissoes lista = JsonUtils.safeEval(
+						PermissaoDoUsuario lista = JsonUtils.safeEval(
 								response.getText()).cast();
 						listaa = lista.getPermissoes();
 						HorizontalPanel hPanel = new HorizontalPanel();
@@ -734,7 +664,7 @@ public class Sistema_PRA implements EntryPoint {
 
             public void onResponseReceived(Request request, Response response) {
               if (200 == response.getStatusCode()) {
-            	 ListaPedidosForTable lista = JsonUtils.safeEval(response.getText()).cast();
+            	 RequisicaoDePedidos lista = JsonUtils.safeEval(response.getText()).cast();
             	 boolean connected = lista.getStatus().equals("Connected")? true: false;
             	 Pedido[] cada = lista.getPedidos();
             	 final ArrayList<Pedido> listaa = new ArrayList<Pedido>();
@@ -865,6 +795,7 @@ public class Sistema_PRA implements EntryPoint {
 	       	         // Add some text to the top of the dialog
 	       	         dialogContents.add(barra);
 	       	         dialogContents.add(new Label("Número do pedido: "+todo.getNumero()));
+	       	         dialogContents.add(new Label("Tipo de pedido: "+todo.getTipoDePedido()));
 	       	         dialogContents.add(new Label("Nome do demandante: "+todo.getDemandante()));
 	       	         dialogContents.add(new Label("Email do demandante: "+todo.getEmail()));
 	       	         dialogContents.add(new Label("Data de entrada: "+todo.getDataFormatada()));
@@ -912,193 +843,13 @@ public class Sistema_PRA implements EntryPoint {
 	    RootPanel.get("main_bottom").add(table);
 	   // RootPanel.get("main_bottom").add(exampleBar1);
 
-
-
-	    // Create a Pager to control the table.
-	    //SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-	    //SimplePager pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
-	    //pager.setDisplay(table);
 	    HTML sobra = new HTML("<br><br><br>");
 	    final MaisButton mais = new MaisButton(cursor, listaa, table, sobra);
-	    /*		
-	    		//new Button("Mais Resultados");
-	    mais.addClickHandler(new ClickHandler(
-	    		) {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				
-				
-				RequestBuilder builder5;
-				builder5 = new RequestBuilder(RequestBuilder.GET, "searchpedido?cursor="+mais.getCursorInterno());
-		        try {
-		          Request request = builder5.sendRequest(null, new RequestCallback() {
-		            
-
-					public void onError(Request request, Throwable exception) {
-		            }
-
-		            public void onResponseReceived(Request request, Response response) {
-		              if (200 == response.getStatusCode()) {
-		            	 ListaPedidosForTable lista = JsonUtils.safeEval(response.getText()).cast();
-		            	 
-		            	 boolean connected = lista.getStatus().equals("Connected")? true: false;
-		            	 Pedido[] cada = lista.getPedidos();
-		            	 
-		            	 
-		            	 mais.removeFromParent();
-		            	 RootPanel.get("main_bottom").add(new MaisButton(lista.getCursor()));
-		            	 
-		            	 
-		            	 ArrayList<Pedido> cada2 = new ArrayList<Pedido>();
-		            	 for (int i = 0; i < cada.length; i++) {
-		            		 listaa.add(cada[i]);
-						
-		            		 table.setWidth("100%");
-		     			    // Set the total row count. This isn't strictly necessary, but it affects
-		     			    // paging calculations, so its good habit to keep the row count up to date.
-		     			 table.setRowCount(listaa.size(), true);
-
-		     			    // Push the data into the widget.
-		     			 table.setRowData(0, listaa);
-		     			 	table.setPageSize(listaa.size());
-		     				//geraLista("", cursor);
-		     				
-		            	 }
-		            		 
-		              	
-		            	 
-		            	 
-		              } else {
-		            	  
-		              }
-		            }
-		          });
-		        } catch (RequestException e) {
-		        }
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-			}
-		});*/
-
 	    RootPanel.get("main_bottom").add(mais);
-	   // RootPanel.get("main_bottom").add(new HTML("<br><br><br>"));
+	  
 	}
 
 
-
-	private void alteraPedidoPanel() {
-		final VerticalPanel vPanel = new VerticalPanel();
-
-		vPanel.add(new HTML("Carregando pedidos...<br>"));
-
-		RequestBuilder builder2 = new RequestBuilder(RequestBuilder.GET, "/Pedido");
-      try {
-        Request request = builder2.sendRequest(null, new RequestCallback() {
-          
-
-			public void onError(Request request, Throwable exception) {
-          }
-
-          public void onResponseReceived(Request request, Response response) {
-            if (200 == response.getStatusCode()) {
-          	 ListaPedidos lista = JsonUtils.safeEval(response.getText()).cast();
-          	 vPanel.clear();
-          	vPanel.add(new HTML("Pedidos<br>"));
-          	 final String[] listaa = lista.getPedidos();
-          	 for (int i = 0; i < listaa.length; i++) {
-          		 final RequestBuilder builder3 = new RequestBuilder(RequestBuilder.GET, "/getpedido?q="+listaa[i]);
-          		 vPanel.add(new Button("Pedido "+ listaa[i], new ClickHandler() {
-       		        public void onClick(ClickEvent event) {
-       		    	RootPanel.get("main_right").clear();
-       		    	final DecoratedPopupPanel simplePopup = new DecoratedPopupPanel(true);
-       		    	simplePopup.ensureDebugId("cwBasicPopup-simplePopup");
-       		    	simplePopup.setWidth("150px");
-       		     	simplePopup.setWidget(new HTML("Carregando <br> por favor, espere!"));
-       		     	// Reposition the popup relative to the button
-       	            Widget source = (Widget) event.getSource();
-       	            int left = source.getAbsoluteLeft() + 10;
-       	            int top = source.getAbsoluteTop() + 10;
-       	            simplePopup.setPopupPosition(left, top);
-
-       	            // Show the popup
-       	            simplePopup.show();
-       		    	  
-       		      try {
-       		        Request request = builder3.sendRequest(null, new RequestCallback() {
-       		          
-
-       					public void onError(Request request, Throwable exception) {
-       		          }
-
-       		          public void onResponseReceived(Request request, Response response) {
-       		            if (200 == response.getStatusCode()) {
-       		            	simplePopup.hide();
-       		            	RootPanel.get("main_right").clear();
-       		            	
-       		            	DecoratorPanel decPanel = new DecoratorPanel();
-       		            	final FlexTable layout = new FlexTable();
-       		            	layout.setCellSpacing(6);
-       		            	User user = JsonUtils.safeEval(response.getText()).cast();
-       		            	Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
-       		            	Label Nome = new Label();
-       		            	Nome.setText(pedido.getDemandante());
-       		            	Label numero = new Label();
-       		            	numero.setText(pedido.getNumero());
-       		            	Label email = new Label();
-       		            	email.setText(pedido.getEmail());
-       		            	Label local = new Label();
-       		            	local.setText(pedido.getLocal());
-       		            	Label descricao = new Label();
-       		            	descricao.setText(pedido.getDescricao());
-       		     		    layout.setWidget(0, 1, numero);
-       		     		    layout.setWidget(1, 1, Nome);
-       		     		    layout.setWidget(2, 1, email);
-       		     		    layout.setWidget(3, 1, local);
-       		     		    layout.setWidget(4, 1, descricao);
-       		            	decPanel.setWidget(layout);
-       		            	RootPanel.get("main_right").add(decPanel);
-       		          	 
-       		            } else {
-       		          	  
-       		            }
-       		          }
-       		        });
-       		      } catch (RequestException e) {
-       		      }
-       		    	  
-       		    	  
-       		    	  
-       		    	  
-    		        }
-    		      }));
-          		
-          		 
-          	 }
-          	 
-            } else {
-          	  
-            }
-          }
-        });
-      } catch (RequestException e) {
-      }
-
-
-
-
-
-		RootPanel.get("main_left").add(vPanel);
-	}
 
 
 
@@ -1355,108 +1106,7 @@ public class Sistema_PRA implements EntryPoint {
 	}
 	*/
 
-	private VerticalPanel pedidosPanel() {
-		final VerticalPanel vPanel = new VerticalPanel();
 
-		vPanel.add(new HTML("Carregando pedidos...<br>"));
-
-		RequestBuilder builder2 = new RequestBuilder(RequestBuilder.GET, "/getpedido");
-      try {
-        Request request = builder2.sendRequest(null, new RequestCallback() {
-          
-
-			public void onError(Request request, Throwable exception) {
-          }
-
-          public void onResponseReceived(Request request, Response response) {
-            if (200 == response.getStatusCode()) {
-          	 ListaPedidos lista = JsonUtils.safeEval(response.getText()).cast();
-          	 vPanel.clear();
-          	vPanel.add(new HTML("Pedidos<br>"));
-          	 final String[] listaa = lista.getPedidos();
-          	 for (int i = 0; i < listaa.length; i++) {
-          		 final RequestBuilder builder3 = new RequestBuilder(RequestBuilder.GET, "/getpedido?q="+listaa[i]);
-          		 vPanel.add(new Button("Pedido "+ listaa[i], new ClickHandler() {
-       		        public void onClick(ClickEvent event) {
-       		    	RootPanel.get("main_right").clear();
-       		    	final DecoratedPopupPanel simplePopup = new DecoratedPopupPanel(true);
-       		    	simplePopup.ensureDebugId("cwBasicPopup-simplePopup");
-       		    	simplePopup.setWidth("150px");
-       		     	simplePopup.setWidget(new HTML("Carregando <br> por favor, espere!"));
-       		     	// Reposition the popup relative to the button
-       	            Widget source = (Widget) event.getSource();
-       	            int left = source.getAbsoluteLeft() + 10;
-       	            int top = source.getAbsoluteTop() + 10;
-       	            simplePopup.setPopupPosition(left, top);
-
-       	            // Show the popup
-       	            simplePopup.show();
-       		    	  
-       		      try {
-       		        Request request = builder3.sendRequest(null, new RequestCallback() {
-       		          
-
-       					public void onError(Request request, Throwable exception) {
-       		          }
-
-       		          public void onResponseReceived(Request request, Response response) {
-       		            if (200 == response.getStatusCode()) {
-       		            	simplePopup.hide();
-       		            	RootPanel.get("main_right").clear();
-       		            	DecoratorPanel decPanel = new DecoratorPanel();
-       		            	final FlexTable layout = new FlexTable();
-       		            	layout.setCellSpacing(6);
-       		            	Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
-       		            	Label Nome = new Label();
-       		            	Nome.setText(pedido.getDemandante());
-       		            	Label numero = new Label();
-       		            	numero.setText(pedido.getNumero());
-       		            	Label email = new Label();
-       		            	email.setText(pedido.getEmail());
-       		            	Label local = new Label();
-       		            	local.setText(pedido.getLocal());
-       		            	Label descricao = new Label();
-       		            	descricao.setText(pedido.getDescricao());
-       		     		    layout.setWidget(0, 1, numero);
-       		     		    layout.setWidget(1, 1, Nome);
-       		     		    layout.setWidget(2, 1, email);
-       		     		    layout.setWidget(3, 1, local);
-       		     		    layout.setWidget(4, 1, descricao);
-       		            	decPanel.setWidget(layout);
-       		            	RootPanel.get("main_right").add(decPanel);
-       		          	 
-       		            } else {
-       		          	  
-       		            }
-       		          }
-       		        });
-       		      } catch (RequestException e) {
-       		      }
-       		    	  
-       		    	  
-       		    	  
-       		    	  
-    		        }
-    		      }));
-          		
-          		 
-          	 }
-          	 
-            } else {
-          	  
-            }
-          }
-        });
-      } catch (RequestException e) {
-      }
-
-
-
-
-
-		RootPanel.get("main_left").add(vPanel);
-		return vPanel;
-	}
 
 
 
@@ -2090,7 +1740,11 @@ public class Sistema_PRA implements EntryPoint {
             	 final Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
             	 VerticalPanel vPanel = new VerticalPanel();
             	 SimplePanel folha = new SimplePanel();
-            	 final Barrinha barrinha = new Barrinha(pedido.getNumero());
+            	 final Barrinha barrinha;
+            	 if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
+              		 barrinha = new BarrinhaReduzida(pedido.getNumero());
+            	 else
+            		 barrinha = new Barrinha(pedido.getNumero());
             	 folha.setStyleName("folha");
             	 VerticalPanel pedacos = new VerticalPanel();
             	 pedacos.setSpacing(10);
@@ -2101,18 +1755,23 @@ public class Sistema_PRA implements EntryPoint {
 		         //DADOS BASICOS
 		         SubFolhaPanel subfolha = new SubFolhaPanel("Dados básicos");
 		         pedacos.add(subfolha);
+		         
 		         subfolha.add(new Label(pedido.getNumero()), "Número do pedido: ");
+		         
+	              
+		        // subfolha.add(createTextBox(barrinha, "tipo_pedido", pedido.getTipoDePedido(), pedido.getNumero()), "Tipo de pedido: ");
 		         subfolha.add(createTextBox(barrinha, "demandante", pedido.getDemandante(), pedido.getNumero()), "Nome do demandante: ");
 		         subfolha.add(createTextBox(barrinha, "email_demandante",pedido.getEmail(), pedido.getNumero()), "Email do demandante: ");
-		        subfolha.add(createTextBox(barrinha, "descricao",pedido.getDescricao(), pedido.getNumero()), "Descrição do pedido: ");
+		         subfolha.add(createTextBox(barrinha, "descricao",pedido.getDescricao(), pedido.getNumero()), "Descrição do pedido: ");
 
 		         DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
 		         final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getData(), "setpedido?numero="+pedido.getNumero()+"&data_entrada="), "Data de entrada: ");
-
-
+		         subfolha.add(new Label(""), "");
+		         subfolha.add(createRadioGroupTipo(barrinha, pedido, true,  pedido.getTipoDePedido()), "Tipo de Pedido: ");
+		         
 
 		         /*
 		         final ListBox lb = new ListBox();
@@ -2148,7 +1807,9 @@ public class Sistema_PRA implements EntryPoint {
 
               	 //AUTORIZACAO
               	 subfolha = new SubFolhaPanel("Autorização");
-              	 pedacos.add(subfolha);
+              	 if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
+              		 subfolha.setVisible(false);
+                 pedacos.add(subfolha);
 
 		         subfolha.add(autorizacao, "Parecer de Autorização");
 
@@ -2172,6 +1833,8 @@ public class Sistema_PRA implements EntryPoint {
 		         HorizontalPanel minuta = createRadioGroup(barrinha, pedido, "MinutaHandler", "Minuta", pedido.getMinuta().getParecer(indiceMinuta), "parecer", "Legal", "Ilegal");
 
 		         subfolha = new SubFolhaPanel("Minuta do Edital");
+		         if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
+              		 subfolha.setVisible(false);
               	 pedacos.add(subfolha);
               	 subfolha.add(minuta, "Parecer da Minuta: ");
 
@@ -2302,13 +1965,16 @@ public class Sistema_PRA implements EntryPoint {
 
 
 		         subfolha = new SubFolhaPanel("Adjudicação");
-		         
+		         if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
+              		 subfolha.setVisible(false);	
               	 pedacos.add(subfolha);
 
               	 
               	 subfolha.add(criaDatePicker(barrinha, pedido.getAdjudicacao().getData(), "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Adjudicação: ");
 
               	subfolha = new SubFolhaPanel("Homologação");
+              	if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
+             		 subfolha.setVisible(false);
              	 pedacos.add(subfolha);
 
              	 
@@ -2357,7 +2023,7 @@ public class Sistema_PRA implements EntryPoint {
 		        // HTML title = new HTML();
 		        // final TreeItem root = new TreeItem(title);
 		         
-		         TreeItem item = to.addTextItem("Histórico de alterações no pedido");
+		         TreeItem item = to.addTextItem("Histórico de alteraçães no pedido");
 
 		         // Temporarily add an item so we can expand this node
 		         item.addTextItem("");
@@ -2430,6 +2096,116 @@ public class Sistema_PRA implements EntryPoint {
               }
             }
             
+            
+            private HorizontalPanel createRadioGroupTipo(final Barrinha barrinha, final Pedido pedido, boolean enabled, String atual) {
+			   final HorizontalPanel vp = new HorizontalPanel();
+			   VerticalPanel vvp = new VerticalPanel();
+			   HorizontalPanel fp = new HorizontalPanel();
+			   HorizontalPanel sp = new HorizontalPanel();
+			   fp.setSpacing(20);
+			   sp.setSpacing(20);
+			   vp.add(vvp);
+			   vvp.add(fp);
+			   vvp.add(sp);
+			   final SimplePanel uploading = new SimplePanel();
+			   uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
+			   
+			   RadioButton radioPregao = new RadioButton("tipo", "Pregão Eletrônico");
+               radioPregao.setEnabled(enabled);
+               
+
+               radioPregao.addClickHandler(new ClickHandler(){
+               		                @Override
+               		                public void onClick(ClickEvent event) {
+               		                	vp.add(uploading);
+               		                	AlteraEstadoTipo("tipo_pedido=pregao", pedido.getNumero(), "setpedido", uploading);
+               		                	
+               		                	
+               		                	
+               	                }
+               	            });
+               
+               RadioButton radioDispensa = new RadioButton("tipo", "Dispensa");
+               radioDispensa.setEnabled(enabled);
+               
+
+               radioDispensa.addClickHandler(new ClickHandler(){
+               		                @Override
+               		                public void onClick(ClickEvent event) {
+               		                	vp.add(uploading);
+               		                	AlteraEstadoTipo("tipo_pedido=dispensa", pedido.getNumero(), "setpedido", uploading);
+               		                	
+               		                	
+               		                	
+               	                }
+               	            });
+               
+               RadioButton radioInexi = new RadioButton("tipo", "Inexigibilidade");
+               radioInexi.setEnabled(enabled);
+               
+
+               radioInexi.addClickHandler(new ClickHandler(){
+               		                @Override
+               		                public void onClick(ClickEvent event) {
+               		                	vp.add(uploading);
+               		                	AlteraEstadoTipo("tipo_pedido=inexigibilidade", pedido.getNumero(), "setpedido", uploading);
+               		                	
+               		                	
+               		                	
+               	                }
+               	            });
+               
+               RadioButton radioSessao = new RadioButton("tipo", "Sessão Pública");
+               radioSessao.setEnabled(enabled);
+               
+
+               radioSessao.addClickHandler(new ClickHandler(){
+               		                @Override
+               		                public void onClick(ClickEvent event) {
+               		                	vp.add(uploading);
+               		                	AlteraEstadoTipo("tipo_pedido=sessao", pedido.getNumero(), "setpedido", uploading);
+               		                	
+               		                	
+               		                	
+               	                }
+               	            });
+               
+               
+               if(atual.equals("pregao")){
+            	   radioPregao.setValue(true);
+                   radioDispensa.setValue(false);
+                   radioInexi.setValue(false);
+               	   radioSessao.setValue(false);
+               }else if(atual.equals("dispensa")){
+            	   radioPregao.setValue(false);
+                   radioDispensa.setValue(true);
+                   radioInexi.setValue(false);
+               	   radioSessao.setValue(false);
+               }else if(atual.equals("inexigibilidade")){
+            	   radioPregao.setValue(false);
+                   radioDispensa.setValue(false);
+                   radioInexi.setValue(true);
+               	   radioSessao.setValue(false);
+               }else if(atual.equals("sessao")){
+            	   radioPregao.setValue(false);
+                   radioDispensa.setValue(false);
+                   radioInexi.setValue(false);
+               	   radioSessao.setValue(true);
+               }else{
+            	   	 radioPregao.setValue(false);
+                	 radioDispensa.setValue(false);
+                	 radioInexi.setValue(false);
+                	 radioSessao.setValue(false);
+               }
+               fp.add(radioPregao);
+               fp.add(radioDispensa);
+               sp.add(radioInexi);
+               sp.add(radioSessao);
+             
+			return vp;
+			}
+            
+            
             private HorizontalPanel createRadioGroup(Barrinha barrinha, final Pedido pedido, final String handler, String group,  String atual, final String dado, String valorVerdade, String valorFalso) {
             	return createRadioGroup(barrinha, pedido, true, handler, group, atual, dado, valorVerdade, valorFalso);
             }
@@ -2478,6 +2254,7 @@ public class Sistema_PRA implements EntryPoint {
              
 				return vp;
 			}
+			
 			private HorizontalPanel criaDatePicker(Barrinha barrinha, String dataAtual, final String parameters) {
 				return criaDatePicker(barrinha, dataAtual, true, parameters);
 			}
@@ -2665,7 +2442,38 @@ public class Sistema_PRA implements EntryPoint {
          }
   }   
     
+  private void AlteraEstadoTipo(String parameter, String numPedido, String handler, final SimplePanel uploading){
 
+	  	 RequestBuilder builder6 = new RequestBuilder(RequestBuilder.POST, handler+"?numero="+numPedido+"&"+parameter);
+	       try {
+	           Request request = builder6.sendRequest(null, new RequestCallback() {
+	            
+	 			public void onError(Request request, Throwable exception) {
+	             }
+
+	             public void onResponseReceived(Request request, Response response) {
+	               if (200 == response.getStatusCode()) {
+	            	   uploading.clear();
+	               	uploading.add(new HTML("<img src=\"images/ok.gif\" width=\"20px\"></a>"));
+	               	Timer timer = new Timer() {
+
+							@Override
+							public void run() {
+								uploading.removeFromParent();
+
+							}
+						};
+						timer.schedule(2000);
+	               } else {
+	             	  
+	               }
+	             }
+
+	           });
+	         } catch (RequestException e) {
+	         }
+	  }   
+	    
 
     
     
