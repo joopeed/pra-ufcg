@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LabelBase;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.StackPanel;
@@ -49,6 +50,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
+
 
 
 
@@ -783,7 +785,11 @@ public class Sistema_PRA implements EntryPoint {
 	                if (200 == response.getStatusCode()) {
 	                Pedido todo = JsonUtils.safeEval(response.getText()).cast();
 	                	// Window.alert("You selected: Pedido " + selected.getNumero());
-	       	         Widget barra = barrinhaSemNomes(todo);
+	       	         Barrinha barra = new Barrinha(todo.getNumero());
+	       	         if(todo.getTipoDePedido().equalsIgnoreCase("dispensa") || todo.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
+	              		 barra.setMontador(new MontadorReduzidoSemNomes());
+	            	 else
+	            		 barra.setMontador(new MontadorPadraoSemNomes());
 	       	         // Create the dialog box
 	       	         final ExtendedDialogBox dialogBox = new ExtendedDialogBox(true);
 	       	         dialogBox.center();
@@ -1119,49 +1125,74 @@ public class Sistema_PRA implements EntryPoint {
 
 		VerticalPanel vPanel = new VerticalPanel();
 			final TextBox numero = new TextBox();
-            numero.setWidth("250");
+            numero.setWidth("350");
+            HTML space = new HTML();
+            space.setWidth("50");
 			HorizontalPanel hnumero = new HorizontalPanel();
             hnumero.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+            hnumero.add(space);
             hnumero.add(new HTML("<p>Número do processo:*</p>"));
 			hnumero.add(numero);
+			HorizontalPanel htipo = new HorizontalPanel();
+			htipo.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			htipo.add(space);
+			htipo.add(new HTML("<p>Tipo do pedido:*</p>"));
+			final HorizontalPanel tipo = new HorizontalPanel();
+			htipo.add(tipo);
+			final RadioButton radioPregao = new RadioButton("tipo_pedido", "Pregão Eletrônico");
+			final RadioButton radioDispensa = new RadioButton("tipo_pedido", "Dispensa");
+			final RadioButton radioInexi = new RadioButton("tipo_pedido", "Inexigibilidade");
+			final RadioButton radioSessao = new RadioButton("tipo_pedido", "Sessão Pública");
+			tipo.add(radioPregao);
+			tipo.add(radioDispensa);
+			tipo.add(radioInexi);
+			tipo.add(radioSessao);
+			tipo.setWidth("350");
 			final TextBox demandante = new TextBox();
-            demandante.setWidth("250");
+            demandante.setWidth("350");
 			HorizontalPanel hdemandante = new HorizontalPanel();
 			hdemandante.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			hdemandante.add(space);
 			hdemandante.add(new HTML("<p>Nome do demandante:* </p>"));
 			hdemandante.add(demandante);
 			final DateBox data_entrada = new DateBox();
-            data_entrada.setWidth("250");
+            data_entrada.setWidth("350");
 			HorizontalPanel hdata_entrada = new HorizontalPanel();
             hdata_entrada.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+            hdata_entrada.add(space);
             hdata_entrada.add(new HTML("<p>Data de entrada:* </p>"));
 			hdata_entrada.add(data_entrada);
 			final TextArea descricao = new TextArea();
-            descricao.setWidth("250");
+            descricao.setWidth("350");
 			HorizontalPanel hdescricao = new HorizontalPanel();
             hdescricao.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+            hdescricao.add(space);
             hdescricao.add(new HTML("<p>Descrição:* </p>"));
 			hdescricao.add(descricao);
 			final TextBox email_demandante = new TextBox();
-            email_demandante.setWidth("250");
+            email_demandante.setWidth("350");
 			HorizontalPanel hemail = new HorizontalPanel();
             hemail.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+            hemail.add(space);
             hemail.add(new HTML("<p>Email do demandante:* </p>"));
 			hemail.add(email_demandante);
 			vPanel.add(new HTML("Cadastro de Pedidos<br>"));
 			HorizontalPanel hObrigatorio = new HorizontalPanel();
+			hObrigatorio.add(space);
 			hObrigatorio.add(new HTML("* = campos obrigatórios"));
             vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 			vPanel.add(hnumero);
+			vPanel.add(htipo);
 			vPanel.add(hdemandante);
 			vPanel.add(hemail);
-				vPanel.add(hdata_entrada);
-				vPanel.add(hdescricao);
-				vPanel.add(hObrigatorio);
-				vPanel.add(new Button("Enviar", new ClickHandler() {
+			vPanel.add(hdata_entrada);
+			vPanel.add(hdescricao);
+			vPanel.add(hObrigatorio);
+			vPanel.add(new Button("Enviar", new ClickHandler() {
        		        public void onClick(ClickEvent event) {
 
-       		        	if(numero.getText().equals("") || demandante.getText().equals("") || descricao.getText().equals("") || email_demandante.getText().equals("") || data_entrada.getValue() == null){
+       		        	if(numero.getText().equals("") || demandante.getText().equals("") || descricao.getText().equals("") || email_demandante.getText().equals("") || data_entrada.getValue() == null || 
+       		        			!(radioPregao.getValue() || radioDispensa.getValue() || radioInexi.getValue() || radioSessao.getValue())){
            		        	final ExtendedDialogBox aviso = new ExtendedDialogBox(true);
            		        	aviso.center();
            		        	aviso.add(new Label("Todos os campos obrigatorios devem ser preenchidos"));
@@ -1170,7 +1201,12 @@ public class Sistema_PRA implements EntryPoint {
            		            aviso.show();	
        		        	}else{
        		        	DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+       		        	String tipo = "pregao";       		        	
+       		        	if(radioDispensa.getValue()) tipo = "dispensa";
+       		        	else if(radioInexi.getValue()) tipo = "inexigibilidade";
+       		        	else if(radioSessao.getValue()) tipo = "sessao";
        		        	String parameters = "numero="+numero.getText()+
+       		        			"&tipo_pedido="+tipo+
        		        			"&demandante="+demandante.getText()+
        		        			"&data_entrada="+format.format(data_entrada.getValue())+
        		        			"&descricao="+descricao.getText()+
@@ -1194,477 +1230,6 @@ public class Sistema_PRA implements EntryPoint {
 	
 
 
-
-
-    private HTML barrinhaSemNomes(Pedido p) {
-                     
-            String barraProgresso = "<table border='0' bordecolor='#000000' " +
-                                                             "style='background-color:#999999' width='100%' " +
-                                                             "cellpadding='10' cellspacing='1'><tr>";
-           
-            /*//LEGALIDADE
-            if (p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Legalidade parecer: em andamento'>1</td>";
-            }
-            else if (p.getLegalidade().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Legalidade parecer: legal<br>Data de envio a PJ: " + p.getLegalidade().getDataEnvio() + "<br>Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>1</td>";
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#FF0000' title='Legalidade parecer: ilegal<br>Data de envio a PJ: " +
-                    p.getLegalidade().getDataEnvio() + "<br>Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>1</td>";
-            }
-           
-            //AUTORIZACAO
-            if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Autorizacao parecer: indefinido'>2</td>";
-            }
-            else if (p.getAutorizacao().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Autorizacao parecer: em andamento'>2</td>";
-            }
-            else if (p.getAutorizacao().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Autorizacao parecer: autorizado'>2</td>";
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#FF0000' title='Autorizacao parecer: nao autorizado'>2</td>";
-            }
-           
-            //CORRETUDE
-            
-     
-            if (p.getCorretude().getDescricao().equals("true") && p.getCorretude().getQuantitativo().equals("true") && p.getCorretude().getCotacao().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Corretude: completo<br>Data da definicao: " +
-                    p.getCorretude().getData() + "'>3</td>";
-            }
-            else if ((p.getCorretude().getDescricao().equals("false") == false && p.getCorretude().getQuantitativo().equals("false") == false && p.getCorretude().getCotacao().equals("false") == false)) {
-                    if (p.getAutorizacao().getParecer().equals("null"))
-                            barraProgresso += "<td style='background-color:#999999' title='Corretude: indefinida'>3</td>";
-                    else
-                            barraProgresso += "<td style='background-color:#FFFF33' title='Corretude: em andamento'>3</td>";
-            }
-            else {
-            		String statuss = "";
-                    if (p.getCorretude().getDescricao().equals("true"))
-                    	 statuss += "Corretude da descricao: correto <br>";
-                    else
-                    	statuss += "Corretude da descricao: incorreto<br>";
-     
-                    if (p.getCorretude().getQuantitativo().equals("true"))
-                    	statuss += "Corretude do quantitativo: correto<br>";
-                    else
-                    	statuss +="Corretude do quantitativo: incorreto<br>";
-     
-                    if (p.getCorretude().getCotacao().equals("true"))
-                    	statuss += "Corretude da cotacao: correto<br>";
-                    else
-                    	statuss += "Corretude da cotacao: incorreto<br>";
-                    barraProgresso += "<td style='background-color:#FF0000' title='"+statuss+"'>3</td>";
-                 
-            }
-           
-            //MINUTA
-            
-            
-            int iInicio = p.getMinuta().getDataInicio().length - 1;
-            int iEnvio = p.getMinuta().getDataEnvio().length - 1;
-            int iRetorno = p.getMinuta().getDataRetorno().length - 1;
-            int iParecerMinuta = p.getMinuta().getParecer().length - 1;
-            
-            //gambiarra {
-            String dataMinutaInicio = "";
-            if (p.getMinuta().getDataInicio().length > 0) dataMinutaInicio = p.getMinuta().getDataInicio()[iInicio];
-            String dataMinutaEnvio = "";
-            if (p.getMinuta().getDataEnvio().length > 0) dataMinutaEnvio = p.getMinuta().getDataEnvio()[iEnvio];
-            String dataMinutaRetorno = "";
-            if (p.getMinuta().getDataRetorno().length > 0) dataMinutaRetorno = p.getMinuta().getDataRetorno()[iRetorno];
-            //} gambiarra
-            
-            if (p.getMinuta().getParecer().length > 0) {
-	            if (p.getMinuta().getParecer()[iParecerMinuta].equals("null") && p.getCorretude().getCotacao().equals("null")) {
-	                    barraProgresso += "<td style='background-color:#999999' title='Minuta parecer: indefinido'>4</td>";
-	            }
-	            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-	                    barraProgresso += "<td style='background-color:#FFFF33' title='Minuta parecer: em andamento'>4</td>";
-	            }
-	            else if (p.getMinuta().getParecer()[iParecerMinuta].equals("true")) {
-	                    barraProgresso += "<td style='background-color:#33CC33' title='Minuta parecer: de acordo<br>Data do inicio da elaboracao: " +
-	                    dataMinutaInicio + "<br>Data de envio a PJ: " + dataMinutaEnvio + "<br>Data de retorno: " +
-	                    dataMinutaRetorno + "'>4</td>";
-	            }
-	            else {
-	                    barraProgresso += "<td style='background-color:#FF0000' title='Minuta parecer: nao de acordo<br>Data do inicio da elaboracao" +
-	                    ": " + dataMinutaInicio + "<br>Data de envio a PJ: " + dataMinutaEnvio +
-	                    "<br>Data de retorno: " + dataMinutaRetorno + "'>4</td>";
-	            }
-            }
-            else {
-            	barraProgresso += "<td style='background-color:#999999' title='Minuta parecer: indefinido'>4</td>";
-            }
-           
-            //PREGAO
-            
-            int iParecerPregao = p.getPregao().getParecer().length - 1;
-            int iParecerData = p.getPregao().getData().length - 1;
-            
-            //TODO gambiarra {
-            String dataPregao = "";
-            if (p.getPregao().getData().length > 0) dataPregao = p.getPregao().getData()[iParecerData];
-            //TODO } gambiarra
-     
-            if (p.getPregao().getParecer().length > 0) {
-	            if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-	                    barraProgresso += "<td style='background-color:#999999' title='Pregao parecer: indefinido'>5</td>";
-	            }
-	            else if (p.getPregao().getParecer()[iParecerPregao].equals("null")) {
-	                    barraProgresso += "<td style='background-color:#FFFF33' title='Pregao parecer: em andamento'>5</td>";
-	            }
-	            else if (p.getPregao().getParecer()[iParecerPregao].equals("true")) {
-	                    barraProgresso += "<td style='background-color:#33CC33' title='Pregao parecer: realizado<br>Data de realizacao: " +
-	                    dataPregao + "'>5</td>";
-	            }
-	            else {
-	                    barraProgresso += "<td style='background-color:#FF0000' title='Pregao parecer: nao realizado'>5</td>";
-	            }
-            }
-            else {
-            	barraProgresso += "<td style='background-color:#999999' title='Minuta parecer: indefinido'>4</td>";
-            }
-           
-            //ADJUDICACAO
-            if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
-                    barraProgresso += "<td style='background-color:#999999' title='Adjudicacao: indefinida'>6</td>";
-            }
-            else if (p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Adjudicacao: em andamento'>6</td>";
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Adjudicao: concluida<br>Data: " +
-                    p.getAdjudicacao().getData() + "'>6</td>";
-            }
-     	
-            //HOMOLOGACAO
-            if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Homologacao: indefinida'>7</td>";
-            }
-            else if (p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Homologacao: em andamento'>7</td>";
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Homologacao: concluida<br>Data: " +
-                    p.getHomologacao().getData() + "'>7</td>";
-            }
-     
-            //PUBLICACAO
-            if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Publicacao: indefinida'>8</td>";
-            }
-            else if (p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Publicacao: em andamento'>8</td>";
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Publicacao: concluida<br>Data: " +
-                    p.getPublicacao().getData() + "'>8</td>";
-            }
-            
-          //LIQUIDACAO
-            if (p.getLiquidacao().getData().equals("") && p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Liquidacao: indefinida'>9</td>";
-            }
-            else if (p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Liquidacao: em andamento'>9</td>";
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Liquidacao: concluida<br>Data: " +
-                    p.getHomologacao().getData() + "'>9</td>";
-            }
-     
-            
-          //PAGAMENTO
-            if (p.getPagamento().getData().equals("") && p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999' title='Pagamento: indefinida'>10</td>";
-            }
-            else if (p.getPagamento().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33' title='Pagamento: em andamento'>10</td>";
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33' title='Pagamento: concluido<br>Data: " +
-                    p.getHomologacao().getData() + "'>10</td>";
-            }
-     
-            */
-            
-
-            ArrayList<Integer> estados = new ArrayList<Integer>();
-            
-            //LEGALIDADE
-            if (p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Legalidade parecer: em andamento'>Legalidade</a></td>";
-                    estados.add(1);
-            }
-            else if (p.getLegalidade().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Legalidade parecer: legal. Data de envio a PJ: " + p.getLegalidade().getDataEnvio() + " Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>Legalidade</a></td>";
-                    estados.add(2);
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Legalidade parecer: ilegal. Data de envio a PJ: " +
-                    p.getLegalidade().getDataEnvio() + " Data de retorno da PJ: " + p.getLegalidade().getDataRetorno() + "'>Legalidade</a></td>";
-                    estados.add(3);
-            }
-           
-            //AUTORIZACAO
-            if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Autorizacao parecer: indefinido'>Autorização</a></td>";
-                    estados.add(0);
-            }
-            else if (p.getAutorizacao().getParecer().equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Autorizacao parecer: em andamento'>Autorização</a></td>";
-                    estados.add(1);
-            }
-            else if (p.getAutorizacao().getParecer().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Autorizacao parecer: autorizado'>Autorização</a></td>";
-                    estados.add(2);
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Autorizacao parecer: nao autorizado'>Autorização</a></td>";
-                    estados.add(3);
-        		   }
-           
-            //CORRETUDE
-            
-     
-            if (p.getCorretude().getDescricao().equals("true") && p.getCorretude().getQuantitativo().equals("true") && p.getCorretude().getCotacao().equals("true")) {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Corretude: completo. Data da definicao: " +
-                    p.getCorretude().getData() + "'>Corretude</a></td>";
-                    estados.add(2);
-            }
-            else if ((p.getCorretude().getDescricao().equals("false") == false && p.getCorretude().getQuantitativo().equals("false") == false && p.getCorretude().getCotacao().equals("false") == false)) {
-                    if (p.getAutorizacao().getParecer().equals("null")) {
-                            barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Corretude: indefinida'>Corretude</a></td>";
-                            estados.add(0);
-                    }else {
-                            barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Corretude: em andamento'>Corretude</a></td>";
-                            estados.add(1);
-                    }
-            }
-            else {
-            		String statuss = "";
-                    if (p.getCorretude().getDescricao().equals("true"))
-                    	 statuss += "Corretude da descricao: correto <br>";
-                    else
-                    	statuss += "Corretude da descricao: incorreto<br>";
-     
-                    if (p.getCorretude().getQuantitativo().equals("true"))
-                    	statuss += "Corretude do quantitativo: correto<br>";
-                    else
-                    	statuss +="Corretude do quantitativo: incorreto<br>";
-     
-                    if (p.getCorretude().getCotacao().equals("true"))
-                    	statuss += "Corretude da cotacao: correto<br>";
-                    else
-                    	statuss += "Corretude da cotacao: incorreto<br>";
-                    barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='"+statuss+"'>Corretude</a></td>";
-                   
-                    if(!(p.getCorretude().getDescricao().equals("null") || p.getCorretude().getQuantitativo().equals("null") || p.getCorretude().getCotacao().equals("null")))
-                    	if((p.getCorretude().getDescricao().equals("false") || p.getCorretude().getQuantitativo().equals("false") || p.getCorretude().getCotacao().equals("false")))
-                    		estados.add(3);
-                    else if(p.getCorretude().getDescricao().equals("null") && p.getCorretude().getQuantitativo().equals("null") && p.getCorretude().getCotacao().equals("null"))
-                    	estados.add(0);
-                    else
-                    	estados.add(1);
-                    
-            }
-           
-            //MINUTA
-            
-            
-            int iInicio = p.getMinuta().getDataInicio().length - 1;
-            int iEnvio = p.getMinuta().getDataEnvio().length - 1;
-            int iRetorno = p.getMinuta().getDataRetorno().length - 1;
-            int iParecerMinuta = p.getMinuta().getParecer().length - 1;
-            
-            //gambiarra {
-            String dataMinutaInicio = "";
-            if (p.getMinuta().getDataInicio().length > 0) dataMinutaInicio = p.getMinuta().getDataInicio()[iInicio];
-            String dataMinutaEnvio = "";
-            if (p.getMinuta().getDataEnvio().length > 0) dataMinutaEnvio = p.getMinuta().getDataEnvio()[iEnvio];
-            String dataMinutaRetorno = "";
-            if (p.getMinuta().getDataRetorno().length > 0) dataMinutaRetorno = p.getMinuta().getDataRetorno()[iRetorno];
-            //} gambiarra
-            
-            if (p.getMinuta().getParecer().length > 0) {
-                if (p.getMinuta().getParecer()[iParecerMinuta].equals("null") && p.getCorretude().getCotacao().equals("null")) {
-                        barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
-                        estados.add(0);
-                }
-                else if (p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-                        barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Minuta parecer: em andamento'>Minuta</a></td>";
-                        estados.add(1);
-                }
-                else if (p.getMinuta().getParecer()[iParecerMinuta].equals("true")) {
-                        barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Minuta parecer: de acordo. Data do inicio da elaboracao: " +
-                        dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio + " Data de retorno: " +
-                        dataMinutaRetorno + "'>Minuta</a></td>";
-                        estados.add(2);
-                }
-                else {
-                        barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Minuta parecer: nao de acordo. Data do inicio da elaboracao" +
-                        ": " + dataMinutaInicio + " Data de envio a PJ: " + dataMinutaEnvio +
-                        " Data de retorno: " + dataMinutaRetorno + "'>Minuta</a></td>";
-                        estados.add(3);
-                }
-            }
-            else {
-            	barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Minuta parecer: indefinido'>Minuta</a></td>";
-            	estados.add(0);
-            }
-           
-            //PREGAO
-            
-            int iParecerPregao = p.getPregao().getParecer().length - 1;
-            int iParecerData = p.getPregao().getData().length - 1;
-            
-            //TODO gambiarra {
-            String dataPregao = "";
-            if (p.getPregao().getData().length > 0) dataPregao = p.getPregao().getData()[iParecerData];
-            //TODO } gambiarra
-     
-            if (p.getPregao().getParecer().length > 0) {
-                if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-                        barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
-                        estados.add(0);
-                }
-                else if (p.getPregao().getParecer()[iParecerPregao].equals("null")) {
-                        barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Pregao parecer: em andamento'>Pregão</a></td>";
-                        estados.add(1);
-                }
-                else if (p.getPregao().getParecer()[iParecerPregao].equals("true")) {
-                        barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Pregao parecer: realizado. Data de realizacao: " +
-                        dataPregao + "'>Pregão</a></td>";
-                        estados.add(2);
-                }
-                else {
-                        barraProgresso += "<td style='background-color:#FF0000'><a id='anchorBarra' title='Pregao parecer: nao realizado'>Pregão</a></td>";
-                        estados.add(3);
-                }
-            }
-            else {
-            	barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Pregao parecer: indefinido'>Pregão</a></td>";
-            	estados.add(0);
-            }
-           
-            //ADJUDICACAO
-            if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
-                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Adjudicacao: indefinida'>Adjudicação</a></td>";
-                    estados.add(0);
-            }
-            else if (p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Adjudicacao: em andamento'>Adjudicação</a></td>";
-                    estados.add(1);
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Adjudicacao: concluida Data: " +
-                    p.getAdjudicacao().getData() + "'>Adjudicação</a></td>";
-                    estados.add(2);
-            }
-     	
-            //HOMOLOGACAO
-            if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Homologacao: indefinida'>Homologação</a></td>";
-                    estados.add(0);
-            }
-            else if (p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Homologacao: em andamento'>Homologação</a></td>";
-                    estados.add(1);
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Homologacao: concluida Data: " +
-                    p.getHomologacao().getData() + "'>Homologação</a></td>";
-                    estados.add(2);
-            }
-     
-            //PUBLICACAO
-            if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Publicacao: indefinida'>Publicação</a></td>";
-                    estados.add(0);
-            }
-            else if (p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Publicacao: em andamento'>Publicação</a></td>";
-                    estados.add(1);
-            }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Publicacao: concluida Data: " +
-                    p.getPublicacao().getData() + "'>Publicação</a></td>";
-                    estados.add(2);
-            }
-            
-          //LIQUIDACAO
-            if (p.getLiquidacao().getData().equals("") && p.getPublicacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Empenho: indefinido'>Empenho</a></td>";
-                    estados.add(0);
-            }
-            else if (p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Empenho: em andamento'>Empenho</a></td>";
-                    estados.add(1);
-                    }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Empenho: concluido Data: " +
-                    p.getHomologacao().getData() + "'>Empenho</a></td>";
-                    estados.add(2);
-                    }
-     
-            
-          //PAGAMENTO
-            if (p.getPagamento().getData().equals("") && p.getLiquidacao().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#999999'><a id='anchorBarra' title='Pagamento: indefinida'>Pagamento</a></td>";
-                    estados.add(0);
-                    }
-            else if (p.getPagamento().getData().equals("")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a id='anchorBarra' title='Pagamento: em andamento'>Pagamento</a></td>";
-                    estados.add(1);
-                    }
-            else {
-                    barraProgresso += "<td style='background-color:#33CC33'><a id='anchorBarra' title='Pagamento: concluido Data: " +
-                    p.getHomologacao().getData() + "'>Pagamento</a></td>";
-                    estados.add(2);
-                    }
-     
-            
-            barraProgresso += "</tr></table><br>";
-           
-
-            String[] titles = {
-            		"Legalidade", "Autorização", "Corretude", "Minuta", "Pregão", 
-            		"Adjudicação", "Homologação", "Publicação", "Empenho", "Pagamento"	
-            };
-            String[] links = {
-            		"legalidade", "autorizacao", "corretude", "minuta", "pregao", 
-            		"adjudicacao", "homologacao", "publicacao", "liquidacao", "pagamento"	
-            };
-            
-            barraProgresso =  "<div class=\"progress_2\">";
-            for(int i = 0; i < estados.size();i++){
-            	String label = "&#10003;";
-            	String classe = "circle done";
-    			if(estados.get(i) == 0 || estados.get(i) == 1) {
-            		label = Integer.toString(i+1);
-            		if(estados.get(i) == 1) classe = "circle active";
-            		else classe = "circle";
-            	}
-            	else if(estados.get(i) == 3){ 
-            		classe = "circle fail";
-            		label = "x";
-            		}
-            	if(i!=0) barraProgresso += "  <span class=\"bar_2\"></span>";
-            	barraProgresso += "      <a\" title=\""+titles[i]+"\">    <div class=\""+classe+"\">" + 
-            			"    <span class=\"label\">"+label+"</span>" + 
-                		"  </div></a>";
-            	
-            	
-            }
-            
-            barraProgresso +="</div>";
-            
-            return new HTML(barraProgresso);
-            }
 
 
     private void exibeTelaCompleta(Pedido selected) {
@@ -1740,11 +1305,12 @@ public class Sistema_PRA implements EntryPoint {
             	 final Pedido pedido = JsonUtils.safeEval(response.getText()).cast();
             	 VerticalPanel vPanel = new VerticalPanel();
             	 SimplePanel folha = new SimplePanel();
-            	 final Barrinha barrinha;
+            	 final Barrinha barrinha = new Barrinha(pedido.getNumero());;
             	 if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
-              		 barrinha = new BarrinhaReduzida(pedido.getNumero());
+              		 barrinha.setMontador(new MontadorReduzido());
             	 else
-            		 barrinha = new Barrinha(pedido.getNumero());
+            		 barrinha.setMontador(new MontadorPadrao());
+            	 ArrayList<SimplePanel> aRemover = new ArrayList<SimplePanel>();
             	 folha.setStyleName("folha");
             	 VerticalPanel pedacos = new VerticalPanel();
             	 pedacos.setSpacing(10);
@@ -1770,7 +1336,7 @@ public class Sistema_PRA implements EntryPoint {
 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getData(), "setpedido?numero="+pedido.getNumero()+"&data_entrada="), "Data de entrada: ");
 		         subfolha.add(new Label(""), "");
-		         subfolha.add(createRadioGroupTipo(barrinha, pedido, true,  pedido.getTipoDePedido()), "Tipo de Pedido: ");
+		         subfolha.addToBottom(createRadioGroupTipo(aRemover, barrinha, pedido, true,  pedido.getTipoDePedido()), "Tipo de Pedido: ");
 		         
 
 		         /*
@@ -1810,6 +1376,7 @@ public class Sistema_PRA implements EntryPoint {
               	 if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
               		 subfolha.setVisible(false);
                  pedacos.add(subfolha);
+                 aRemover.add(subfolha);
 
 		         subfolha.add(autorizacao, "Parecer de Autorização");
 
@@ -1836,6 +1403,7 @@ public class Sistema_PRA implements EntryPoint {
 		         if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
               		 subfolha.setVisible(false);
               	 pedacos.add(subfolha);
+              	 aRemover.add(subfolha);
               	 subfolha.add(minuta, "Parecer da Minuta: ");
 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataInicio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="), "Data de inicio de elaboração da Minuta: ");
@@ -1968,6 +1536,7 @@ public class Sistema_PRA implements EntryPoint {
 		         if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
               		 subfolha.setVisible(false);	
               	 pedacos.add(subfolha);
+              	aRemover.add(subfolha);
 
               	 
               	 subfolha.add(criaDatePicker(barrinha, pedido.getAdjudicacao().getData(), "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Adjudicação: ");
@@ -1976,6 +1545,7 @@ public class Sistema_PRA implements EntryPoint {
               	if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
              		 subfolha.setVisible(false);
              	 pedacos.add(subfolha);
+             	aRemover.add(subfolha);
 
              	 
              	 subfolha.add(criaDatePicker(barrinha, pedido.getHomologacao().getData(), "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Homologação: ");
@@ -2097,16 +1667,16 @@ public class Sistema_PRA implements EntryPoint {
             }
             
             
-            private HorizontalPanel createRadioGroupTipo(final Barrinha barrinha, final Pedido pedido, boolean enabled, String atual) {
+            private HorizontalPanel createRadioGroupTipo(final ArrayList<SimplePanel> aRemover, final Barrinha barrinha, final Pedido pedido, boolean enabled, String atual) {
 			   final HorizontalPanel vp = new HorizontalPanel();
-			   VerticalPanel vvp = new VerticalPanel();
-			   HorizontalPanel fp = new HorizontalPanel();
-			   HorizontalPanel sp = new HorizontalPanel();
-			   fp.setSpacing(20);
-			   sp.setSpacing(20);
-			   vp.add(vvp);
-			   vvp.add(fp);
-			   vvp.add(sp);
+			   //VerticalPanel vvp = new VerticalPanel();
+			   //HorizontalPanel fp = new HorizontalPanel();
+			   //HorizontalPanel sp = new HorizontalPanel();
+			   //fp.setSpacing(20);
+			   //sp.setSpacing(20);
+			   //vp.add(vvp);
+			   //vvp.add(fp);
+			   //vvp.add(sp);
 			   final SimplePanel uploading = new SimplePanel();
 			   uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 			   
@@ -2119,9 +1689,11 @@ public class Sistema_PRA implements EntryPoint {
                		                public void onClick(ClickEvent event) {
                		                	vp.add(uploading);
                		                	AlteraEstadoTipo("tipo_pedido=pregao", pedido.getNumero(), "setpedido", uploading);
-               		                	
-               		                	
-               		                	
+               		                	for(SimplePanel a: aRemover) {
+               		                		a.setVisible(true);
+               		                	}
+               		                barrinha.setMontador(new MontadorPadrao());
+               		                barrinha.atualizar();
                	                }
                	            });
                
@@ -2134,9 +1706,11 @@ public class Sistema_PRA implements EntryPoint {
                		                public void onClick(ClickEvent event) {
                		                	vp.add(uploading);
                		                	AlteraEstadoTipo("tipo_pedido=dispensa", pedido.getNumero(), "setpedido", uploading);
-               		                	
-               		                	
-               		                	
+               		                	for(SimplePanel a: aRemover) {
+               		                		a.setVisible(false);
+               		                	}
+               		                	barrinha.setMontador(new MontadorReduzido());
+               		                	barrinha.atualizar();
                	                }
                	            });
                
@@ -2149,9 +1723,11 @@ public class Sistema_PRA implements EntryPoint {
                		                public void onClick(ClickEvent event) {
                		                	vp.add(uploading);
                		                	AlteraEstadoTipo("tipo_pedido=inexigibilidade", pedido.getNumero(), "setpedido", uploading);
-               		                	
-               		                	
-               		                	
+               		                	for(SimplePanel a: aRemover) {
+               		                		a.setVisible(false);
+               		                	}
+               		                	barrinha.setMontador(new MontadorReduzido());
+               		                	barrinha.atualizar();
                	                }
                	            });
                
@@ -2164,9 +1740,11 @@ public class Sistema_PRA implements EntryPoint {
                		                public void onClick(ClickEvent event) {
                		                	vp.add(uploading);
                		                	AlteraEstadoTipo("tipo_pedido=sessao", pedido.getNumero(), "setpedido", uploading);
-               		                	
-               		                	
-               		                	
+               		                	for(SimplePanel a: aRemover) {
+               		                		a.setVisible(true);
+               		                	}
+               		                	barrinha.setMontador(new MontadorPadrao());
+               		                	barrinha.atualizar();
                	                }
                	            });
                
@@ -2197,10 +1775,11 @@ public class Sistema_PRA implements EntryPoint {
                 	 radioInexi.setValue(false);
                 	 radioSessao.setValue(false);
                }
-               fp.add(radioPregao);
-               fp.add(radioDispensa);
-               sp.add(radioInexi);
-               sp.add(radioSessao);
+               vp.setSpacing(20);
+               vp.add(radioPregao);
+               vp.add(radioDispensa);
+               vp.add(radioInexi);
+               vp.add(radioSessao);
              
 			return vp;
 			}

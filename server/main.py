@@ -318,14 +318,14 @@ class CadastraPedido(webapp2.RequestHandler):
 class SetPedido(webapp2.RequestHandler):
     def post(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
-        if self.request.get("numero") and self.request.get("demandante") and self.request.get("data_entrada") and self.request.get("descricao") and self.request.get("email_demandante"):
+        if self.request.get("numero") and self.request.get("demandante") and self.request.get("data_entrada") and self.request.get("descricao") and self.request.get("tipo_pedido") and self.request.get("email_demandante"):
                 novo = Pedido(key_name=self.request.get("numero"), 
                               demandante=self.request.get("demandante"), 
                               data_entrada=datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S"), 
                               descricao=self.request.get("descricao"), 
                               numero=self.request.get("numero"), 
-                              email_demandante=self.request.get("email_demandante"))
-                              #tipo_pedido=self.request.get("tipo_pedido"))
+                              email_demandante=self.request.get("email_demandante"),
+                              tipo_pedido=self.request.get("tipo_pedido"))
                 novo.historico_info.append("Pedido criado no sistema")
                 novo.historico_data.append(datetime.datetime.now())
                 novo.historico_user.append(users.get_current_user().email())

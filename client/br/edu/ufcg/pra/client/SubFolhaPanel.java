@@ -101,4 +101,19 @@ public class SubFolhaPanel extends SimplePanel {
 		
 		
 	}
+	
+	public void addToBottom(Widget w, String title) {
+		HorizontalPanel campoEtexto = new HorizontalPanel();
+		campoEtexto.setSpacing(10);
+		Label ti = new Label(title);
+		ti.setWidth("140px");
+		ti.setHorizontalAlignment( HasHorizontalAlignment.ALIGN_RIGHT);
+		campoEtexto.add(ti);
+		w.setWidth("200px");
+		w.setHeight("25px");
+		campoEtexto.add(w);
+		add(campoEtexto);
+		
+		
+	}
 }
