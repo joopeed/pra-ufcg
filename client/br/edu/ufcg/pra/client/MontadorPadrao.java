@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import java.util.ArrayList;
 
@@ -234,16 +234,16 @@ public class MontadorPadrao implements MontadorDeBarrinha {
         
       //PAGAMENTO
         if (p.getPagamento().getData().equals("") && p.getLiquidacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#bottom' id='anchorBarra' title='Pagamento: indefinida'>Pagamento</a></td>";
+                barraProgresso += "<td style='background-color:#999999'><a href='#bottom' id='anchorBarra' title='Recebimento: indefinida'>Recebimento</a></td>";
                 estados.add(0);
                 }
         else if (p.getPagamento().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#bottom' id='anchorBarra' title='Pagamento: em andamento'>Pagamento</a></td>";
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#bottom' id='anchorBarra' title='Recebimento: em andamento'>Recebimento</a></td>";
                 estados.add(1);
                 }
         else {
-                barraProgresso += "<td style='background-color:#33CC33'><a href='#bottom' id='anchorBarra' title='Pagamento: concluido Data: " +
-                p.getHomologacao().getData() + "'>Pagamento</a></td>";
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#bottom' id='anchorBarra' title='Recebimento: concluido Data: " +
+                p.getHomologacao().getData() + "'>Recebimento</a></td>";
                 estados.add(2);
                 }
  
@@ -252,11 +252,11 @@ public class MontadorPadrao implements MontadorDeBarrinha {
        
         String[] titles = {
         		"Legalidade", "Autorização", "Corretude", "Minuta", "Pregão", 
-        		"Adjudicação", "Homologação", "Publicação", "Empenho", "Pagamento"	
+        		"Adjudicação", "Homologação", "Publicação", "Empenho", "Recebimento"	
         };
         String[] links = {
         		"legalidade", "autorizacao", "corretude", "minuta", "pregao", 
-        		"adjudicacao", "homologacao", "publicacao", "empenho", "pagamento"	
+        		"adjudicacao", "homologacao", "publicacao", "empenho", "recebimento"	
         };
         
         barraProgresso =  "<div class=\"progress\">";

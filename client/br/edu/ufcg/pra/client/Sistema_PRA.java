@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 
 
@@ -1472,7 +1472,11 @@ public class Sistema_PRA implements EntryPoint {
 					}
 				});*/
 		         subfolha.add(t, "Número do Pregão: ");
-		         subfolha.add(new HTML(), "");
+		         if(i!=indicePregao+1){ 
+			         subfolha.add(new HTML(), "");
+		         } else{
+		         subfolha.add(new HTML("<a name ='"+"adjudicacao"+"'></a>"), "");
+		         }
 		         final HorizontalPanel definicao = criaDatePicker(barrinha, pedido.getPregao().getData(i), enabled,  "PregaoHandler?pedido="+pedido.getNumero()+"&data=");
 		         final HorizontalPanel abertura = criaDatePicker(barrinha, pedido.getPregao().getLicitacaoData(i),  enabled, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data=");
 		         subfolha.add(definicao, "Data de definição do Pregão: ");
