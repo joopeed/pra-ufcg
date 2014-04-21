@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import java.util.ArrayList;
 
@@ -28,26 +28,26 @@ public class SubFolhaPanel extends SimplePanel {
 	
 	public SubFolhaPanel(String title){
 		linhas = new VerticalPanel();
-		if (title.equals("Dados básicos")) {
-			linhas.add(new HTML("<a name ='"+"legalidade"+"'></a>"));
-		}else if (title.equals("Legalidade")) {
-			linhas.add(new HTML("<a name ='"+"autorizacao"+"'></a>"));
+		/*if (title.equals("Dados básicos")) {
+			linhas.add(new HTML("<a class='anc' name ='"+"legalidade"+"'></a>"));
+		}else */if (title.equals("Legalidade")) {
+			linhas.add(new HTML("<a class='anc' name ='"+"legalidade"+"'></a>"));
 		} else if (title.equals("Autorização")) {
-			linhas.add(new HTML("<a name ='"+"corretude"+"'></a>"));
+			linhas.add(new HTML("<a class='anc2' name ='"+"autorizacao"+"'></a>"));
 		} else if (title.equals("Corretude")) {
-			linhas.add(new HTML("<a name ='"+"minuta"+"'></a>"));
+			linhas.add(new HTML("<a class='anc3' name ='"+"corretude"+"'></a>"));
 		} else if (title.equals("Minuta do Edital")) {
-			linhas.add(new HTML("<a name ='"+"pregao"+"'></a>"));
-		} else if (title.equals("Prego")) {
-			linhas.add(new HTML("<a name ='"+"adjudicacao"+"'></a>"));
+			linhas.add(new HTML("<a class='anc4' name ='"+"minuta"+"'></a>"));
 		} else if (title.equals("Adjudicação")) {
-			linhas.add(new HTML("<a name ='"+"homologacao"+"'></a>"));
+			linhas.add(new HTML("<a class='anc6' name ='"+"adjudicacao"+"'></a>"));
 		} else if (title.equals("Homologação")) {
-			linhas.add(new HTML("<a name ='"+"publicacao"+"'></a>"));
+			linhas.add(new HTML("<a class='anc7' name ='"+"homologacao"+"'></a>"));
 		} else if (title.equals("Publicação")) {
-			linhas.add(new HTML("<a name ='"+"empenho"+"'></a>"));
-		} else {
-			linhas.add(new HTML("<a name ='"+"bottom"+"'></a>"));
+			linhas.add(new HTML("<a class='anc8' name ='"+"publicacao"+"'></a>"));
+		} else if (title.equals("Empenho")){
+			linhas.add(new HTML("<a class='anc9' name = '"+"empenho"+"'></a>"));
+		} else if (title.equals("Recebimento")){
+			linhas.add(new HTML("<a class='anc10' name ='"+"recebimento"+"'></a>"));
 		}
 		grid = new Grid();
 		linhas.add(new HTML("<h2>"+title+"</h2>"));

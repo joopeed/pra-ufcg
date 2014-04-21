@@ -1475,7 +1475,7 @@ public class Sistema_PRA implements EntryPoint {
 		         if(i!=indicePregao+1){ 
 			         subfolha.add(new HTML(), "");
 		         } else{
-		         subfolha.add(new HTML("<a name ='"+"adjudicacao"+"'></a>"), "");
+		         subfolha.add(new HTML("<a class='anc5' name ='"+"pregao"+"'></a>"), "");
 		         }
 		         final HorizontalPanel definicao = criaDatePicker(barrinha, pedido.getPregao().getData(i), enabled,  "PregaoHandler?pedido="+pedido.getNumero()+"&data=");
 		         final HorizontalPanel abertura = criaDatePicker(barrinha, pedido.getPregao().getLicitacaoData(i),  enabled, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data=");
