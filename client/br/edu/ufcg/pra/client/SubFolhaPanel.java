@@ -104,6 +104,7 @@ public class SubFolhaPanel extends SimplePanel {
 	
 	public void addToBottom(Widget w, String title) {
 		HorizontalPanel campoEtexto = new HorizontalPanel();
+		campoEtexto.setStylePrimaryName("tipoPedido");
 		campoEtexto.setSpacing(10);
 		Label ti = new Label(title);
 		ti.setWidth("140px");

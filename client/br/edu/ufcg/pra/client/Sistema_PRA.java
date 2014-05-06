@@ -1120,10 +1120,18 @@ public class Sistema_PRA implements EntryPoint {
 	private void cadastraPanel() {
 		
 		RootPanel.get("main_cadastrar").clear();
-
-
-
+   	 	SimplePanel folha = new SimplePanel();
+   	 	folha.setStyleName("folha");
+   	 	VerticalPanel pedacos = new VerticalPanel();
+   	 	pedacos.setSpacing(10);
+   	 	folha.add(pedacos);
+   	 	RootPanel.get("main_bottom_in").clear();
+   	 	RootPanel.get("main_bottom_in").add(folha);
+        SubFolhaPanel subfolha = new SubFolhaPanel("Cadastro de Pedidos");
 		VerticalPanel vPanel = new VerticalPanel();
+		vPanel.setStylePrimaryName("cadastroFolha");
+		subfolha.add(vPanel);
+		pedacos.add(subfolha);
 			final TextBox numero = new TextBox();
             numero.setWidth("350");
             HTML space = new HTML();
@@ -1176,7 +1184,7 @@ public class Sistema_PRA implements EntryPoint {
             hemail.add(space);
             hemail.add(new HTML("<p>Email do demandante:* </p>"));
 			hemail.add(email_demandante);
-			vPanel.add(new HTML("Cadastro de Pedidos<br>"));
+			//vPanel.add(new HTML("Cadastro de Pedidos<br>"));
 			HorizontalPanel hObrigatorio = new HorizontalPanel();
 			hObrigatorio.add(space);
 			hObrigatorio.add(new HTML("* = campos obrigatórios"));
@@ -1215,8 +1223,8 @@ public class Sistema_PRA implements EntryPoint {
 
        		        	
 				RootPanel.get("main_bottom").clear();
-				RootPanel.get("main_bottom_in").clear();
-				RootPanel.get("main_bottom").add(vPanel);
+				/*RootPanel.get("main_bottom_in").clear();
+				RootPanel.get("main_bottom").add(vPanel);*/
 
 
 
@@ -1358,18 +1366,18 @@ public class Sistema_PRA implements EntryPoint {
                lb.setSelectedIndex(pedido.getLegalidade().getParecer().equals("false")?1:0);
               	*/
               HorizontalPanel legalidade = createRadioGroup(barrinha, pedido, "LegalidadeHandler", "LegalidadeHandler", pedido.getLegalidade().getParecer(), "parecer", "Legal", "Ilegal");
-              HorizontalPanel autorizacao = createRadioGroup(barrinha, pedido, "AutorizacaoHandler",  "AutorizacaoHandler",pedido.getAutorizacao().getParecer(), "parecer", "Legal", "Ilegal");
+              HorizontalPanel autorizacao = createRadioGroup(barrinha, pedido, "AutorizacaoHandler",  "AutorizacaoHandler",pedido.getAutorizacao().getParecer(), "parecer", "Sim", "Não");
               HorizontalPanel corretudeDescricao = createRadioGroup(barrinha, pedido, "CorretudeHandler", "CorretudeDescHandler",pedido.getCorretude().getDescricao(), "descricao", "Correta", "Incorreta");
               HorizontalPanel corretudeQuantitativo = createRadioGroup(barrinha, pedido, "CorretudeHandler", "CorretudeQuantHandler",pedido.getCorretude().getQuantitativo(), "quantitativo", "Correta", "Incorreta");
               HorizontalPanel corretudeCotacao = createRadioGroup(barrinha, pedido, "CorretudeHandler", "CorretudeCotHandler",pedido.getCorretude().getCotacao(), "cotacao", "Correta", "Incorreta");
 
               subfolha = new SubFolhaPanel("Legalidade");
 		      pedacos.add(subfolha);
-              subfolha.add(legalidade, "Parecer de Legalidade: ");
+              subfolha.add(legalidade, "Parecer: ");
               subfolha.add(new Label(), "");
-              subfolha.add(criaDatePicker(barrinha, pedido.getLegalidade().getDataEnvio(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio da Legalidade: ");
+              subfolha.add(criaDatePicker(barrinha, pedido.getLegalidade().getDataEnvio(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio: ");
               
-              	 subfolha.add(criaDatePicker(barrinha, pedido.getLegalidade().getDataRetorno(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno da Legalidade: ");
+              	 subfolha.add(criaDatePicker(barrinha, pedido.getLegalidade().getDataRetorno(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno: ");
 
               	 //AUTORIZACAO
               	 subfolha = new SubFolhaPanel("Autorização");
@@ -1378,7 +1386,7 @@ public class Sistema_PRA implements EntryPoint {
                  pedacos.add(subfolha);
                  aRemover.add(subfolha);
 
-		         subfolha.add(autorizacao, "Parecer de Autorização");
+		         subfolha.add(autorizacao, "Parecer: ");
 
 		         subfolha = new SubFolhaPanel("Corretude");
               	 pedacos.add(subfolha);
@@ -1390,7 +1398,7 @@ public class Sistema_PRA implements EntryPoint {
              	 subfolha.add(new Label(), "");
 		         //CORRETUDE
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getCorretude().getData(), "CorretudeHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição da corretude: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getCorretude().getData(), "CorretudeHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição: ");
 
 
 		         //MINUTA DO EDITAL
@@ -1404,11 +1412,11 @@ public class Sistema_PRA implements EntryPoint {
               		 subfolha.setVisible(false);
               	 pedacos.add(subfolha);
               	 aRemover.add(subfolha);
-              	 subfolha.add(minuta, "Parecer da Minuta: ");
+              	 subfolha.add(minuta, "Parecer: ");
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataInicio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="), "Data de inicio de elaboração da Minuta: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataInicio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="), "Data de inicio de elaboração: ");
               	 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataEnvio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio da Minuta: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataEnvio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio: ");
 
 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataRetorno(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno: ");
@@ -1425,7 +1433,7 @@ public class Sistema_PRA implements EntryPoint {
 		         boolean enabled = true;
 				 if(i!=indicePregao+1){ 
 					enabled = false;
-					stack.add(subfolha,"Pregão <span style = 'color: #FF0000'>não comprado</span>",true);
+					stack.add(subfolha,"Pregão <span style = 'color: #FF0000'>não comprado</span>, nº: "+pedido.getPregao().getNumero(i),true);
 				 }else{
 					stack.add(subfolha,"Pregão atual");
 					stack.showStack(indicePregao+1);
@@ -1471,7 +1479,7 @@ public class Sistema_PRA implements EntryPoint {
 
 					}
 				});*/
-		         subfolha.add(t, "Número do Pregão: ");
+		         subfolha.add(t, "Número: ");
 		         if(i!=indicePregao+1){ 
 			         subfolha.add(new HTML(), "");
 		         } else{
@@ -1479,10 +1487,10 @@ public class Sistema_PRA implements EntryPoint {
 		         }
 		         final HorizontalPanel definicao = criaDatePicker(barrinha, pedido.getPregao().getData(i), enabled,  "PregaoHandler?pedido="+pedido.getNumero()+"&data=");
 		         final HorizontalPanel abertura = criaDatePicker(barrinha, pedido.getPregao().getLicitacaoData(i),  enabled, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data=");
-		         subfolha.add(definicao, "Data de definição do Pregão: ");
-		         subfolha.add(abertura, "Data de abertura do Pregão: ");
+		         subfolha.add(definicao, "Data de definição: ");
+		         subfolha.add(abertura, "Data de abertura: ");
 
-		         subfolha.add(pregao, "Parecer do Pregão: ");
+		         subfolha.add(pregao, "Parecer: ");
 
 		         final Button adicionaPregao = new Button("Adicionar Pregão");
 		         adicionaPregao.addClickHandler(new ClickHandler() {
@@ -1543,7 +1551,7 @@ public class Sistema_PRA implements EntryPoint {
               	aRemover.add(subfolha);
 
               	 
-              	 subfolha.add(criaDatePicker(barrinha, pedido.getAdjudicacao().getData(), "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Adjudicação: ");
+              	 subfolha.add(criaDatePicker(barrinha, pedido.getAdjudicacao().getData(), "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
 
               	subfolha = new SubFolhaPanel("Homologação");
               	if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
@@ -1552,40 +1560,40 @@ public class Sistema_PRA implements EntryPoint {
              	aRemover.add(subfolha);
 
              	 
-             	 subfolha.add(criaDatePicker(barrinha, pedido.getHomologacao().getData(), "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Homologação: ");
+             	 subfolha.add(criaDatePicker(barrinha, pedido.getHomologacao().getData(), "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
 
              	subfolha = new SubFolhaPanel("Publicação");
             	 pedacos.add(subfolha);
 
-            	 subfolha.add(criaDatePicker(barrinha, pedido.getPublicacao().getData(), "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Publicação: ");
+            	 subfolha.add(criaDatePicker(barrinha, pedido.getPublicacao().getData(), "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
 
             	 
 		    	 subfolha = new SubFolhaPanel("Empenho");
              	 pedacos.add(subfolha);
 
-             	 subfolha.add(criaDatePicker(barrinha, pedido.getEmpenho().getData(), "EmpenhoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Empenho: ");
+             	 subfolha.add(criaDatePicker(barrinha, pedido.getEmpenho().getData(), "EmpenhoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaAlmoxarifado().getData(), "NotaAlmoxarifadoHandler?pedido="+pedido.getNumero()+"&data="),"Data de envio do Empenho ao almoxarifado" );
+		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaAlmoxarifado().getData(), "NotaAlmoxarifadoHandler?pedido="+pedido.getNumero()+"&data="),"Data de envio ao almoxarifado" );
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio do Empenho ao Patrimônio: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio ao Patrimônio: ");
 		         
 		         
-		         subfolha = new SubFolhaPanel("Crédito Orçamentário");
+		         /*subfolha = new SubFolhaPanel("Crédito Orçamentário");
             	 pedacos.add(subfolha);
             
 		         //DETALHAMENTO
 		         HorizontalPanel detalhamento = createRadioGroup(barrinha, pedido, "DetalhamentoHandler", "Detalhamento", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
-		    	 subfolha.add(detalhamento, "Parecer do Detalhamento de Crédito: ");
+		    	 subfolha.add(detalhamento, "Parecer: ");
 
-		    	 subfolha.add(criaDatePicker(barrinha, pedido.getDetalhamento().getData(), "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Detalhamento de Crédito: ");
-
+		    	 subfolha.add(criaDatePicker(barrinha, pedido.getDetalhamento().getData(), "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
+		    	 */
 
 		    	 subfolha = new SubFolhaPanel("Recebimento");
             	 pedacos.add(subfolha);
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data de recebimento provisória: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data provisória: ");
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getLiquidacao().getData(), "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data de recebimento definitiva: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getLiquidacao().getData(), "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data definitiva: ");
 
 		         //subfolha.add(criaDatePicker(barrinha, pedido.getPagamento().getData(), "PagamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data de Pagamento: " );
 
