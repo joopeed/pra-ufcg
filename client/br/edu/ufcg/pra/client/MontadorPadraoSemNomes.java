@@ -15,7 +15,7 @@ public class MontadorPadraoSemNomes implements MontadorDeBarrinha {
     String[] titles = p.getNomesDosEstados();
     String[] links = p.getLinksDosEstados();
     
-    barraProgresso =  "<div class=\"progress\">";
+    barraProgresso =  "<div class=\"progress_2\">";
     for(int i = 0; i < estados.length;i++){
     	String label = "&#10003;";
     	String classe = "circle done";
@@ -28,7 +28,7 @@ public class MontadorPadraoSemNomes implements MontadorDeBarrinha {
     		classe = "circle fail";
     		label = "x";
     		}
-    	if(i!=0) barraProgresso += "  <span class=\"bar\"></span>";
+    	if(i!=0) barraProgresso += "  <span class=\"bar_2\"></span>";
     	barraProgresso += "     <a\" title=\""+titles[i]+"\">   <div class=\""+classe+"\">" + 
     			"    <span class=\"label\">"+label+"</span>" + 
         		"  </div></a>";
