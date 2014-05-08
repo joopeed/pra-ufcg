@@ -1,4 +1,4 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 import java.util.ArrayList;
 
@@ -9,10 +9,8 @@ public class MontadorPadrao implements MontadorDeBarrinha {
 	@Override
 	public HTML monta(Pedido p) {
 		 
-        String barraProgresso = "<table border='0' bordecolor='#000000' " +
-                                                         "style='background-color:#999999' width='100%' " +
-                                                         "cellpadding='10' cellspacing='1'><tr>";
-       
+        
+       /*
         ArrayList<Integer> estados = new ArrayList<Integer>();
         
         //LEGALIDADE
@@ -246,29 +244,25 @@ public class MontadorPadrao implements MontadorDeBarrinha {
                 p.getHomologacao().getData() + "'>Recebimento</a></td>";
                 estados.add(2);
                 }
- 
-        
+        */
+		String barraProgresso = "<table border='0' bordecolor='#000000' " +
+                "style='background-color:#999999' width='100%' " +
+                "cellpadding='10' cellspacing='1'><tr>";
         barraProgresso += "</tr></table><br>";
-       
-        String[] titles = {
-        		"Legalidade", "Autorização", "Corretude", "Minuta", "Pregão", 
-        		"Adjudicação", "Homologação", "Publicação", "Empenho", "Recebimento"	
-        };
-        String[] links = {
-        		"legalidade", "autorizacao", "corretude", "minuta", "pregao", 
-        		"adjudicacao", "homologacao", "publicacao", "empenho", "recebimento"	
-        };
+        int[] estados = p.getValoresDosEstados();
+        String[] titles = p.getNomesDosEstados();
+        String[] links = p.getNomesDosEstados();
         
         barraProgresso =  "<div class=\"progress\">";
-        for(int i = 0; i < estados.size();i++){
+        for(int i = 0; i < estados.length;i++){
         	String label = "&#10003;";
         	String classe = "circle done";
-			if(estados.get(i) == 0 || estados.get(i) == 1) {
+			if(estados[i] == 0 || estados[i] == 1) {
         		label = Integer.toString(i+1);
-        		if(estados.get(i) == 1) classe = "circle active";
+        		if(estados[i] == 1) classe = "circle active";
         		else classe = "circle";
         	}
-        	else if(estados.get(i) == 3){ 
+        	else if(estados[i] == 3){ 
         		classe = "circle fail";
         		label = "x";
         		}

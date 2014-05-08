@@ -1,4 +1,4 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 
 
@@ -50,6 +50,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
+
 
 
 
@@ -301,6 +302,8 @@ class Pedido extends JavaScriptObject {
     public final native String getLocal() /*-{ return this.local; }-*/;
     public final native String getData() /*-{ return this.data_entrada; }-*/;
     public final native String getError() /*-{return this.error; }-*/;
+    public final native int[] getValoresDosEstados() /*-{return this.estados_valores; }-*/;
+    public final native String[] getNomesDosEstados() /*-{return this.estados_nomes; }-*/;
     
     public final String getDataFormatada() {
          DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -786,10 +789,7 @@ public class Sistema_PRA implements EntryPoint {
 	                Pedido todo = JsonUtils.safeEval(response.getText()).cast();
 	                	// Window.alert("You selected: Pedido " + selected.getNumero());
 	       	         Barrinha barra = new Barrinha(todo.getNumero());
-	       	         if(todo.getTipoDePedido().equalsIgnoreCase("dispensa") || todo.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
-	              		 barra.setMontador(new MontadorReduzidoSemNomes());
-	            	 else
-	            		 barra.setMontador(new MontadorPadraoSemNomes());
+	       	         barra.setMontador(new MontadorPadraoSemNomes());
 	       	         // Create the dialog box
 	       	         final ExtendedDialogBox dialogBox = new ExtendedDialogBox(true);
 	       	         dialogBox.center();
@@ -1314,10 +1314,7 @@ public class Sistema_PRA implements EntryPoint {
             	 VerticalPanel vPanel = new VerticalPanel();
             	 SimplePanel folha = new SimplePanel();
             	 final Barrinha barrinha = new Barrinha(pedido.getNumero());;
-            	 if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
-              		 barrinha.setMontador(new MontadorReduzido());
-            	 else
-            		 barrinha.setMontador(new MontadorPadrao());
+            	 barrinha.setMontador(new MontadorPadrao());
             	 ArrayList<SimplePanel> aRemover = new ArrayList<SimplePanel>();
             	 folha.setStyleName("folha");
             	 VerticalPanel pedacos = new VerticalPanel();
@@ -1721,7 +1718,7 @@ public class Sistema_PRA implements EntryPoint {
                		                	for(SimplePanel a: aRemover) {
                		                		a.setVisible(false);
                		                	}
-               		                	barrinha.setMontador(new MontadorReduzido());
+               		                	barrinha.setMontador(new MontadorPadrao());
                		                	barrinha.atualizar();
                	                }
                	            });
@@ -1738,7 +1735,7 @@ public class Sistema_PRA implements EntryPoint {
                		                	for(SimplePanel a: aRemover) {
                		                		a.setVisible(false);
                		                	}
-               		                	barrinha.setMontador(new MontadorReduzido());
+               		                	barrinha.setMontador(new MontadorPadrao());
                		                	barrinha.atualizar();
                	                }
                	            });

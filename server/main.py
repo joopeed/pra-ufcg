@@ -192,7 +192,7 @@ class GetPedido(webapp2.RequestHandler):
                         "descricao": pedido.descricao,
                         "data_entrada": pedido.data_entrada.isoformat(),
                         "email_demandante": pedido.email_demandante,
-                        "local": pedido.local,
+                        "local": pedido.get_local_atual(),
                         "legalidade": { 
                                     "parecer": pedido.legalidade_parecer, 
                                     "data_envio": pedido.legalidade_data_envio.isoformat() if pedido.legalidade_data_envio else "", 
@@ -219,11 +219,13 @@ class GetPedido(webapp2.RequestHandler):
                         "detalhamento": {"parecer":pedido.detalhamento_parecer, 
                                          "data":pedido.detalhamento_data.isoformat() if pedido.detalhamento_data else ""},
                         "empenho": { "data": pedido.empenho_data.isoformat() if pedido.empenho_data else "" },
-                        "nota_almoxarifado": { "data": pedido.nota_almoxarifado_data.isoformat() if  pedido.nota_almoxarifado_data else ""},
-                        "patrimonio": { "data": pedido.patrimonio_data.isoformat() if  pedido.patrimonio_data else "" },
-                        "nota_contabilidade": { "data": pedido.nota_contabilidade_data.isoformat() if pedido.nota_contabilidade_data else "" },
-                        "liquidacao": { "data": pedido.liquidacao_data.isoformat() if pedido.liquidacao_data else "" },
-                        "pagamento":  { "data": pedido.pagamento_data.isoformat() if pedido.pagamento_data else "" }                        
+                        "nota_almoxarifado": { "data": pedido.empenho_nota_almoxarifado_data.isoformat() if  pedido.empenho_nota_almoxarifado_data else ""},
+                        "patrimonio": { "data": pedido.empenho_patrimonio_data.isoformat() if  pedido.empenho_patrimonio_data else "" },
+                        "nota_contabilidade": { "data": pedido.recebimento_nota_contabilidade_data.isoformat() if pedido.recebimento_nota_contabilidade_data else "" },
+                        "liquidacao": { "data": pedido.recebimento_liquidacao_data.isoformat() if pedido.recebimento_liquidacao_data else "" },
+                        "pagamento":  { "data": pedido.pagamento_data.isoformat() if pedido.pagamento_data else "" },
+                        "estados_valores" : pedido.get_lista_status(),
+                        "estados_nomes": pedido.get_lista_nomes()
                         }
 
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
@@ -272,7 +274,7 @@ class ListaPedidoForTable(webapp2.RequestHandler):
                         "empenho":  pedido.empenho, 
                         "almoxarifado":  pedido.nota_almoxarifado, 
                         "tombamento":  pedido.tombamento, 
-                        "contabilidade":  pedido.nota_contabilidade, 
+                        "contabilidade":  pedido.recebimento_nota_contabilidade,
                         "liquidacao": pedido.liquidacao, 
                         "pagamento": pedido.pagamento                 
                         }
@@ -362,9 +364,8 @@ class SearchPedido(webapp2.RequestHandler):
                                         "demandante": pedido.demandante,
                                         "descricao": pedido.descricao,
                                         "data_entrada": pedido.data_entrada.isoformat(),
-                                        "local": pedido.local,
-                                        "estados_concluidos": pedido.estados_concluidos(),
-                                        "estados_totais": pedido.estados_totais()
+                                        "local": pedido.local
+
                                         }
                         dic["pedidos"].append(pedido_info)
                         
@@ -375,9 +376,7 @@ class SearchPedido(webapp2.RequestHandler):
                                         "demandante": pedido.demandante,
                                         "descricao": pedido.descricao,
                                         "data_entrada": pedido.data_entrada.isoformat(),
-                                        "local": pedido.local,
-                                        "estados_concluidos": pedido.estados_concluidos(),
-                                        "estados_totais": pedido.estados_totais()
+                                        "local": pedido.local
                                         }
                         dic["pedidos"].append(pedido_info)
             
@@ -388,9 +387,7 @@ class SearchPedido(webapp2.RequestHandler):
                                         "demandante": pedido.demandante,
                                         "descricao": pedido.descricao,
                                         "data_entrada": pedido.data_entrada.isoformat(),
-                                        "local": pedido.local,
-                                        "estados_concluidos": pedido.estados_concluidos(),
-                                        "estados_totais": pedido.estados_totais()
+                                        "local": pedido.local
                                         }
                         dic["pedidos"].append(pedido_info)
 
@@ -403,8 +400,7 @@ class SearchPedido(webapp2.RequestHandler):
                                         "descricao": pedido.descricao, 
                                         "data_entrada": pedido.data_entrada.isoformat(),
                                         "local": pedido.local,
-                                        "estados_concluidos": pedido.estados_concluidos(),
-                                        "estados_totais": pedido.estados_totais()
+                                        "estados": pedido.get_lista_status()
                                         }
                         dic["pedidos"].append(pedido_info)
 
@@ -948,12 +944,12 @@ class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
                 if pedido:
                     pedido_em_questao = searchkey(pedido) 
                     if data:
-                        if pedido_em_questao.nota_almoxarifado_data == None:
+                        if pedido_em_questao.empenho_nota_almoxarifado_data == None:
                             data_almoxarifado_anterior = "nenhuma"
                         else:
-                            data_almoxarifado_anterior = pedido_em_questao.nota_almoxarifado_data.strftime("%d/%m/%Y")
-                        pedido_em_questao.nota_almoxarifado_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                        data_almoxarifado_atual = pedido_em_questao.nota_almoxarifado_data.strftime("%d/%m/%Y")
+                            data_almoxarifado_anterior = pedido_em_questao.empenho_nota_almoxarifado_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.empenho_nota_almoxarifado_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_almoxarifado_atual = pedido_em_questao.empenho_nota_almoxarifado_data.strftime("%d/%m/%Y")
                         pedido_em_questao.historico_info.append("A data de envio da nota ao almoxarifado foi definida de "+data_almoxarifado_anterior+" para "+data_almoxarifado_atual)
                         pedido_em_questao.historico_data.append(datetime.datetime.now())
                         pedido_em_questao.historico_user.append(users.get_current_user().email())
@@ -977,12 +973,12 @@ class PatrimonioHandler(webapp2.RequestHandler):
                 if pedido:
                     pedido_em_questao = searchkey(pedido) 
                     if data:
-                        if pedido_em_questao.patrimonio_data == None:
+                        if pedido_em_questao.empenho_patrimonio_data == None:
                             data_patrimonio_anterior = "nenhuma"
                         else:
-                            data_patrimonio_anterior = pedido_em_questao.patrimonio_data.strftime("%d/%m/%Y")
-                        pedido_em_questao.patrimonio_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                        data_patrimonio_atual = pedido_em_questao.patrimonio_data.strftime("%d/%m/%Y")
+                            data_patrimonio_anterior = pedido_em_questao.empenho_patrimonio_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.empenho_patrimonio_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_patrimonio_atual = pedido_em_questao.empenho_patrimonio_data.strftime("%d/%m/%Y")
                         pedido_em_questao.historico_info.append("A data de envio ao patrimonio foi definida de "+data_patrimonio_anterior+" para "+data_patrimonio_atual)
                         pedido_em_questao.historico_data.append(datetime.datetime.now())
                         pedido_em_questao.historico_user.append(users.get_current_user().email())
@@ -1006,12 +1002,12 @@ class NotaContabilidadeHandler(webapp2.RequestHandler):
                 if pedido:
                     pedido_em_questao = searchkey(pedido) 
                     if data:
-                        if pedido_em_questao.nota_contabilidade_data == None:
+                        if pedido_em_questao.recebimento_nota_contabilidade_data == None:
                             data_nota_anterior = "nenhuma"
                         else:
-                            data_nota_anterior = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
-                        pedido_em_questao.nota_contabilidade_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                        data_nota_atual = pedido_em_questao.nota_contabilidade_data.strftime("%d/%m/%Y")
+                            data_nota_anterior = pedido_em_questao.recebimento_nota_contabilidade_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.recebimento_nota_contabilidade_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_nota_atual = pedido_em_questao.recebimento_nota_contabilidade_data.strftime("%d/%m/%Y")
                         pedido_em_questao.historico_info.append("A data de recebimento provisoria foi definida de "+data_nota_anterior+" para "+data_nota_atual)
                         pedido_em_questao.historico_data.append(datetime.datetime.now())
                         pedido_em_questao.historico_user.append(users.get_current_user().email())
@@ -1036,12 +1032,12 @@ class LiquidacaoHandler(webapp2.RequestHandler):
                 if pedido:
                     pedido_em_questao = searchkey(pedido) 
                     if data:
-                        if pedido_em_questao.liquidacao_data == None:
+                        if pedido_em_questao.recebimento_liquidacao_data == None:
                             data_liquidacao_anterior = "nenhuma"
                         else:
-                            data_liquidacao_anterior = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
-                        pedido_em_questao.liquidacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
-                        data_liquidacao_atual = pedido_em_questao.liquidacao_data.strftime("%d/%m/%Y")
+                            data_liquidacao_anterior = pedido_em_questao.recebimento_liquidacao_data.strftime("%d/%m/%Y")
+                        pedido_em_questao.recebimento_liquidacao_data = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%S")
+                        data_liquidacao_atual = pedido_em_questao.recebimento_liquidacao_data.strftime("%d/%m/%Y")
                         pedido_em_questao.historico_info.append("A data de recebimento definitiva foi definida de "+data_liquidacao_anterior+" para "+data_liquidacao_atual)
                         pedido_em_questao.historico_data.append(datetime.datetime.now())
                         pedido_em_questao.historico_user.append(users.get_current_user().email())
