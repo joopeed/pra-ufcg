@@ -31,7 +31,6 @@ public class MontadorPadraoSemNomes implements MontadorDeBarrinha {
     	if(i!=0) barraProgresso += "  <span class=\"bar\"></span>";
     	barraProgresso += "      <a href=\"#"+links[i]+"\" title=\""+titles[i]+"\">    <div class=\""+classe+"\">" + 
     			"    <span class=\"label\">"+label+"</span>" + 
-    			"    <span class=\"title\">"+titles[i]+"</span>" + 
         		"  </div></a>";
     	
     	
