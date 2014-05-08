@@ -225,7 +225,8 @@ class GetPedido(webapp2.RequestHandler):
                         "liquidacao": { "data": pedido.recebimento_liquidacao_data.isoformat() if pedido.recebimento_liquidacao_data else "" },
                         "pagamento":  { "data": pedido.pagamento_data.isoformat() if pedido.pagamento_data else "" },
                         "estados_valores" : pedido.get_lista_status(),
-                        "estados_nomes": pedido.get_lista_nomes()
+                        "estados_nomes": pedido.get_lista_nomes(),
+                        "estados_links": pedido.get_lista_links()
                         }
 
                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')

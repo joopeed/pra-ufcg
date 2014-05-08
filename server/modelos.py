@@ -161,4 +161,6 @@ class Pedido(db.Model):
 
     def get_lista_nomes(self):
         return Workflow(self.tipo_pedido).nomes_publicos
+    def get_lista_links(self):
+        return Workflow(self.tipo_pedido).nomes
 

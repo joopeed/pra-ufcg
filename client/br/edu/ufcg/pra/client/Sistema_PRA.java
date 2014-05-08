@@ -304,6 +304,7 @@ class Pedido extends JavaScriptObject {
     public final native String getError() /*-{return this.error; }-*/;
     public final native int[] getValoresDosEstados() /*-{return this.estados_valores; }-*/;
     public final native String[] getNomesDosEstados() /*-{return this.estados_nomes; }-*/;
+    public final native String[] getLinksDosEstados() /*-{return this.estados_links; }-*/;
     
     public final String getDataFormatada() {
          DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
