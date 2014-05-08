@@ -160,5 +160,5 @@ class Pedido(db.Model):
         return Workflow(self.tipo_pedido).lista_status(self)
 
     def get_lista_nomes(self):
-        return Workflow(self.tipo_pedido).nomes
+        return Workflow(self.tipo_pedido).nomes_publicos
 
