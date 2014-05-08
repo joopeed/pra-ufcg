@@ -251,7 +251,7 @@ public class MontadorPadrao implements MontadorDeBarrinha {
         barraProgresso += "</tr></table><br>";
         int[] estados = p.getValoresDosEstados();
         String[] titles = p.getNomesDosEstados();
-        String[] links = p.getNomesDosEstados();
+        String[] links = p.getLinksDosEstados();
         
         barraProgresso =  "<div class=\"progress\">";
         for(int i = 0; i < estados.length;i++){
