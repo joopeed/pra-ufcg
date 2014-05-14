@@ -21,8 +21,9 @@ from modelos import *
 from google.appengine.api import mail
 from google.appengine.datastore.datastore_query import Cursor
 from google.appengine.api import users
+from google.appengine.api import search as api_search
 
-
+index = api_search.Index(name='Pedido')
 
 permission_type = {
 1:'acompanhar_qualquer',
@@ -333,13 +334,39 @@ class SetPedido(webapp2.RequestHandler):
                 novo.historico_data.append(datetime.datetime.now())
                 novo.historico_user.append(users.get_current_user().email())
                 novo.put()
+
+                doc = api_search.Document(
+                doc_id=self.request.get("numero"),
+                fields=[api_search.TextField(name='demandante', value=self.request.get("demandante")),
+                        api_search.DateField(name='data_entrada', value=datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")),
+                        api_search.TextField(name='descricao', value=self.request.get("descricao")),
+                        api_search.TextField(name='numero', value=self.request.get("numero")),
+                        api_search.TextField(name='email_demandante', value=self.request.get("email_demandante"))])
+                index.put(doc)
         elif self.request.get("numero"):
                 pedido = searchkey(self.request.get("numero"))
-                if self.request.get("demandante"): pedido.demandante = self.request.get("demandante")
-                if self.request.get("data_entrada"): pedido.data_entrada = datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")
-                if self.request.get("descricao"): pedido.descricao=self.request.get("descricao")
-                if self.request.get("email_demandante"): pedido.email_demandante=self.request.get("email_demandante")
-                if self.request.get("tipo_pedido"): pedido.tipo_pedido=self.request.get("tipo_pedido")
+                if self.request.get("demandante"):
+                    doc = index.get(self.request.get("numero"))
+                    doc.fields.append(api_search.TextField(name='demandante', value=self.request.get("demandante")))
+                    index.put(doc)
+                    pedido.demandante = self.request.get("demandante")
+                if self.request.get("data_entrada"):
+                    doc = index.get(self.request.get("numero"))
+                    doc.fields.append(api_search.TextField(name='data_entrada', value=datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")))
+                    index.put(doc)
+                    pedido.data_entrada = datetime.datetime.strptime(self.request.get("data_entrada"), "%Y-%m-%dT%H:%M:%S")
+                if self.request.get("descricao"):
+                    doc = index.get(self.request.get("numero"))
+                    doc.fields.append(api_search.TextField(name='descricao', value=self.request.get("descricao")))
+                    index.put(doc)
+                    pedido.descricao=self.request.get("descricao")
+                if self.request.get("email_demandante"):
+                    doc = index.get(self.request.get("numero"))
+                    doc.fields.append(api_search.TextField(name='email_demandante', value=self.request.get("email_demandante")))
+                    index.put(doc)
+                    pedido.email_demandante=self.request.get("email_demandante")
+                if self.request.get("tipo_pedido"):
+                    pedido.tipo_pedido=self.request.get("tipo_pedido")
                 pedido.put()
         
 
@@ -351,6 +378,52 @@ class SearchPedido(webapp2.RequestHandler):
 
     # TODO Ajeitar esta seboseira
     def get(self):
+            import json
+            dic = {"pedidos": []}
+            search = self.request.get("q")
+            #query = Pedido.all() #db.GqlQuery("SELECT * FROM Pedido ORDER BY data_entrada DESC")
+            #if search.strip() != "":
+            #    query.filter("numero = ", search)
+            #query.with_cursor(self.request.get('cursor',default_value=None))
+
+
+            """
+            for pedido in query.fetch(10):
+                pedido_info = { "numero": pedido.numero,
+                                "demandante": pedido.demandante,
+                                "descricao": pedido.descricao,
+                                "data_entrada": pedido.data_entrada.isoformat()
+                                }
+                dic["pedidos"].append(pedido_info)
+            """
+            cursor = "invalid"
+            cursor_string = self.request.get("cursor", default_value=None)
+            if cursor_string != "invalid":
+                cursor = api_search.Cursor(web_safe_string=cursor_string) if cursor_string else api_search.Cursor()
+                options = api_search.QueryOptions(cursor=cursor, limit=2)
+                query = api_search.Query(query_string=search, options=options )
+                results = index.search(query)
+
+                for pedido in results:
+                    pedido_info = {}
+                    for field in pedido.fields:
+                        if field.name == "data_entrada":
+                            pedido_info[field.name] = field.value.isoformat()
+                        else:
+                            pedido_info[field.name] = field.value
+                    dic["pedidos"].append(pedido_info)
+
+
+                cursor = results.cursor.web_safe_string if results.cursor else "invalid"
+
+
+            if not users.get_current_user():
+                self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                self.response.out.write(json.dumps(dict({'status':'Disconnected', "cursor": cursor }.items() + dic.items()), indent=2))
+            else:
+                 self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+                 self.response.out.write(json.dumps(dict({'status':'Connected', "cursor": cursor }.items() + dic.items()), indent=2))
+            """
             import json
             dic = {"pedidos": []}
             search = self.request.get("q")
@@ -413,7 +486,7 @@ class SearchPedido(webapp2.RequestHandler):
             else:
                  self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
                  self.response.out.write(json.dumps(dict({'status':'Connected', "cursor": query.cursor()}.items() + dic.items()), indent=2))
-
+            """
 
 
 	
