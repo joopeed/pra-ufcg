@@ -558,7 +558,12 @@ class SearchPedido(webapp2.RequestHandler):
             cursor_string = self.request.get("cursor", default_value=None)
             if cursor_string != "invalid":
                 cursor = api_search.Cursor(web_safe_string=cursor_string) if cursor_string else api_search.Cursor()
-                options = api_search.QueryOptions(cursor=cursor, limit=10)
+                soptions = api_search.SortOptions(expressions=[
+                    api_search.SortExpression(expression='data_entrada',
+                                              direction=api_search.SortExpression.DESCENDING,
+                                              default_value=0)],
+                                                limit=1000)
+                options = api_search.QueryOptions(cursor=cursor, limit=10, sort_options=soptions)
                 query = api_search.Query(query_string=search, options=options )
                 results = index.search(query)
 
