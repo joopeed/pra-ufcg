@@ -146,8 +146,144 @@ class ListaPedido(webapp2.RequestHandler):
 
 
 
+class GetCSV(webapp2.RequestHandler):
+    def get(self):
+        import json
+        import csv
+        import StringIO
+        from datetime import datetime
+        
+        if not users.get_current_user():
+            self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+            self.response.out.write(json.dumps({'status':'Disconnected', 'url': users.create_login_url('/')}))
+        else:
+            dic = {}
+            titulos = ["Numero","Demandante","Descricao","Data de entrada","E-mail do demandante","Local","Data de envio da Legalidade",
+                       "Data de retorno da Legalidade","Parecer da Legalidade","Parecer da Autorizacao","Cotacao da Corretude",
+                       "Descricao da Corretude", "Quantitativo da Corretude", "Data da Corretude", "Data de inicio da Minuta",
+                       "Data de envio da Minuta", "Data de retorno da Minuta", "Parecer da Minuta","Data da Adjudicacao",
+                       "Data da Homologacao","Data da Publicacao","Data do Empenho", "Data de envio do Empenho ao Almoxarifado",
+                       "Data de envio do Empenho ao Patrimonio" ,"Data provisoria de Recebimento", "Data definitiva de Recebimento"]
+            si = StringIO.StringIO()
+            cw = csv.writer(si)
+            cw.writerow(titulos)
+            
+            for pedido in db.GqlQuery("SELECT * FROM Pedido"):
+                dic = {
+                    "numero": pedido.numero,
+                    "demandante": pedido.demandante,
+                    "descricao": pedido.descricao,
+                    "data_entrada": pedido.data_entrada,
+                    "email_demandante": pedido.email_demandante,
+                    "local": pedido.local,
+                    "legalidade": { 
+                                    "parecer": pedido.legalidade_parecer, 
+                                    "data_envio": pedido.legalidade_data_envio if pedido.legalidade_data_envio else "" , 
+                                    "data_retorno": pedido.legalidade_data_retorno if pedido.legalidade_data_retorno else "" },
+                    "autorizacao": {"parecer":pedido.autorizacao_parecer },
+                    "corretude": {
+                                    "descricao":pedido.corretude_descricao, 
+                                    "quantitativo":pedido.corretude_quantitativo, 
+                                    "cotacao":pedido.corretude_cotacao, 
+                                    "data":pedido.corretude_data  if pedido.corretude_data else "" }, 
+                    "minuta":  { "parecer": pedido.minuta_parecer, 
+                                    "data_inicio": [ data.isoformat() for data in pedido.minuta_data_inicio ], 
+                                    "data_envio":  [ data.isoformat() for data in pedido.minuta_data_envio ], 
+                                    "data_retorno": [ data.isoformat() for data in pedido.minuta_data_retorno ]}, 
+                     "pregao": { "indice": pedido.pregao_indice,
+                                    "parecer": pedido.pregao_parecer,
+                                    "data": [ data.isoformat() for data in pedido.pregao_data ],
+                                    "numero": pedido.pregao_numero,
+                                    "licitacao_data": [ data.isoformat() for data in pedido.pregao_licitacao_data ], 
+                                    },
+                    "adjudicacao": { "data": pedido.adjudicacao_data  if pedido.adjudicacao_data else "" },
+                    "homologacao":  { "data": pedido.homologacao_data if pedido.homologacao_data else "" },
+                    "publicacao": { "data": pedido.publicacao_data if pedido.publicacao_data else "" },
+                    "detalhamento": {"parecer":pedido.detalhamento_parecer, 
+                                         "data":pedido.detalhamento_data.isoformat() if pedido.detalhamento_data else ""},
+                    "empenho": { "data": pedido.empenho_data if pedido.empenho_data else "" },
+                    "nota_almoxarifado": { "data": pedido.empenho_nota_almoxarifado_data if  pedido.empenho_nota_almoxarifado_data else ""},
+                    "patrimonio": { "data": pedido.empenho_patrimonio_data if  pedido.empenho_patrimonio_data else "" },
+                    "nota_contabilidade": { "data": pedido.recebimento_nota_contabilidade_data if pedido.recebimento_nota_contabilidade_data else "" },
+                    "liquidacao": { "data": pedido.recebimento_liquidacao_data if pedido.recebimento_liquidacao_data else "" },
+                    }
+                if dic.get("legalidade").get("parecer")==True:
+                    parecer_legalidade="Sim"
+                elif dic.get("legalidade").get("parecer")==False:
+                    parecer_legalidade="Nao"
+                elif dic.get("legalidade").get("parecer")==None:
+                    parecer_legalidade="Nao definida"
 
+                if dic.get("autorizacao").get("parecer")==True:
+                    parecer_autorizacao="Sim"
+                elif dic.get("autorizacao").get("parecer")==False:
+                    parecer_autorizacao="Nao"
+                elif dic.get("autorizacao").get("parecer")==None:
+                    parecer_autorizacao="Nao definida"
 
+                if dic.get("corretude").get("cotacao")==True:
+                    cotacao="Sim"
+                elif dic.get("corretude").get("cotacao")==False:
+                    cotacao="Nao"
+                elif dic.get("corretude").get("cotacao")==None:
+                    cotacao="Nao definida"
+
+                if dic.get("corretude").get("descricao")==True:
+                    descricao="Sim"
+                elif dic.get("corretude").get("descricao")==False:
+                    descricao="Nao"
+                elif dic.get("corretude").get("descricao")==None:
+                    descricao="Nao definida"
+
+                if dic.get("corretude").get("quantitativo")==True:
+                    quantitativo="Sim"
+                elif dic.get("corretude").get("quantitativo")==False:
+                    quantitativo="Nao"
+                elif dic.get("corretude").get("quantitativo")==None:
+                    quantitativo="Nao definida"
+
+                if len(dic.get("minuta").get("parecer"))==0:
+                    parecer_minuta="Nao definida"
+                elif dic.get("minuta").get("parecer")[0]==True:
+                    parecer_minuta="Sim"
+                elif dic.get("minuta").get("parecer")[0]==False:
+                    parecer_minuta="Nao"
+
+                if len(dic.get("minuta").get("data_inicio"))==0:
+                    data_inicio_minuta="Nao definida"
+                else:
+                    data_isoformat_inicio = dic.get("minuta").get("data_inicio")[0][:10]
+                    data_inicio_minuta = data_isoformat_inicio[8:]+"/"+data_isoformat_inicio[5:7]+"/"+data_isoformat_inicio[:4]
+
+                if len(dic.get("minuta").get("data_envio"))==0:
+                    data_envio_minuta="Nao definida"
+                else:
+                    data_isoformat_envio = dic.get("minuta").get("data_envio")[0][:10]
+                    data_envio_minuta = data_isoformat_envio[8:]+"/"+data_isoformat_envio[5:7]+"/"+data_isoformat_envio[:4]
+
+                if len(dic.get("minuta").get("data_retorno"))==0:
+                    data_retorno_minuta="Nao definida"
+                else:
+                    data_isoformat_retorno = dic.get("minuta").get("data_retorno")[0][:10]
+                    data_retorno_minuta = data_isoformat_retorno[8:]+"/"+data_isoformat_retorno[5:7]+"/"+data_isoformat_retorno[:4]
+
+                cw.writerow([dic.get("numero"),dic.get("demandante"),dic.get("descricao"),dic.get("data_entrada").strftime("%d/%m/%Y"),dic.get("email_demandante"),dic.get("local"),
+                            "Nao definida" if dic.get("legalidade").get("data_envio") == "" else dic.get("legalidade").get("data_envio").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("legalidade").get("data_retorno")=="" else dic.get("legalidade").get("data_retorno").strftime("%d/%m/%Y"),parecer_legalidade,
+                            parecer_autorizacao,cotacao,descricao,quantitativo,
+                            "Nao definida" if dic.get("corretude").get("data")=="" else dic.get("corretude").get("data").strftime("%d/%m/%Y"),data_inicio_minuta,data_envio_minuta,data_retorno_minuta,parecer_minuta,
+                            "Nao definida" if dic.get("adjudicacao").get("data")=="" else dic.get("adjudicacao").get("data").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("homologacao").get("data")=="" else dic.get("homologacao").get("data").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("publicacao").get("data")=="" else dic.get("publicacao").get("data").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("empenho").get("data")=="" else dic.get("empenho").get("data").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("nota_almoxarifado").get("data")=="" else dic.get("nota_almoxarifado").get("data").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("patrimonio").get("data")=="" else dic.get("patrimonio").get("data").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("nota_contabilidade").get("data")=="" else dic.get("nota_contabilidade").get("data").strftime("%d/%m/%Y"),
+                            "Nao definida" if dic.get("liquidacao").get("data") =="" else dic.get("liquidacao").get("data").strftime("%d/%m/%Y")])
+
+            self.response.headers.add_header('content-type', 'application/csv', charset='utf-8')
+            self.response.out.write(si.getvalue())
+                
 class GetHistorico(webapp2.RequestHandler):
     def get(self):
             import json
@@ -1155,6 +1291,6 @@ class PagamentoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
 
 
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/AdicionaPregao', AdicionaPregao), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler)],debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/AdicionaPregao', AdicionaPregao), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler),('/getcsv',GetCSV)],debug=True)
 
 #app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
