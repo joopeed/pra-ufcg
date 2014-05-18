@@ -64,6 +64,22 @@ lista_usuarios = [users.User("eliasalmox@ufcg.edu.br"),users.User("fatima.pereir
                  users.User("contadorjulio@reitoria.ufcg.edu.br"),users.User("tarcisio.almox@ufcg.edu.br"),
                  users.User("leideadriana@ufcg.edu.br"),users.User("lucilenebandeira@ufcg.edu.br")]
 
+
+def login_required(handler_method):
+    def check_login(self, *args):
+        #if self.request.method != 'GET':
+        #  raise webapp.Error('The check_login decorator can only be used for GET '
+        #                    'requests')
+        user = users.get_current_user()
+        if not user:
+            self.redirect(users.create_login_url(self.request.uri))
+            return
+        else:
+            if user not in lista_admins + lista_admins:
+                raise webapp.Error('Access Denied')
+            handler_method(self, *args)
+    return check_login
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         body = open("base.html").read()
@@ -461,20 +477,7 @@ class DeletePedido(webapp2.RequestHandler):
         if self.request.get("numero"):
             index.delete(self.request.get("numero"))
 
-def login_required(handler_method):
-    def check_login(self, *args):
-        #if self.request.method != 'GET':
-        #  raise webapp.Error('The check_login decorator can only be used for GET '
-        #                    'requests')
-        user = users.get_current_user()
-        if not user:
-            self.redirect(users.create_login_url(self.request.uri))
-            return
-        else:
-            if user not in lista_admins + lista_admins:
-                raise webapp.Error('Access Denied')
-            handler_method(self, *args)
-    return check_login
+
 
 @login_required
 class SetPedido(webapp2.RequestHandler):
