@@ -145,7 +145,7 @@ class ListaPedido(webapp2.RequestHandler):
                 self.response.out.write(json.dumps({'status':'Connected', 'pedidos': todos}))    
 
 
-
+@login_required
 class GetCSV(webapp2.RequestHandler):
     def get(self):
         import json
@@ -370,7 +370,7 @@ class GetPedido(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected', 'error':error}.items() + dic.items()), indent=2)) 
 
 
-
+@login_required
 class AdicionaPregao(webapp2.RequestHandler):
     def get(self):
         import json
@@ -426,7 +426,7 @@ class ListaPedidoForTable(webapp2.RequestHandler):
 
 
 
-
+@login_required
 class InitSys(webapp2.RequestHandler):
     def get(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
@@ -455,6 +455,28 @@ class CadastraPedido(webapp2.RequestHandler):
                           email_demandante=self.request.get("email_demandante"))
             novo.put()
 
+@login_required
+class DeletePedido(webapp2.RequestHandler):
+    def get(self):
+        if self.request.get("numero"):
+            index.delete(self.request.get("numero"))
+
+def login_required(handler_method):
+    def check_login(self, *args):
+        #if self.request.method != 'GET':
+        #  raise webapp.Error('The check_login decorator can only be used for GET '
+        #                    'requests')
+        user = users.get_current_user()
+        if not user:
+            self.redirect(users.create_login_url(self.request.uri))
+            return
+        else:
+            if user not in lista_admins + lista_admins:
+                raise webapp.Error('Access Denied')
+            handler_method(self, *args)
+    return check_login
+
+@login_required
 class SetPedido(webapp2.RequestHandler):
     def post(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
@@ -536,7 +558,7 @@ class SearchPedido(webapp2.RequestHandler):
             cursor_string = self.request.get("cursor", default_value=None)
             if cursor_string != "invalid":
                 cursor = api_search.Cursor(web_safe_string=cursor_string) if cursor_string else api_search.Cursor()
-                options = api_search.QueryOptions(cursor=cursor, limit=2)
+                options = api_search.QueryOptions(cursor=cursor, limit=10)
                 query = api_search.Query(query_string=search, options=options )
                 results = index.search(query)
 
@@ -636,6 +658,7 @@ def notifica(pedido_em_questao, mensagem):
 #HANDLERS DOS ESTADOS
    
 #Legalidade
+@login_required
 class LegalidadeHandler(webapp2.RequestHandler):
         def post(self):
                 import json
@@ -690,6 +713,7 @@ class LegalidadeHandler(webapp2.RequestHandler):
                     self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Autorizacao
+@login_required
 class AutorizacaoHandler(webapp2.RequestHandler):
         def post(self):
                 import json
@@ -725,6 +749,7 @@ class AutorizacaoHandler(webapp2.RequestHandler):
                     self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Corretude
+@login_required
 class CorretudeHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -805,6 +830,7 @@ class CorretudeHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Minuta
+@login_required
 class MinutaHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -873,6 +899,7 @@ class MinutaHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Pregao
+@login_required
 class PregaoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -976,6 +1003,7 @@ class PregaoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Adjudicacao
+@login_required
 class AdjudicacaoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1006,6 +1034,7 @@ class AdjudicacaoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Homologacao
+@login_required
 class HomologacaoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1036,6 +1065,7 @@ class HomologacaoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Publicacao
+@login_required
 class PublicacaoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1066,6 +1096,7 @@ class PublicacaoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Detalhamento
+@login_required
 class DetalhamentoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1113,6 +1144,7 @@ class DetalhamentoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Empenho
+@login_required
 class EmpenhoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1143,6 +1175,7 @@ class EmpenhoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Nota do almoxarifado
+@login_required
 class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1172,6 +1205,7 @@ class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Patrimonio
+@login_required
 class PatrimonioHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1201,6 +1235,7 @@ class PatrimonioHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Nota da contabilidade
+@login_required
 class NotaContabilidadeHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1231,6 +1266,7 @@ class NotaContabilidadeHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Liquidacao
+@login_required
 class LiquidacaoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1261,6 +1297,7 @@ class LiquidacaoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
      
 #Pagamento
+@login_required
 class PagamentoHandler(webapp2.RequestHandler):
         def post(self):
             pedido = self.request.get("pedido")
@@ -1291,6 +1328,6 @@ class PagamentoHandler(webapp2.RequestHandler):
                 self.response.out.write(json.dumps(dict({'status':'Connected'}.items()), indent=2))
 
 
-app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/AdicionaPregao', AdicionaPregao), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler),('/getcsv',GetCSV)],debug=True)
+app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler),('/deleta', DeletePedido), ('/AdicionaPregao', AdicionaPregao), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/gethistorico', GetHistorico),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido), ('/LegalidadeHandler', LegalidadeHandler), ('/AutorizacaoHandler', AutorizacaoHandler), ('/CorretudeHandler', CorretudeHandler), ('/MinutaHandler', MinutaHandler), ('/PregaoHandler', PregaoHandler), ('/AdjudicacaoHandler', AdjudicacaoHandler), ('/HomologacaoHandler', HomologacaoHandler), ('/PublicacaoHandler', PublicacaoHandler), ('/DetalhamentoHandler', DetalhamentoHandler), ('/EmpenhoHandler', EmpenhoHandler), ('/NotaAlmoxarifadoHandler', NotaAlmoxarifadoHandler), ('/PatrimonioHandler', PatrimonioHandler), ("/NotaContabilidadeHandler", NotaContabilidadeHandler), ('/LiquidacaoHandler', LiquidacaoHandler), ('/PagamentoHandler', PagamentoHandler),('/getcsv',GetCSV)],debug=True)
 
 #app = webapp2.WSGIApplication([('/', MainHandler), ('/LoginHandler', LoginHandler), ('/inicializar', InitSys), ('/Pedido', ListaPedido), ('/setpedido', SetPedido), ('/getpedido', GetPedido),('/searchpedido', SearchPedido),('/PedidosForTable', SearchPedido), ('/Permissoes', PermissoesHandler), ('/CadastraPedido', CadastraPedido)],debug=True)
