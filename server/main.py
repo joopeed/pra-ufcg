@@ -72,11 +72,12 @@ def login_required(handler_method):
         #                    'requests')
         user = users.get_current_user()
         if not user:
-            self.redirect(users.create_login_url(self.request.uri))
+            self.redirect(users.create_login_url(self.request.url))
             return
         else:
-            if user not in lista_admins + lista_admins:
-                raise webapp.Error('Access Denied')
+            if user not in lista_admins + lista_usuarios:
+                self.abort(401, 'Você não tem autorização para fazer isso')
+                return
             handler_method(self, *args)
     return check_login
 
