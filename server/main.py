@@ -159,6 +159,7 @@ class ListaPedido(webapp2.RequestHandler):
                 self.response.out.write(json.dumps({'status':'Connected', 'pedidos': todos}))    
 
 class GetCSV(webapp2.RequestHandler):
+    @login_required
     def get(self):
         import json
         import csv
@@ -297,6 +298,7 @@ class GetCSV(webapp2.RequestHandler):
             self.response.out.write(si.getvalue())
                 
 class GetHistorico(webapp2.RequestHandler):
+    @login_required
     def get(self):
             import json
             query = self.request.get("q")
@@ -438,6 +440,7 @@ class ListaPedidoForTable(webapp2.RequestHandler):
 
 
 class InitSys(webapp2.RequestHandler):
+    @login_required
     def get(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
        
@@ -456,6 +459,7 @@ class InitSys(webapp2.RequestHandler):
 
 
 class CadastraPedido(webapp2.RequestHandler):
+    @login_required
     def post(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
             novo = Pedido(demandante=self.request.get("demandante"), 
@@ -466,6 +470,7 @@ class CadastraPedido(webapp2.RequestHandler):
             novo.put()
 
 class DeletePedido(webapp2.RequestHandler):
+    @login_required
     def get(self):
         if self.request.get("numero"):
             index.delete(self.request.get("numero"))
@@ -473,6 +478,7 @@ class DeletePedido(webapp2.RequestHandler):
 
 
 class SetPedido(webapp2.RequestHandler):
+    @login_required
     def post(self):
         #if users.get_current_user(): #and 21 in users_permission[users.get_current_user()]:
         if self.request.get("numero") and self.request.get("demandante") and self.request.get("data_entrada") and self.request.get("descricao") and self.request.get("tipo_pedido") and self.request.get("email_demandante"):
@@ -659,6 +665,7 @@ def notifica(pedido_em_questao, mensagem):
    
 #Legalidade
 class LegalidadeHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
                 import json
          
@@ -713,6 +720,7 @@ class LegalidadeHandler(webapp2.RequestHandler):
      
 #Autorizacao
 class AutorizacaoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
                 import json
          
@@ -748,6 +756,7 @@ class AutorizacaoHandler(webapp2.RequestHandler):
      
 #Corretude
 class CorretudeHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -828,6 +837,7 @@ class CorretudeHandler(webapp2.RequestHandler):
      
 #Minuta
 class MinutaHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -896,6 +906,7 @@ class MinutaHandler(webapp2.RequestHandler):
      
 #Pregao
 class PregaoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -999,6 +1010,7 @@ class PregaoHandler(webapp2.RequestHandler):
      
 #Adjudicacao
 class AdjudicacaoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1029,6 +1041,7 @@ class AdjudicacaoHandler(webapp2.RequestHandler):
      
 #Homologacao
 class HomologacaoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1059,6 +1072,7 @@ class HomologacaoHandler(webapp2.RequestHandler):
      
 #Publicacao
 class PublicacaoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1089,6 +1103,7 @@ class PublicacaoHandler(webapp2.RequestHandler):
      
 #Detalhamento
 class DetalhamentoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1136,6 +1151,7 @@ class DetalhamentoHandler(webapp2.RequestHandler):
      
 #Empenho
 class EmpenhoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1166,6 +1182,7 @@ class EmpenhoHandler(webapp2.RequestHandler):
      
 #Nota do almoxarifado
 class NotaAlmoxarifadoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1224,6 +1241,7 @@ class PatrimonioHandler(webapp2.RequestHandler):
      
 #Nota da contabilidade
 class NotaContabilidadeHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1254,6 +1272,7 @@ class NotaContabilidadeHandler(webapp2.RequestHandler):
      
 #Liquidacao
 class LiquidacaoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
@@ -1284,6 +1303,7 @@ class LiquidacaoHandler(webapp2.RequestHandler):
      
 #Pagamento
 class PagamentoHandler(webapp2.RequestHandler):
+        @login_required
         def post(self):
             pedido = self.request.get("pedido")
             if (users.get_current_user() in lista_usuarios) or (users.get_current_user() in lista_admins and users.get_current_user() == users.User(searchkey(pedido).email_demandante)):
