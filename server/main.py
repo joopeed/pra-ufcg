@@ -280,19 +280,19 @@ class GetCSV(webapp2.RequestHandler):
                     data_isoformat_retorno = dic.get("minuta").get("data_retorno")[0][:10]
                     data_retorno_minuta = data_isoformat_retorno[8:]+"/"+data_isoformat_retorno[5:7]+"/"+data_isoformat_retorno[:4]
 
-                cw.writerow([dic.get("numero"),dic.get("demandante"),dic.get("descricao"),dic.get("data_entrada").strftime("%d/%m/%Y"),dic.get("email_demandante"),dic.get("local"),
-                            "Nao definida" if dic.get("legalidade").get("data_envio") == "" else dic.get("legalidade").get("data_envio").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("legalidade").get("data_retorno")=="" else dic.get("legalidade").get("data_retorno").strftime("%d/%m/%Y"),parecer_legalidade,
-                            parecer_autorizacao,cotacao,descricao,quantitativo,
-                            "Nao definida" if dic.get("corretude").get("data")=="" else dic.get("corretude").get("data").strftime("%d/%m/%Y"),data_inicio_minuta,data_envio_minuta,data_retorno_minuta,parecer_minuta,
-                            "Nao definida" if dic.get("adjudicacao").get("data")=="" else dic.get("adjudicacao").get("data").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("homologacao").get("data")=="" else dic.get("homologacao").get("data").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("publicacao").get("data")=="" else dic.get("publicacao").get("data").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("empenho").get("data")=="" else dic.get("empenho").get("data").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("nota_almoxarifado").get("data")=="" else dic.get("nota_almoxarifado").get("data").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("patrimonio").get("data")=="" else dic.get("patrimonio").get("data").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("nota_contabilidade").get("data")=="" else dic.get("nota_contabilidade").get("data").strftime("%d/%m/%Y"),
-                            "Nao definida" if dic.get("liquidacao").get("data") =="" else dic.get("liquidacao").get("data").strftime("%d/%m/%Y")])
+                cw.writerow([dic.get("numero").encode('utf-8'),dic.get("demandante").encode('utf-8'),dic.get("descricao").encode('utf-8'),dic.get("data_entrada").strftime("%d/%m/%Y").encode('utf-8'),dic.get("email_demandante"),dic.get("local").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("legalidade").get("data_envio") == "" else dic.get("legalidade").get("data_envio").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("legalidade").get("data_retorno")=="" else dic.get("legalidade").get("data_retorno").strftime("%d/%m/%Y").encode('utf-8'),parecer_legalidade.encode('utf-8'),
+                            parecer_autorizacao.encode('utf-8'),cotacao.encode('utf-8'),descricao.encode('utf-8'),quantitativo.encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("corretude").get("data")=="" else dic.get("corretude").get("data").strftime("%d/%m/%Y").encode('utf-8'),data_inicio_minuta.encode('utf-8'),data_envio_minuta.encode('utf-8'),data_retorno_minuta.encode('utf-8'),parecer_minuta.encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("adjudicacao").get("data")=="" else dic.get("adjudicacao").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("homologacao").get("data")=="" else dic.get("homologacao").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("publicacao").get("data")=="" else dic.get("publicacao").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("empenho").get("data")=="" else dic.get("empenho").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("nota_almoxarifado").get("data")=="" else dic.get("nota_almoxarifado").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("patrimonio").get("data")=="" else dic.get("patrimonio").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("nota_contabilidade").get("data")=="" else dic.get("nota_contabilidade").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nao definida".encode('utf-8') if dic.get("liquidacao").get("data") =="" else dic.get("liquidacao").get("data").strftime("%d/%m/%Y").encode('utf-8')])
 
             self.response.headers.add_header('content-type', 'application/csv', charset='utf-8')
             self.response.out.write(si.getvalue())
