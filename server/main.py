@@ -58,7 +58,7 @@ users.User("daltonserey@gmail.com"): [1, 21]
 
 lista_admins = [users.User("leo.vital@ccc.ufcg.edu.br"),users.User("daltonserey@gmail.com"),users.User("jcafigueiredo@gmail.com"),users.User("joopeeds@gmail.com")]
 
-lista_usuarios = [users.User("eliasalmox@ufcg.edu.br"),users.User("fatima.pereira@ufcg.edu.br"),
+lista_usuarios = [users.User("isaac.almeida@ufcg.edu.br"),users.User("eliasalmox@ufcg.edu.br"),users.User("fatima.pereira@ufcg.edu.br"),
                  users.User("agama@reitoria.ufcg.edu.br"),users.User("dm@reitoria.ufcg.edu.br"),
                  users.User("cpl@reitoria.ufcg.edu.br"),users.User("empenho@ufcg.edu.br"),
                  users.User("contadorjulio@reitoria.ufcg.edu.br"),users.User("tarcisio.almox@ufcg.edu.br"),
