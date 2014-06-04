@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 
 
@@ -1183,7 +1183,7 @@ public class Sistema_PRA implements EntryPoint {
 			HorizontalPanel hemail = new HorizontalPanel();
             hemail.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
             hemail.add(space);
-            hemail.add(new HTML("<p>Email do demandante:* </p>"));
+            hemail.add(new HTML("<p>Email do demandante: </p>"));
 			hemail.add(email_demandante);
 			//vPanel.add(new HTML("Cadastro de Pedidos<br>"));
 			HorizontalPanel hObrigatorio = new HorizontalPanel();
@@ -1200,7 +1200,7 @@ public class Sistema_PRA implements EntryPoint {
 			vPanel.add(new Button("Enviar", new ClickHandler() {
        		        public void onClick(ClickEvent event) {
 
-       		        	if(numero.getText().equals("") || demandante.getText().equals("") || descricao.getText().equals("") || email_demandante.getText().equals("") || data_entrada.getValue() == null || 
+       		        	if(numero.getText().equals("") || demandante.getText().equals("") || descricao.getText().equals("") || data_entrada.getValue() == null || 
        		        			!(radioPregao.getValue() || radioDispensa.getValue() || radioInexi.getValue() || radioSessao.getValue())){
            		        	final ExtendedDialogBox aviso = new ExtendedDialogBox(true);
            		        	aviso.center();
@@ -1208,7 +1208,7 @@ public class Sistema_PRA implements EntryPoint {
            		        	aviso.setGlassEnabled(true);
            		            aviso.setAnimationEnabled(true);
            		            aviso.show();	
-       		        	}else{
+       		        	}else if(email_demandante.getText().equals("")){
        		        	DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
        		        	String tipo = "pregao";       		        	
        		        	if(radioDispensa.getValue()) tipo = "dispensa";
@@ -1219,8 +1219,22 @@ public class Sistema_PRA implements EntryPoint {
        		        			"&demandante="+demandante.getText()+
        		        			"&data_entrada="+format.format(data_entrada.getValue())+
        		        			"&descricao="+descricao.getText()+
-       		        			"&email_demandante="+email_demandante.getText();
-       		        	enviaForm(parameters, numero.getText());}}}));
+       		        			"&email_demandante="+"Nenhum";
+       		        	enviaForm(parameters, numero.getText());}
+       		        	else{
+       		        		DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+           		        	String tipo = "pregao";       		        	
+           		        	if(radioDispensa.getValue()) tipo = "dispensa";
+           		        	else if(radioInexi.getValue()) tipo = "inexigibilidade";
+           		        	else if(radioSessao.getValue()) tipo = "sessao";
+           		        	String parameters = "numero="+numero.getText()+
+           		        			"&tipo_pedido="+tipo+
+           		        			"&demandante="+demandante.getText()+
+           		        			"&data_entrada="+format.format(data_entrada.getValue())+
+           		        			"&descricao="+descricao.getText()+
+           		        			"&email_demandante="+email_demandante.getText();
+           		        	enviaForm(parameters, numero.getText());
+       		        	}}}));
 
        		        	
 				RootPanel.get("main_bottom").clear();
