@@ -63,7 +63,7 @@ lista_usuarios = [users.User("clovis.de.melo@hotmail.com"),users.User("isaac.alm
                  users.User("agama@reitoria.ufcg.edu.br"),users.User("dm@reitoria.ufcg.edu.br"),
                  users.User("cpl@reitoria.ufcg.edu.br"),users.User("empenho@ufcg.edu.br"),
                  users.User("contadorjulio@reitoria.ufcg.edu.br"),users.User("tarcisio.almox@ufcg.edu.br"),
-                 users.User("leideadriana@ufcg.edu.br"),users.User("lucilenebandeira@ufcg.edu.br")]
+                 users.User("leideadriana@ufcg.edu.br"),users.User("lucilenebandeira@ufcg.edu.br"),users.User("souelelac2000@yahoo.com.br")]
 
 
 def login_required(handler_method):
@@ -205,9 +205,9 @@ class GetCSV(webapp2.RequestHandler):
                                     "data_envio":  [ data.isoformat() for data in pedido.minuta_data_envio ], 
                                     "data_retorno": [ data.isoformat() for data in pedido.minuta_data_retorno ]}, 
                      "pregao": { "indice": pedido.pregao_indice,
-                                    "parecer": pedido.pregao_parecer,
+                                    "parecer": [ parecer for parecer in pedido.pregao_parecer ],
                                     "data": [ data.isoformat() for data in pedido.pregao_data ],
-                                    "numero": pedido.pregao_numero,
+                                    "numero": [ numero for numero in pedido.pregao_numero ],
                                     "licitacao_data": [ data.isoformat() for data in pedido.pregao_licitacao_data ], 
                                     },
                     "adjudicacao": { "data": pedido.adjudicacao_data  if pedido.adjudicacao_data else "" },
