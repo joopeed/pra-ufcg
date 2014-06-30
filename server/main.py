@@ -63,7 +63,8 @@ lista_usuarios = [users.User("clovis.de.melo@hotmail.com"),users.User("isaac.alm
                  users.User("agama@reitoria.ufcg.edu.br"),users.User("dm@reitoria.ufcg.edu.br"),
                  users.User("cpl@reitoria.ufcg.edu.br"),users.User("empenho@ufcg.edu.br"),
                  users.User("contadorjulio@reitoria.ufcg.edu.br"),users.User("tarcisio.almox@ufcg.edu.br"),
-                 users.User("leideadriana@ufcg.edu.br"),users.User("lucilenebandeira@ufcg.edu.br"),users.User("souelelac2000@yahoo.com.br")]
+                 users.User("leideadriana@ufcg.edu.br"),users.User("lucilenebandeira@ufcg.edu.br"),users.User("souelelac2000@yahoo.com.br"),
+                 users.User("klenia.bandeira@gmail.com")]
 
 
 def login_required(handler_method):
