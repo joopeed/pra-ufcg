@@ -178,7 +178,8 @@ class GetCSV(webapp2.RequestHandler):
                        "Descricao da Corretude", "Quantitativo da Corretude", "Data da Corretude", "Data de inicio da Minuta",
                        "Data de envio da Minuta", "Data de retorno da Minuta", "Parecer da Minuta","Data da Adjudicacao",
                        "Data da Homologacao","Data da Publicacao","Data do Empenho", "Data de envio do Empenho ao Almoxarifado",
-                       "Data de envio do Empenho ao Patrimonio" ,"Data provisoria de Recebimento", "Data definitiva de Recebimento"]
+                       "Data de envio do Empenho ao Patrimonio" ,"Data provisoria de Recebimento", "Data definitiva de Recebimento",
+                       "Numeros dos Pregoes", "Pareceres dos Pregoes", "Datas de definicao dos Pregoes", "Datas de abertura dos Pregoes"]
             si = StringIO.StringIO()
             cw = csv.writer(si)
             cw.writerow(titulos)
@@ -208,7 +209,7 @@ class GetCSV(webapp2.RequestHandler):
                      "pregao": { "indice": pedido.pregao_indice,
                                     "parecer": [ parecer for parecer in pedido.pregao_parecer ],
                                     "data": [ data.isoformat() for data in pedido.pregao_data ],
-                                    "numero": [ numero for numero in pedido.pregao_numero ],
+                                    "numero": [ numero.encode('utf-8') for numero in pedido.pregao_numero ],
                                     "licitacao_data": [ data.isoformat() for data in pedido.pregao_licitacao_data ], 
                                     },
                     "adjudicacao": { "data": pedido.adjudicacao_data  if pedido.adjudicacao_data else "" },
@@ -282,6 +283,35 @@ class GetCSV(webapp2.RequestHandler):
                     data_isoformat_retorno = dic.get("minuta").get("data_retorno")[0][:10]
                     data_retorno_minuta = data_isoformat_retorno[8:]+"/"+data_isoformat_retorno[5:7]+"/"+data_isoformat_retorno[:4]
 
+                if len(dic.get("pregao").get("parecer"))==0:
+                    parecer_pregao="Nenhum parecer de pregao definido"
+                else:
+                    parecer_pregao = []
+                    for parecer in dic.get("pregao").get("parecer"):
+                        if parecer==False:
+                            parecer_pregao.append("Nao comprado")
+                        else:
+                            parecer_pregao.append("Comprado")
+
+
+                if len(dic.get("pregao").get("data"))==0:
+                    data_pregao="Nenhuma data de pregao definida"
+                else:
+                    data_pregao = []
+                    for data in dic.get("pregao").get("data"):
+                        data_pregao_inicio = data[:10]
+                        data_inicio_pregao = data_pregao_inicio[8:]+"/"+data_isoformat_inicio[5:7]+"/"+data_isoformat_inicio[:4]
+                        data_pregao.append(data_inicio_pregao)
+
+                if len(dic.get("pregao").get("licitacao_data"))==0:
+                    data_licit_pregao="Nenhuma data de licitacao de pregao definida"
+                else:
+                    data_licit_pregao = []
+                    for data in dic.get("pregao").get("licitacao_data"):
+                        data_pregao_licit = data[:10]
+                        data_licit = data_pregao_licit[8:]+"/"+data_isoformat_inicio[5:7]+"/"+data_isoformat_inicio[:4]
+                        data_licit_pregao.append(data_licit)
+
                 cw.writerow([dic.get("numero").encode('utf-8'),dic.get("demandante").encode('utf-8'),dic.get("descricao").encode('utf-8'),dic.get("data_entrada").strftime("%d/%m/%Y").encode('utf-8'),dic.get("email_demandante"),dic.get("local").encode('utf-8'),
                             "Nao definida".encode('utf-8') if dic.get("legalidade").get("data_envio") == "" else dic.get("legalidade").get("data_envio").strftime("%d/%m/%Y").encode('utf-8'),
                             "Nao definida".encode('utf-8') if dic.get("legalidade").get("data_retorno")=="" else dic.get("legalidade").get("data_retorno").strftime("%d/%m/%Y").encode('utf-8'),parecer_legalidade.encode('utf-8'),
@@ -294,7 +324,10 @@ class GetCSV(webapp2.RequestHandler):
                             "Nao definida".encode('utf-8') if dic.get("nota_almoxarifado").get("data")=="" else dic.get("nota_almoxarifado").get("data").strftime("%d/%m/%Y").encode('utf-8'),
                             "Nao definida".encode('utf-8') if dic.get("patrimonio").get("data")=="" else dic.get("patrimonio").get("data").strftime("%d/%m/%Y").encode('utf-8'),
                             "Nao definida".encode('utf-8') if dic.get("nota_contabilidade").get("data")=="" else dic.get("nota_contabilidade").get("data").strftime("%d/%m/%Y").encode('utf-8'),
-                            "Nao definida".encode('utf-8') if dic.get("liquidacao").get("data") =="" else dic.get("liquidacao").get("data").strftime("%d/%m/%Y").encode('utf-8')])
+                            "Nao definida".encode('utf-8') if dic.get("liquidacao").get("data") =="" else dic.get("liquidacao").get("data").strftime("%d/%m/%Y").encode('utf-8'),
+                            "Nenhum numero de pregao definido" if len(dic.get("pregao").get("numero")) == 0 else dic.get("pregao").get("numero"),
+                            parecer_pregao,data_pregao,data_licit_pregao])
+                            
 
             self.response.headers.add_header('content-type', 'application/csv', charset='utf-8')
             self.response.out.write(si.getvalue())
