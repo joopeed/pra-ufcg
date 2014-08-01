@@ -468,6 +468,10 @@ class Pedido extends JavaScriptObject {
 	public final native String[] getNomesDosEstados() /*-{
 		return this.estados_nomes;
 	}-*/;
+	
+	public final native String getLastData() /*-{
+		return this.ultima_atualizacao;
+	}-*/;
 
 	public final native String[] getLinksDosEstados() /*-{
 		return this.estados_links;
