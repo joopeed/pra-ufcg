@@ -279,7 +279,7 @@ public class MontadorPadrao implements MontadorDeBarrinha {
         
         barraProgresso +="</div>";
 
-        
+      
         
         return new HTML(barraProgresso);
 	}
