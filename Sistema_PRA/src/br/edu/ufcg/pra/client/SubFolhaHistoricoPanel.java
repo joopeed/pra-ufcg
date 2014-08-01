@@ -23,7 +23,7 @@ public class SubFolhaHistoricoPanel extends SubFolhaPanel {
 		addToSuper(linhas);
 		HorizontalPanel head = new HorizontalPanel();
 		head.setSpacing(15);
-		head.add(new HTML("<h2>HistÃ³rico</h2>"));
+		head.add(new HTML("<h2>Histórico</h2>"));
 		Button atualizador = new Button("<img src=\"images/refresh.png\"></a>");
 		head.add(atualizador);
 		linhas.add(head);

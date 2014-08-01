@@ -1,1 +1,33 @@
-.idea/
+*.class
+
+.idea
+
+# Package Files #
+*.jar
+*.war
+
+Sistema_PRA/build
+Sistema_PRA/target
+
+# gwt caches and compiled units #
+Sistema_PRA/war
+Sistema_PRA/gwt-unitCache/
+
+# boilerplate generated classes #
+Sistema_PRA/.apt_generated/
+
+# more caches and things from deploy #
+Sistema_PRA/war/WEB-INF/deploy/
+war/WEB-INF/classes/
+
+#compilation logs
+Sistema_PRA/.gwt/
+
+#caching for already compiled files
+Sistema_PRA/gwt-unitCache/
+
+#gwt junit compilation files
+Sistema_PRA/www-test/
+
+#old GWT (1.5) created this dir
+Sistema_PRA/.gwt-tmp/

@@ -1,3 +1,5 @@
+
+
 package br.edu.ufcg.pra.client;
 
 import java.util.ArrayList;
@@ -30,19 +32,19 @@ public class MontadorPadrao implements MontadorDeBarrinha {
        
         //AUTORIZACAO
         if (p.getAutorizacao().getParecer().equals("null") && p.getLegalidade().getParecer().equals("null")) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: indefinido'>Autoriza√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#999999'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: indefinido'>AutorizaÁ„o</a></td>";
                 estados.add(0);
         }
         else if (p.getAutorizacao().getParecer().equals("null")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: em andamento'>Autoriza√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: em andamento'>AutorizaÁ„o</a></td>";
                 estados.add(1);
         }
         else if (p.getAutorizacao().getParecer().equals("true")) {
-                barraProgresso += "<td style='background-color:#33CC33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: autorizado'>Autoriza√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#33CC33'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: autorizado'>AutorizaÁ„o</a></td>";
                 estados.add(2);
         }
         else {
-                barraProgresso += "<td style='background-color:#FF0000'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: nao autorizado'>Autoriza√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#FF0000'><a href='#autorizacao' id='anchorBarra' title='Autorizacao parecer: nao autorizado'>AutorizaÁ„o</a></td>";
                 estados.add(3);
     		   }
        
@@ -147,70 +149,70 @@ public class MontadorPadrao implements MontadorDeBarrinha {
  
         if (p.getPregao().getParecer().length > 0) {
             if (p.getPregao().getParecer()[iParecerPregao].equals("null") && p.getMinuta().getParecer()[iParecerMinuta].equals("null")) {
-                    barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Preg√£o</a></td>";
+                    barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Preg„o</a></td>";
                     estados.add(0);
             }
             else if (p.getPregao().getParecer()[iParecerPregao].equals("null")) {
-                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#pregao' id='anchorBarra' title='Pregao parecer: em andamento'>Preg√£o</a></td>";
+                    barraProgresso += "<td style='background-color:#FFFF33'><a href='#pregao' id='anchorBarra' title='Pregao parecer: em andamento'>Preg„o</a></td>";
                     estados.add(1);
             }
             else if (p.getPregao().getParecer()[iParecerPregao].equals("true")) {
                     barraProgresso += "<td style='background-color:#33CC33'><a href='#pregao' id='anchorBarra' title='Pregao parecer: realizado. Data de realizacao: " +
-                    dataPregao + "'>Preg√£o</a></td>";
+                    dataPregao + "'>Preg„o</a></td>";
                     estados.add(2);
             }
             else {
-                    barraProgresso += "<td style='background-color:#FF0000'><a href='#pregao' id='anchorBarra' title='Pregao parecer: nao realizado'>Preg√£o</a></td>";
+                    barraProgresso += "<td style='background-color:#FF0000'><a href='#pregao' id='anchorBarra' title='Pregao parecer: nao realizado'>Preg„o</a></td>";
                     estados.add(3);
             }
         }
         else {
-        	barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Preg√£o</a></td>";
+        	barraProgresso += "<td style='background-color:#999999'><a href='#pregao' id='anchorBarra' title='Pregao parecer: indefinido'>Preg„o</a></td>";
         	estados.add(0);
         }
        
         //ADJUDICACAO
         if (p.getAdjudicacao().getData().equals("") && (p.getPregao().getParecer(iParecerPregao).equals("null") || p.getPregao().getParecer(iParecerPregao).equals("")) ) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: indefinida'>Adjudica√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#999999'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: indefinida'>AdjudicaÁ„o</a></td>";
                 estados.add(0);
         }
         else if (p.getAdjudicacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: em andamento'>Adjudica√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: em andamento'>AdjudicaÁ„o</a></td>";
                 estados.add(1);
         }
         else {
                 barraProgresso += "<td style='background-color:#33CC33'><a href='#adjudicacao' id='anchorBarra' title='Adjudicacao: concluida Data: " +
-                p.getAdjudicacao().getData() + "'>Adjudica√ß√£o</a></td>";
+                p.getAdjudicacao().getData() + "'>AdjudicaÁ„o</a></td>";
                 estados.add(2);
         }
  	
         //HOMOLOGACAO
         if (p.getHomologacao().getData().equals("") && p.getAdjudicacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#homologacao' id='anchorBarra' title='Homologacao: indefinida'>Homologa√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#999999'><a href='#homologacao' id='anchorBarra' title='Homologacao: indefinida'>HomologaÁ„o</a></td>";
                 estados.add(0);
         }
         else if (p.getHomologacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#homologacao' id='anchorBarra' title='Homologacao: em andamento'>Homologa√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#homologacao' id='anchorBarra' title='Homologacao: em andamento'>HomologaÁ„o</a></td>";
                 estados.add(1);
         }
         else {
                 barraProgresso += "<td style='background-color:#33CC33'><a href='#homologacao' id='anchorBarra' title='Homologacao: concluida Data: " +
-                p.getHomologacao().getData() + "'>Homologa√ß√£o</a></td>";
+                p.getHomologacao().getData() + "'>HomologaÁ„o</a></td>";
                 estados.add(2);
         }
  
         //PUBLICACAO
         if (p.getPublicacao().getData().equals("") && p.getHomologacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#999999'><a href='#publicacao' id='anchorBarra' title='Publicacao: indefinida'>Publica√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#999999'><a href='#publicacao' id='anchorBarra' title='Publicacao: indefinida'>PublicaÁ„o</a></td>";
                 estados.add(0);
         }
         else if (p.getPublicacao().getData().equals("")) {
-                barraProgresso += "<td style='background-color:#FFFF33'><a href='#publicacao' id='anchorBarra' title='Publicacao: em andamento'>Publica√ß√£o</a></td>";
+                barraProgresso += "<td style='background-color:#FFFF33'><a href='#publicacao' id='anchorBarra' title='Publicacao: em andamento'>PublicaÁ„o</a></td>";
                 estados.add(1);
         }
         else {
                 barraProgresso += "<td style='background-color:#33CC33'><a href='#publicacao' id='anchorBarra' title='Publicacao: concluida Data: " +
-                p.getPublicacao().getData() + "'>Publica√ß√£o</a></td>";
+                p.getPublicacao().getData() + "'>PublicaÁ„o</a></td>";
                 estados.add(2);
         }
         

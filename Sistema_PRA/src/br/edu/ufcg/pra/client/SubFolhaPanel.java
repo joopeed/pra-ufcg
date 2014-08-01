@@ -28,21 +28,21 @@ public class SubFolhaPanel extends SimplePanel {
 	
 	public SubFolhaPanel(String title){
 		linhas = new VerticalPanel();
-		/*if (title.equals("Dados b√°sicos")) {
+		/*if (title.equals("Dados b·sicos")) {
 			linhas.add(new HTML("<a class='anc' name ='"+"legalidade"+"'></a>"));
 		}else */if (title.equals("Legalidade")) {
 			linhas.add(new HTML("<a class='anc' name ='"+"legalidade"+"'></a>"));
-		} else if (title.equals("Autoriza√ß√£o")) {
+		} else if (title.equals("AutorizaÁ„o")) {
 			linhas.add(new HTML("<a class='anc2' name ='"+"autorizacao"+"'></a>"));
 		} else if (title.equals("Corretude")) {
 			linhas.add(new HTML("<a class='anc3' name ='"+"corretude"+"'></a>"));
 		} else if (title.equals("Minuta do Edital")) {
 			linhas.add(new HTML("<a class='anc4' name ='"+"minuta"+"'></a>"));
-		} else if (title.equals("Adjudica√ß√£o")) {
+		} else if (title.equals("AdjudicaÁ„o")) {
 			linhas.add(new HTML("<a class='anc6' name ='"+"adjudicacao"+"'></a>"));
-		} else if (title.equals("Homologa√ß√£o")) {
+		} else if (title.equals("HomologaÁ„o")) {
 			linhas.add(new HTML("<a class='anc7' name ='"+"homologacao"+"'></a>"));
-		} else if (title.equals("Publica√ß√£o")) {
+		} else if (title.equals("PublicaÁ„o")) {
 			linhas.add(new HTML("<a class='anc8' name ='"+"publicacao"+"'></a>"));
 		} else if (title.equals("Empenho")){
 			linhas.add(new HTML("<a class='anc9' name = '"+"empenho"+"'></a>"));

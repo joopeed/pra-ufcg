@@ -61,7 +61,7 @@ public class MaisButton extends Button {
 		            		 
 		            	 }
 		            	 else {
-		            		 RootPanel.get("main_bottom").add(new Label("N√£o h√° mais pedidos"));
+		            		 RootPanel.get("main_bottom").add(new Label("N„o h· mais pedidos"));
 		            		 
 		            	 }
 		            	 RootPanel.get("main_bottom").add(sobra);

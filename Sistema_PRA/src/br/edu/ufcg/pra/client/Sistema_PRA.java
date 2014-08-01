@@ -1,4 +1,4 @@
-ï»¿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 
 
@@ -479,7 +479,7 @@ public class Sistema_PRA implements EntryPoint {
 						geraLista(tokenBusca, "");
 					}
 					else if (token.trim().equals("") || token==null){
-						Window.setTitle("SAPO@UFCG - InÃ­cio");
+						Window.setTitle("SAPO@UFCG - Início");
 						index();
 					}
 
@@ -734,7 +734,7 @@ public class Sistema_PRA implements EntryPoint {
 	        return object.getNumero();
 	      }
 	    };
-	    table.addColumn(addressColumn, "NÃºmero");
+	    table.addColumn(addressColumn, "Número");
 
 
 	    // Add a text column to show the address.
@@ -744,7 +744,7 @@ public class Sistema_PRA implements EntryPoint {
 	        return object.getDescricao().substring(0, 20);
 	      }
 	    };
-	    table.addColumn(descricaoColumn, "DescriÃ§Ã£o");	
+	    table.addColumn(descricaoColumn, "Descrição");	
 
 
 	    // Add a text column to show the address.
@@ -801,13 +801,13 @@ public class Sistema_PRA implements EntryPoint {
 	       	         dialogBox.setWidget(dialogContents);
 	       	         // Add some text to the top of the dialog
 	       	         dialogContents.add(barra);
-	       	         dialogContents.add(new Label("NÃºmero do pedido: "+todo.getNumero()));
+	       	         dialogContents.add(new Label("Número do pedido: "+todo.getNumero()));
 	       	         dialogContents.add(new Label("Tipo de pedido: "+todo.getTipoDePedido()));
 	       	         dialogContents.add(new Label("Nome do demandante: "+todo.getDemandante()));
 	       	         dialogContents.add(new Label("Email do demandante: "+todo.getEmail()));
 	       	         dialogContents.add(new Label("Data de entrada: "+todo.getDataFormatada()));
 	       	         dialogContents.add(new Label("Local atual: "+todo.getLocal()));
-	       	         dialogContents.add(new Label("DescriÃ§Ã£o do pedido: "+todo.getDescricao()));
+	       	         dialogContents.add(new Label("Descrição do pedido: "+todo.getDescricao()));
 	       	         dialogContents.setCellHorizontalAlignment(
 	       	             barra, HasHorizontalAlignment.ALIGN_CENTER);
 
@@ -1140,7 +1140,7 @@ public class Sistema_PRA implements EntryPoint {
 			HorizontalPanel hnumero = new HorizontalPanel();
             hnumero.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
             hnumero.add(space);
-            hnumero.add(new HTML("<p>NÃºmero do processo:*</p>"));
+            hnumero.add(new HTML("<p>Número do processo:*</p>"));
 			hnumero.add(numero);
 			HorizontalPanel htipo = new HorizontalPanel();
 			htipo.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
@@ -1148,10 +1148,10 @@ public class Sistema_PRA implements EntryPoint {
 			htipo.add(new HTML("<p>Tipo do pedido:*</p>"));
 			final HorizontalPanel tipo = new HorizontalPanel();
 			htipo.add(tipo);
-			final RadioButton radioPregao = new RadioButton("tipo_pedido", "PregÃ£o EletrÃ´nico");
+			final RadioButton radioPregao = new RadioButton("tipo_pedido", "Pregão Eletrônico");
 			final RadioButton radioDispensa = new RadioButton("tipo_pedido", "Dispensa");
 			final RadioButton radioInexi = new RadioButton("tipo_pedido", "Inexigibilidade");
-			final RadioButton radioSessao = new RadioButton("tipo_pedido", "SessÃ£o PÃºblica");
+			final RadioButton radioSessao = new RadioButton("tipo_pedido", "Sessão Pública");
 			tipo.add(radioPregao);
 			tipo.add(radioDispensa);
 			tipo.add(radioInexi);
@@ -1176,7 +1176,7 @@ public class Sistema_PRA implements EntryPoint {
 			HorizontalPanel hdescricao = new HorizontalPanel();
             hdescricao.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
             hdescricao.add(space);
-            hdescricao.add(new HTML("<p>DescriÃ§Ã£o:* </p>"));
+            hdescricao.add(new HTML("<p>Descrição:* </p>"));
 			hdescricao.add(descricao);
 			final TextBox email_demandante = new TextBox();
             email_demandante.setWidth("350");
@@ -1188,7 +1188,7 @@ public class Sistema_PRA implements EntryPoint {
 			//vPanel.add(new HTML("Cadastro de Pedidos<br>"));
 			HorizontalPanel hObrigatorio = new HorizontalPanel();
 			hObrigatorio.add(space);
-			hObrigatorio.add(new HTML("* = campos obrigatÃ³rios"));
+			hObrigatorio.add(new HTML("* = campos obrigatórios"));
             vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 			vPanel.add(hnumero);
 			vPanel.add(htipo);
@@ -1339,16 +1339,16 @@ public class Sistema_PRA implements EntryPoint {
             	 RootPanel.get("main_bottom_in").add(folha);
             	 DecoratorPanel decPanel = new DecoratorPanel();
 		         //DADOS BASICOS
-		         SubFolhaPanel subfolha = new SubFolhaPanel("Dados bÃ¡sicos");
+		         SubFolhaPanel subfolha = new SubFolhaPanel("Dados básicos");
 		         pedacos.add(subfolha);
 		         
-		         subfolha.add(new Label(pedido.getNumero()), "NÃºmero do pedido: ");
+		         subfolha.add(new Label(pedido.getNumero()), "Número do pedido: ");
 		         
 	              
 		        // subfolha.add(createTextBox(barrinha, "tipo_pedido", pedido.getTipoDePedido(), pedido.getNumero()), "Tipo de pedido: ");
 		         subfolha.add(createTextBox(barrinha, "demandante", pedido.getDemandante(), pedido.getNumero()), "Nome do demandante: ");
 		         subfolha.add(createTextBox(barrinha, "email_demandante",pedido.getEmail(), pedido.getNumero()), "Email do demandante: ");
-		         subfolha.add(createTextBox(barrinha, "descricao",pedido.getDescricao(), pedido.getNumero()), "DescriÃ§Ã£o do pedido: ");
+		         subfolha.add(createTextBox(barrinha, "descricao",pedido.getDescricao(), pedido.getNumero()), "Descrição do pedido: ");
 
 		         DateTimeFormat dateFormat = DateTimeFormat.getMediumDateTimeFormat();
 		         final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1378,7 +1378,7 @@ public class Sistema_PRA implements EntryPoint {
                lb.setSelectedIndex(pedido.getLegalidade().getParecer().equals("false")?1:0);
               	*/
               HorizontalPanel legalidade = createRadioGroup(barrinha, pedido, "LegalidadeHandler", "LegalidadeHandler", pedido.getLegalidade().getParecer(), "parecer", "Legal", "Ilegal");
-              HorizontalPanel autorizacao = createRadioGroup(barrinha, pedido, "AutorizacaoHandler",  "AutorizacaoHandler",pedido.getAutorizacao().getParecer(), "parecer", "Sim", "NÃ£o");
+              HorizontalPanel autorizacao = createRadioGroup(barrinha, pedido, "AutorizacaoHandler",  "AutorizacaoHandler",pedido.getAutorizacao().getParecer(), "parecer", "Sim", "Não");
               HorizontalPanel corretudeDescricao = createRadioGroup(barrinha, pedido, "CorretudeHandler", "CorretudeDescHandler",pedido.getCorretude().getDescricao(), "descricao", "Correta", "Incorreta");
               HorizontalPanel corretudeQuantitativo = createRadioGroup(barrinha, pedido, "CorretudeHandler", "CorretudeQuantHandler",pedido.getCorretude().getQuantitativo(), "quantitativo", "Correta", "Incorreta");
               HorizontalPanel corretudeCotacao = createRadioGroup(barrinha, pedido, "CorretudeHandler", "CorretudeCotHandler",pedido.getCorretude().getCotacao(), "cotacao", "Correta", "Incorreta");
@@ -1392,7 +1392,7 @@ public class Sistema_PRA implements EntryPoint {
               	 subfolha.add(criaDatePicker(barrinha, pedido.getLegalidade().getDataRetorno(), "LegalidadeHandler?pedido="+pedido.getNumero()+"&data_retorno="), "Data de retorno: ");
 
               	 //AUTORIZACAO
-              	 subfolha = new SubFolhaPanel("AutorizaÃ§Ã£o");
+              	 subfolha = new SubFolhaPanel("Autorização");
               	 if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
               		 subfolha.setVisible(false);
                  pedacos.add(subfolha);
@@ -1402,15 +1402,15 @@ public class Sistema_PRA implements EntryPoint {
 
 		         subfolha = new SubFolhaPanel("Corretude");
               	 pedacos.add(subfolha);
-              	 subfolha.add(corretudeDescricao,"DescriÃ§Ã£o: ");
+              	 subfolha.add(corretudeDescricao,"Descrição: ");
               	 subfolha.add(new Label(), "");
               	 subfolha.add(corretudeQuantitativo,"Quantitativo: ");
              	 subfolha.add(new Label(), "");
-             	 subfolha.add(corretudeCotacao,"CotaÃ§Ã£o: ");
+             	 subfolha.add(corretudeCotacao,"Cotação: ");
              	 subfolha.add(new Label(), "");
 		         //CORRETUDE
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getCorretude().getData(), "CorretudeHandler?pedido="+pedido.getNumero()+"&data="), "Data de definiÃ§Ã£o: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getCorretude().getData(), "CorretudeHandler?pedido="+pedido.getNumero()+"&data="), "Data de definição: ");
 
 
 		         //MINUTA DO EDITAL
@@ -1426,7 +1426,7 @@ public class Sistema_PRA implements EntryPoint {
               	 aRemover.add(subfolha);
               	 subfolha.add(minuta, "Parecer: ");
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataInicio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="), "Data de inicio de elaboraÃ§Ã£o: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataInicio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_inicio="), "Data de inicio de elaboração: ");
               	 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getMinuta().getDataEnvio(indiceMinuta), "MinutaHandler?pedido="+pedido.getNumero()+"&data_envio="), "Data de envio: ");
 
@@ -1445,16 +1445,16 @@ public class Sistema_PRA implements EntryPoint {
 		         boolean enabled = true;
 				 if(i!=indicePregao+1){ 
 					enabled = false;
-					stack.add(subfolha,"PregÃ£o <span style = 'color: #FF0000'>nÃ£o comprado</span>, nÂº: "+pedido.getPregao().getNumero(i),true);
+					stack.add(subfolha,"Pregão <span style = 'color: #FF0000'>não comprado</span>, nº: "+pedido.getPregao().getNumero(i),true);
 				 }else{
-					stack.add(subfolha,"PregÃ£o atual");
+					stack.add(subfolha,"Pregão atual");
 					stack.showStack(indicePregao+1);
              		pedacos.add(stack);
 				 }
               	 
 		         //PREGAO
 
-		         final HorizontalPanel pregao = createRadioGroup(barrinha, pedido, enabled, "PregaoHandler", "Pregao"+i, pedido.getPregao().getParecer(i), "parecer", "Comprado", "NÃ£o comprado");
+		         final HorizontalPanel pregao = createRadioGroup(barrinha, pedido, enabled, "PregaoHandler", "Pregao"+i, pedido.getPregao().getParecer(i), "parecer", "Comprado", "Não comprado");
 
 		         final TextBox t = new TextBox();
 		         t.setEnabled(enabled);
@@ -1491,7 +1491,7 @@ public class Sistema_PRA implements EntryPoint {
 
 					}
 				});*/
-		         subfolha.add(t, "NÃºmero: ");
+		         subfolha.add(t, "Número: ");
 		         if(i!=indicePregao+1){ 
 			         subfolha.add(new HTML(), "");
 		         } else{
@@ -1499,12 +1499,12 @@ public class Sistema_PRA implements EntryPoint {
 		         }
 		         final HorizontalPanel definicao = criaDatePicker(barrinha, pedido.getPregao().getData(i), enabled,  "PregaoHandler?pedido="+pedido.getNumero()+"&data=");
 		         final HorizontalPanel abertura = criaDatePicker(barrinha, pedido.getPregao().getLicitacaoData(i),  enabled, "PregaoHandler?pedido="+pedido.getNumero()+"&licitacao_data=");
-		         subfolha.add(definicao, "Data de definiÃ§Ã£o: ");
+		         subfolha.add(definicao, "Data de definição: ");
 		         subfolha.add(abertura, "Data de abertura: ");
 
 		         subfolha.add(pregao, "Parecer: ");
 
-		         final Button adicionaPregao = new Button("Adicionar PregÃ£o");
+		         final Button adicionaPregao = new Button("Adicionar Pregão");
 		         adicionaPregao.addClickHandler(new ClickHandler() {
 
 					@Override
@@ -1556,7 +1556,7 @@ public class Sistema_PRA implements EntryPoint {
 		         }
 
 
-		         subfolha = new SubFolhaPanel("AdjudicaÃ§Ã£o");
+		         subfolha = new SubFolhaPanel("Adjudicação");
 		         if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
               		 subfolha.setVisible(false);	
               	 pedacos.add(subfolha);
@@ -1565,7 +1565,7 @@ public class Sistema_PRA implements EntryPoint {
               	 
               	 subfolha.add(criaDatePicker(barrinha, pedido.getAdjudicacao().getData(), "AdjudicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
 
-              	subfolha = new SubFolhaPanel("HomologaÃ§Ã£o");
+              	subfolha = new SubFolhaPanel("Homologação");
               	if(pedido.getTipoDePedido().equalsIgnoreCase("dispensa") || pedido.getTipoDePedido().equalsIgnoreCase("inexigibilidade"))
              		 subfolha.setVisible(false);
              	 pedacos.add(subfolha);
@@ -1574,7 +1574,7 @@ public class Sistema_PRA implements EntryPoint {
              	 
              	 subfolha.add(criaDatePicker(barrinha, pedido.getHomologacao().getData(), "HomologacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
 
-             	subfolha = new SubFolhaPanel("PublicaÃ§Ã£o");
+             	subfolha = new SubFolhaPanel("Publicação");
             	 pedacos.add(subfolha);
 
             	 subfolha.add(criaDatePicker(barrinha, pedido.getPublicacao().getData(), "PublicacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
@@ -1587,14 +1587,14 @@ public class Sistema_PRA implements EntryPoint {
 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaAlmoxarifado().getData(), "NotaAlmoxarifadoHandler?pedido="+pedido.getNumero()+"&data="),"Data de envio ao almoxarifado" );
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio ao PatrimÃ´nio: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getPatrimonio().getData(), "PatrimonioHandler?pedido="+pedido.getNumero()+"&data="), "Data de envio ao Patrimônio: ");
 		         
 		         
-		         /*subfolha = new SubFolhaPanel("CrÃ©dito OrÃ§amentÃ¡rio");
+		         /*subfolha = new SubFolhaPanel("Crédito Orçamentário");
             	 pedacos.add(subfolha);
             
 		         //DETALHAMENTO
-		         HorizontalPanel detalhamento = createRadioGroup(barrinha, pedido, "DetalhamentoHandler", "Detalhamento", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "NÃ£o autorizado");
+		         HorizontalPanel detalhamento = createRadioGroup(barrinha, pedido, "DetalhamentoHandler", "Detalhamento", pedido.getDetalhamento().getParecer(), "parecer", "Autorizado", "Não autorizado");
 		    	 subfolha.add(detalhamento, "Parecer: ");
 
 		    	 subfolha.add(criaDatePicker(barrinha, pedido.getDetalhamento().getData(), "DetalhamentoHandler?pedido="+pedido.getNumero()+"&data="), "Data: ");
@@ -1603,7 +1603,7 @@ public class Sistema_PRA implements EntryPoint {
 		    	 subfolha = new SubFolhaPanel("Recebimento");
             	 pedacos.add(subfolha);
 
-		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data provisÃ³ria: ");
+		         subfolha.add(criaDatePicker(barrinha, pedido.getNotaContabilidade().getData(), "NotaContabilidadeHandler?pedido="+pedido.getNumero()+"&data="), "Data provisória: ");
 
 		         subfolha.add(criaDatePicker(barrinha, pedido.getLiquidacao().getData(), "LiquidacaoHandler?pedido="+pedido.getNumero()+"&data="), "Data definitiva: ");
 
@@ -1617,7 +1617,7 @@ public class Sistema_PRA implements EntryPoint {
 		        // HTML title = new HTML();
 		        // final TreeItem root = new TreeItem(title);
 		         
-		         TreeItem item = to.addTextItem("HistÃ³rico de alteraÃ§Ã£es no pedido");
+		         TreeItem item = to.addTextItem("Histórico de alteraçães no pedido");
 
 		         // Temporarily add an item so we can expand this node
 		         item.addTextItem("");
@@ -1704,7 +1704,7 @@ public class Sistema_PRA implements EntryPoint {
 			   final SimplePanel uploading = new SimplePanel();
 			   uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 			   
-			   RadioButton radioPregao = new RadioButton("tipo", "PregÃ£o EletrÃ´nico");
+			   RadioButton radioPregao = new RadioButton("tipo", "Pregão Eletrônico");
                radioPregao.setEnabled(enabled);
                
 
@@ -1755,7 +1755,7 @@ public class Sistema_PRA implements EntryPoint {
                	                }
                	            });
                
-               RadioButton radioSessao = new RadioButton("tipo", "SessÃ£o PÃºblica");
+               RadioButton radioSessao = new RadioButton("tipo", "Sessão Pública");
                radioSessao.setEnabled(enabled);
                
 
@@ -2126,7 +2126,7 @@ public class Sistema_PRA implements EntryPoint {
 		      } catch (RequestException e) {
 		      }
 		dialogBox.clear();
-     	dialogBox.add(new HTML("Enviado! Carregando seu pedido recÃ©m criado...."));
+     	dialogBox.add(new HTML("Enviado! Carregando seu pedido recém criado...."));
      	
 
 		 Timer t = new Timer() {
