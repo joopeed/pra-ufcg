@@ -46,6 +46,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LabelBase;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -1012,12 +1013,48 @@ public class Sistema_PRA implements EntryPoint {
 			public String getValue(Pedido object) {
 				DateTimeFormat format = DateTimeFormat
 						.getFormat("yyyy-MM-dd'T'HH:mm:ss");
-				DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy");
-				return format2.format(format.parse(object.getLastData()));
+				Date last = format.parse(object.getLastData());
+				Date now = new Date();
+				long diff = now.getTime() - last.getTime();
+				String tempoResposta = "";
+				diff /= 1000; //transforma em segundos
+				if(diff < 60) {
+					tempoResposta = Double.toString(diff) + " s";
+				} else {
+					diff /= 60; //transforma em minutos
+					if(diff < 60) {
+						tempoResposta = Double.toString(diff) + " min";
+					} else {
+						diff /= 60; //transforma em horas
+						if(diff < 24) {
+							tempoResposta = Double.toString(diff) + " h";
+						} else {
+							diff /= 24; //transforma em dias
+							if(diff < 30) {
+								String plural = diff == 1? "": "s";
+								tempoResposta = Double.toString(diff) + " dia" + plural;
+							} else {
+								diff /= 30; //transforma em meses
+								if(diff < 12) {
+									String plural = diff == 1? "": "es";
+									tempoResposta = Double.toString(diff) + " mes" + plural;
+								} else {
+									diff /= 12; //transforma em ano
+									String plural = diff == 1? "": "s";
+									tempoResposta = Double.toString(diff) + " ano" + plural;
+									
+								}
+							}
+						}
+					}
+				}
+				return "há " + tempoResposta;
 			}
 		};
-		table.addColumn(atualizColumn, "Última atualização");
-
+		
+		atualizColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
+		table.addColumn(atualizColumn, "Atualização");
+		table.setColumnWidth(atualizColumn, "50px");
 		// ProgressBar exampleBar1 = new ProgressBar(30, 100, 30);
 		final NoSelectionModel<Pedido> selectionModel = new NoSelectionModel<Pedido>();
 		// Add a selection model to handle user selection.
