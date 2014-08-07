@@ -1,4 +1,4 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -1013,7 +1013,7 @@ public class Sistema_PRA implements EntryPoint {
 				DateTimeFormat format = DateTimeFormat
 						.getFormat("yyyy-MM-dd'T'HH:mm:ss");
 				DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy");
-				return format2.format(format.parse(object.getData()));
+				return format2.format(format.parse(object.getLastData()));
 			}
 		};
 		table.addColumn(atualizColumn, "Última atualização");
