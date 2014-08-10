@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -669,9 +669,9 @@ public class Sistema_PRA implements EntryPoint {
 				String token = event.getValue();
 
 				try {
-					if (token.substring(0, 6).equals("pedido")) {
+					if (token.substring(0,7).equals("/pedido")) {
 
-						String numeroPedido = token.substring(6);
+						String numeroPedido = token.substring(8);
 						Window.setTitle("SAPO@UFCG - Detalhes do Pedido "
 								+ numeroPedido);
 						final RequestBuilder builder3 = new RequestBuilder(
@@ -1032,7 +1032,10 @@ public class Sistema_PRA implements EntryPoint {
 							diff /= 24; //transforma em dias
 							if(diff < 30) {
 								String plural = diff == 1? "": "s";
-								tempoResposta = Double.toString(diff) + " dia" + plural;
+								if (plural.equals(""))
+									tempoResposta="ontem";
+								else
+									tempoResposta = Double.toString(diff) + " dia" + plural;
 							} else {
 								diff /= 30; //transforma em meses
 								if(diff < 12) {
@@ -1048,7 +1051,7 @@ public class Sistema_PRA implements EntryPoint {
 						}
 					}
 				}
-				return "há " + tempoResposta;
+				return !tempoResposta.equals("ontem")?("há " + tempoResposta):tempoResposta;
 			}
 		};
 		
@@ -1070,7 +1073,7 @@ public class Sistema_PRA implements EntryPoint {
 							if (!connected)
 								exibeDialogBox(selected);
 							else
-								History.newItem("pedido" + selected.getNumero());
+								History.newItem("/pedido/" + selected.getNumero());
 							// exibeTelaCompleta(selected);
 
 						}
@@ -1948,7 +1951,7 @@ public class Sistema_PRA implements EntryPoint {
 															// Pedido pedido2 =
 															// JsonUtils.safeEval(response.getText()).cast();
 															// History.newItem("pedido"+pedido.getNumero());
-															Window.Location.replace("/#pedido"
+															Window.Location.replace("/pedido/"
 																	+ pedido.getNumero());
 
 														}
@@ -2661,7 +2664,7 @@ public class Sistema_PRA implements EntryPoint {
 								dialogBox.hide();
 								Pedido pedido = JsonUtils.safeEval(
 										response.getText()).cast();
-								History.newItem("pedido" + pedido.getNumero());
+								History.newItem("/pedido/" + pedido.getNumero());
 							}
 						}
 					});
