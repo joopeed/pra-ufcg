@@ -1,4 +1,4 @@
-package br.edu.ufcg.pra.client;
+﻿package br.edu.ufcg.pra.client;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -1005,6 +1005,18 @@ public class Sistema_PRA implements EntryPoint {
 			}
 		};
 		table.addColumn(dataColumn, "Data de criação");
+		
+		// Add a text column to show the address.
+		TextColumn<Pedido> atualizColumn = new TextColumn<Pedido>() {
+			@Override
+			public String getValue(Pedido object) {
+				DateTimeFormat format = DateTimeFormat
+						.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+				DateTimeFormat format2 = DateTimeFormat.getFormat("dd/MM/yyyy");
+				return format2.format(format.parse(object.getData()));
+			}
+		};
+		table.addColumn(atualizColumn, "Última atualização");
 
 		// ProgressBar exampleBar1 = new ProgressBar(30, 100, 30);
 		final NoSelectionModel<Pedido> selectionModel = new NoSelectionModel<Pedido>();
