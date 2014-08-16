@@ -1637,7 +1637,7 @@ public class Sistema_PRA implements EntryPoint {
 						SubFolhaPanel subfolha = new SubFolhaPanel(
 								"Dados básicos");
 						pedacos.add(subfolha);
-
+						
 						subfolha.add(new Label(pedido.getNumero()),
 								"Número do pedido: ");
 
@@ -1887,6 +1887,37 @@ public class Sistema_PRA implements EntryPoint {
 									}
 								}
 							});
+							RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+									"/LoginHandler");
+
+							try {
+								Request request1 = builder.sendRequest(null, new RequestCallback() {
+
+									public void onError(Request request, Throwable exception) {
+									}
+
+									public void onResponseReceived(Request request,
+											Response response) {
+										if (200 == response.getStatusCode()) {
+											
+											User user = JsonUtils.safeEval(response.getText())
+													.cast();
+											status = user.getStatus();
+											if (!(status.equals("Connected"))) {
+												t.setEnabled(false);
+											}
+											
+											
+
+										} else {
+
+										}
+
+									}
+								});
+							} catch (RequestException e) {
+							}
+
 							/*
 							 * t.addChangeHandler(new ChangeHandler() {
 							 * 
@@ -1896,6 +1927,7 @@ public class Sistema_PRA implements EntryPoint {
 							 * 
 							 * } });
 							 */
+							
 							subfolha.add(t, "Número: ");
 							if (i != indicePregao + 1) {
 								subfolha.add(new HTML(), "");
@@ -2191,7 +2223,7 @@ public class Sistema_PRA implements EntryPoint {
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
-					RadioButton radioPregao = new RadioButton("tipo",
+					final RadioButton radioPregao = new RadioButton("tipo",
 							"Pregão Eletrônico");
 					radioPregao.setEnabled(enabled);
 
@@ -2209,7 +2241,7 @@ public class Sistema_PRA implements EntryPoint {
 						}
 					});
 
-					RadioButton radioDispensa = new RadioButton("tipo",
+					final RadioButton radioDispensa = new RadioButton("tipo",
 							"Dispensa");
 					radioDispensa.setEnabled(enabled);
 
@@ -2227,7 +2259,7 @@ public class Sistema_PRA implements EntryPoint {
 						}
 					});
 
-					RadioButton radioInexi = new RadioButton("tipo",
+					final RadioButton radioInexi = new RadioButton("tipo",
 							"Inexigibilidade");
 					radioInexi.setEnabled(enabled);
 
@@ -2245,7 +2277,7 @@ public class Sistema_PRA implements EntryPoint {
 						}
 					});
 
-					RadioButton radioSessao = new RadioButton("tipo",
+					final RadioButton radioSessao = new RadioButton("tipo",
 							"Sessão Pública");
 					radioSessao.setEnabled(enabled);
 
@@ -2289,6 +2321,39 @@ public class Sistema_PRA implements EntryPoint {
 						radioInexi.setValue(false);
 						radioSessao.setValue(false);
 					}
+					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+							"/LoginHandler");
+
+					try {
+						Request request = builder.sendRequest(null, new RequestCallback() {
+
+							public void onError(Request request, Throwable exception) {
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									
+									User user = JsonUtils.safeEval(response.getText())
+											.cast();
+									status = user.getStatus();
+									if (!(status.equals("Connected"))) {
+										radioDispensa.setEnabled(false);
+										radioInexi.setEnabled(false);
+										radioPregao.setEnabled(false);
+										radioSessao.setEnabled(false);
+									}
+									
+									
+
+								} else {
+
+								}
+
+							}
+						});
+					} catch (RequestException e) {
+					}
 					vp.setSpacing(20);
 					vp.add(radioPregao);
 					vp.add(radioDispensa);
@@ -2312,9 +2377,10 @@ public class Sistema_PRA implements EntryPoint {
 						String atual, final String dado, String valorVerdade,
 						String valorFalso) {
 					final HorizontalPanel vp = new HorizontalPanel();
-					RadioButton radioLegal = new RadioButton(group,
+					final RadioButton radioLegal = new RadioButton(group,
 							valorVerdade);
 					radioLegal.setEnabled(enabled);
+					
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
@@ -2328,8 +2394,39 @@ public class Sistema_PRA implements EntryPoint {
 
 						}
 					});
-					RadioButton radioIlegal = new RadioButton(group, valorFalso);
+					final RadioButton radioIlegal = new RadioButton(group, valorFalso);
 					radioIlegal.setEnabled(enabled);
+					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+							"/LoginHandler");
+
+					try {
+						Request request = builder.sendRequest(null, new RequestCallback() {
+
+							public void onError(Request request, Throwable exception) {
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									
+									User user = JsonUtils.safeEval(response.getText())
+											.cast();
+									status = user.getStatus();
+									if (!(status.equals("Connected"))) {
+										radioIlegal.setEnabled(false);
+										radioLegal.setEnabled(false);
+									}
+									
+									
+
+								} else {
+
+								}
+
+							}
+						});
+					} catch (RequestException e) {
+					}
 					radioIlegal.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
@@ -2375,8 +2472,38 @@ public class Sistema_PRA implements EntryPoint {
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
-					DateBox dateBox = new DateBox();
-					dateBox.setEnabled(enabled);
+					final DateBox dateBox = new DateBox();
+					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+							"/LoginHandler");
+
+					try {
+						Request request = builder.sendRequest(null, new RequestCallback() {
+
+							public void onError(Request request, Throwable exception) {
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									
+									User user = JsonUtils.safeEval(response.getText())
+											.cast();
+									status = user.getStatus();
+									if (!(status.equals("Connected"))) {
+										dateBox.setEnabled(false);
+									}
+									
+									
+
+								} else {
+
+								}
+
+							}
+						});
+					} catch (RequestException e) {
+					}
+
 					novo.add(dateBox);
 					dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat
 							.getFormat("dd/MM/yyyy")));
@@ -2449,15 +2576,47 @@ public class Sistema_PRA implements EntryPoint {
 
 				private HorizontalPanel createTextBox(final Barrinha barrinha,
 						final String parameter, String text,
-						final String numPedido) {
-
+						final String numPedido){
+					
 					final HorizontalPanel novo = new HorizontalPanel();
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
 					final TextBox tal = new TextBox();
-					novo.add(tal);
+					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+							"/LoginHandler");
 
+					try {
+						Request request = builder.sendRequest(null, new RequestCallback() {
+
+							public void onError(Request request, Throwable exception) {
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								if (200 == response.getStatusCode()) {
+									
+									User user = JsonUtils.safeEval(response.getText())
+											.cast();
+									status = user.getStatus();
+									if (!(status.equals("Connected"))) {
+										tal.setEnabled(false);
+									}
+									
+									
+
+								} else {
+
+								}
+
+							}
+						});
+					} catch (RequestException e) {
+					}
+
+					
+					novo.add(tal);
+					
 					tal.setText(text);
 					// tal.setReadOnly(true);
 					tal.addClickHandler(new ClickHandler() {
@@ -2491,6 +2650,7 @@ public class Sistema_PRA implements EntryPoint {
 													Response response) {
 												if (200 == response
 														.getStatusCode()) {
+													
 													barrinha.atualizar();
 													uploading.clear();
 													uploading
