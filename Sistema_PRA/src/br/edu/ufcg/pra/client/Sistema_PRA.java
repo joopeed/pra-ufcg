@@ -434,6 +434,10 @@ class Pedido extends JavaScriptObject {
 	}
 
 	// JSNI methods to get stock data.
+	public final native String getStatus() /*-{
+		return this.status;
+	}-*/;
+	
 	public final native String getDemandante() /*-{
 		return this.demandante;
 	}-*/;
@@ -688,13 +692,18 @@ public class Sistema_PRA implements EntryPoint {
 										public void onResponseReceived(
 												Request request,
 												Response response) {
+										
 											if (200 == response.getStatusCode()) {
+												boolean c = true;
 												// User user =
 												// JsonUtils.safeEval(response.getText()).cast();
 												Pedido pedido = JsonUtils
 														.safeEval(
 																response.getText())
 														.cast();
+												if(!(pedido.getStatus().equals("Connected"))){
+													c = false;
+												}
 												if (pedido.getError().equals(
 														"True")) {
 													final ExtendedDialogBox aviso = new ExtendedDialogBox(
@@ -706,7 +715,7 @@ public class Sistema_PRA implements EntryPoint {
 													aviso.setAnimationEnabled(true);
 													aviso.show();
 												} else
-													exibeTelaCompleta(pedido);
+													exibeTelaCompleta(pedido,c);
 											} else {
 
 											}
@@ -1548,12 +1557,12 @@ public class Sistema_PRA implements EntryPoint {
 
 	}
 
-	private void exibeTelaCompleta(Pedido selected) {
+	private void exibeTelaCompleta(Pedido selected, final boolean c) {
 		RootPanel.get("main_cadastrar").clear();
 		// Create the dialog box
 		final Label nameField = new Label();
+		
 		nameField.setText("");
-
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
 				"/LoginHandler");
 		// RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
@@ -1598,7 +1607,6 @@ public class Sistema_PRA implements EntryPoint {
 			});
 		} catch (RequestException e) {
 		}
-
 		final SimplePanel buscando = new SimplePanel();
 		buscando.addStyleName("buscando");
 		buscando.add(new HTML("<img src=\"images/495.gif\" width=\"4%\"></a>"));
@@ -1637,7 +1645,6 @@ public class Sistema_PRA implements EntryPoint {
 						SubFolhaPanel subfolha = new SubFolhaPanel(
 								"Dados básicos");
 						pedacos.add(subfolha);
-						
 						subfolha.add(new Label(pedido.getNumero()),
 								"Número do pedido: ");
 
@@ -1647,16 +1654,16 @@ public class Sistema_PRA implements EntryPoint {
 						subfolha.add(
 								createTextBox(barrinha, "demandante",
 										pedido.getDemandante(),
-										pedido.getNumero()),
+										pedido.getNumero(),c),
 								"Nome do demandante: ");
 						subfolha.add(
 								createTextBox(barrinha, "email_demandante",
-										pedido.getEmail(), pedido.getNumero()),
+										pedido.getEmail(), pedido.getNumero(),c),
 								"Email do demandante: ");
 						subfolha.add(
 								createTextBox(barrinha, "descricao",
 										pedido.getDescricao(),
-										pedido.getNumero()),
+										pedido.getNumero(),c),
 								"Descrição do pedido: ");
 
 						DateTimeFormat dateFormat = DateTimeFormat
@@ -1670,12 +1677,12 @@ public class Sistema_PRA implements EntryPoint {
 										pedido.getData(),
 										"setpedido?numero="
 												+ pedido.getNumero()
-												+ "&data_entrada="),
+												+ "&data_entrada=",c),
 								"Data de entrada: ");
 						subfolha.add(new Label(""), "");
 						subfolha.addToBottom(
 								createRadioGroupTipo(aRemover, barrinha,
-										pedido, true, pedido.getTipoDePedido()),
+										pedido, true, pedido.getTipoDePedido(),c),
 								"Tipo de Pedido: ");
 
 						/*
@@ -1700,26 +1707,26 @@ public class Sistema_PRA implements EntryPoint {
 								pedido, "LegalidadeHandler",
 								"LegalidadeHandler", pedido.getLegalidade()
 										.getParecer(), "parecer", "Legal",
-								"Ilegal");
+								"Ilegal",c);
 						HorizontalPanel autorizacao = createRadioGroup(
 								barrinha, pedido, "AutorizacaoHandler",
 								"AutorizacaoHandler", pedido.getAutorizacao()
-										.getParecer(), "parecer", "Sim", "Não");
+										.getParecer(), "parecer", "Sim", "Não",c);
 						HorizontalPanel corretudeDescricao = createRadioGroup(
 								barrinha, pedido, "CorretudeHandler",
 								"CorretudeDescHandler", pedido.getCorretude()
 										.getDescricao(), "descricao",
-								"Correta", "Incorreta");
+								"Correta", "Incorreta",c);
 						HorizontalPanel corretudeQuantitativo = createRadioGroup(
 								barrinha, pedido, "CorretudeHandler",
 								"CorretudeQuantHandler", pedido.getCorretude()
 										.getQuantitativo(), "quantitativo",
-								"Correta", "Incorreta");
+								"Correta", "Incorreta",c);
 						HorizontalPanel corretudeCotacao = createRadioGroup(
 								barrinha, pedido, "CorretudeHandler",
 								"CorretudeCotHandler", pedido.getCorretude()
 										.getCotacao(), "cotacao", "Correta",
-								"Incorreta");
+								"Incorreta",c);
 
 						subfolha = new SubFolhaPanel("Legalidade");
 						pedacos.add(subfolha);
@@ -1731,7 +1738,7 @@ public class Sistema_PRA implements EntryPoint {
 										pedido.getLegalidade().getDataEnvio(),
 										"LegalidadeHandler?pedido="
 												+ pedido.getNumero()
-												+ "&data_envio="),
+												+ "&data_envio=",c),
 								"Data de envio: ");
 
 						subfolha.add(
@@ -1740,7 +1747,7 @@ public class Sistema_PRA implements EntryPoint {
 										pedido.getLegalidade().getDataRetorno(),
 										"LegalidadeHandler?pedido="
 												+ pedido.getNumero()
-												+ "&data_retorno="),
+												+ "&data_retorno=",c),
 								"Data de retorno: ");
 
 						// AUTORIZACAO
@@ -1768,7 +1775,7 @@ public class Sistema_PRA implements EntryPoint {
 						subfolha.add(
 								criaDatePicker(barrinha, pedido.getCorretude()
 										.getData(), "CorretudeHandler?pedido="
-										+ pedido.getNumero() + "&data="),
+										+ pedido.getNumero() + "&data=",c),
 								"Data de definição: ");
 
 						// MINUTA DO EDITAL
@@ -1777,7 +1784,7 @@ public class Sistema_PRA implements EntryPoint {
 						HorizontalPanel minuta = createRadioGroup(barrinha,
 								pedido, "MinutaHandler", "Minuta", pedido
 										.getMinuta().getParecer(indiceMinuta),
-								"parecer", "Legal", "Ilegal");
+								"parecer", "Legal", "Ilegal",c);
 
 						subfolha = new SubFolhaPanel("Minuta do Edital");
 						if (pedido.getTipoDePedido().equalsIgnoreCase(
@@ -1796,7 +1803,7 @@ public class Sistema_PRA implements EntryPoint {
 												indiceMinuta),
 										"MinutaHandler?pedido="
 												+ pedido.getNumero()
-												+ "&data_inicio="),
+												+ "&data_inicio=",c),
 								"Data de inicio de elaboração: ");
 
 						subfolha.add(
@@ -1806,7 +1813,7 @@ public class Sistema_PRA implements EntryPoint {
 												indiceMinuta),
 										"MinutaHandler?pedido="
 												+ pedido.getNumero()
-												+ "&data_envio="),
+												+ "&data_envio=",c),
 								"Data de envio: ");
 
 						subfolha.add(
@@ -1816,7 +1823,7 @@ public class Sistema_PRA implements EntryPoint {
 												indiceMinuta),
 										"MinutaHandler?pedido="
 												+ pedido.getNumero()
-												+ "&data_retorno="),
+												+ "&data_retorno=",c),
 								"Data de retorno: ");
 
 						int indicePregao = pedido.getPregao().indiceAtual();
@@ -1850,7 +1857,7 @@ public class Sistema_PRA implements EntryPoint {
 									"Comprado", "Não comprado");
 
 							final TextBox t = new TextBox();
-							t.setEnabled(enabled);
+							t.setEnabled(c);
 							t.setText(pedido.getPregao().getNumero(i));
 							t.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -1887,37 +1894,6 @@ public class Sistema_PRA implements EntryPoint {
 									}
 								}
 							});
-							RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
-									"/LoginHandler");
-
-							try {
-								Request request1 = builder.sendRequest(null, new RequestCallback() {
-
-									public void onError(Request request, Throwable exception) {
-									}
-
-									public void onResponseReceived(Request request,
-											Response response) {
-										if (200 == response.getStatusCode()) {
-											
-											User user = JsonUtils.safeEval(response.getText())
-													.cast();
-											status = user.getStatus();
-											if (!(status.equals("Connected"))) {
-												t.setEnabled(false);
-											}
-											
-											
-
-										} else {
-
-										}
-
-									}
-								});
-							} catch (RequestException e) {
-							}
-
 							/*
 							 * t.addChangeHandler(new ChangeHandler() {
 							 * 
@@ -1927,7 +1903,6 @@ public class Sistema_PRA implements EntryPoint {
 							 * 
 							 * } });
 							 */
-							
 							subfolha.add(t, "Número: ");
 							if (i != indicePregao + 1) {
 								subfolha.add(new HTML(), "");
@@ -1983,7 +1958,7 @@ public class Sistema_PRA implements EntryPoint {
 															// Pedido pedido2 =
 															// JsonUtils.safeEval(response.getText()).cast();
 															// History.newItem("pedido"+pedido.getNumero());
-															Window.Location.replace("/pedido/"
+															Window.Location.replace("/#/pedido/"
 																	+ pedido.getNumero());
 
 														}
@@ -2039,7 +2014,7 @@ public class Sistema_PRA implements EntryPoint {
 										barrinha,
 										pedido.getAdjudicacao().getData(),
 										"AdjudicacaoHandler?pedido="
-												+ pedido.getNumero() + "&data="),
+												+ pedido.getNumero() + "&data=",c),
 								"Data: ");
 
 						subfolha = new SubFolhaPanel("Homologação");
@@ -2056,7 +2031,7 @@ public class Sistema_PRA implements EntryPoint {
 										barrinha,
 										pedido.getHomologacao().getData(),
 										"HomologacaoHandler?pedido="
-												+ pedido.getNumero() + "&data="),
+												+ pedido.getNumero() + "&data=",c),
 								"Data: ");
 
 						subfolha = new SubFolhaPanel("Publicação");
@@ -2065,7 +2040,7 @@ public class Sistema_PRA implements EntryPoint {
 						subfolha.add(
 								criaDatePicker(barrinha, pedido.getPublicacao()
 										.getData(), "PublicacaoHandler?pedido="
-										+ pedido.getNumero() + "&data="),
+										+ pedido.getNumero() + "&data=",c),
 								"Data: ");
 
 						subfolha = new SubFolhaPanel("Empenho");
@@ -2074,20 +2049,20 @@ public class Sistema_PRA implements EntryPoint {
 						subfolha.add(
 								criaDatePicker(barrinha, pedido.getEmpenho()
 										.getData(), "EmpenhoHandler?pedido="
-										+ pedido.getNumero() + "&data="),
+										+ pedido.getNumero() + "&data=",c),
 								"Data: ");
 
 						subfolha.add(
 								criaDatePicker(barrinha, pedido
 										.getNotaAlmoxarifado().getData(),
 										"NotaAlmoxarifadoHandler?pedido="
-												+ pedido.getNumero() + "&data="),
+												+ pedido.getNumero() + "&data=",c),
 								"Data de envio ao almoxarifado");
 
 						subfolha.add(
 								criaDatePicker(barrinha, pedido.getPatrimonio()
 										.getData(), "PatrimonioHandler?pedido="
-										+ pedido.getNumero() + "&data="),
+										+ pedido.getNumero() + "&data=",c),
 								"Data de envio ao Patrimônio: ");
 
 						/*
@@ -2114,13 +2089,13 @@ public class Sistema_PRA implements EntryPoint {
 								criaDatePicker(barrinha, pedido
 										.getNotaContabilidade().getData(),
 										"NotaContabilidadeHandler?pedido="
-												+ pedido.getNumero() + "&data="),
+												+ pedido.getNumero() + "&data=",c),
 								"Data provisória: ");
 
 						subfolha.add(
 								criaDatePicker(barrinha, pedido.getLiquidacao()
 										.getData(), "LiquidacaoHandler?pedido="
-										+ pedido.getNumero() + "&data="),
+										+ pedido.getNumero() + "&data=",c),
 								"Data definitiva: ");
 
 						// subfolha.add(criaDatePicker(barrinha,
@@ -2210,7 +2185,7 @@ public class Sistema_PRA implements EntryPoint {
 				private HorizontalPanel createRadioGroupTipo(
 						final ArrayList<SimplePanel> aRemover,
 						final Barrinha barrinha, final Pedido pedido,
-						boolean enabled, String atual) {
+						boolean enabled, String atual, final boolean c) {
 					final HorizontalPanel vp = new HorizontalPanel();
 					// VerticalPanel vvp = new VerticalPanel();
 					// HorizontalPanel fp = new HorizontalPanel();
@@ -2223,9 +2198,9 @@ public class Sistema_PRA implements EntryPoint {
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
-					final RadioButton radioPregao = new RadioButton("tipo",
+					RadioButton radioPregao = new RadioButton("tipo",
 							"Pregão Eletrônico");
-					radioPregao.setEnabled(enabled);
+					radioPregao.setEnabled(c);
 
 					radioPregao.addClickHandler(new ClickHandler() {
 						@Override
@@ -2241,9 +2216,9 @@ public class Sistema_PRA implements EntryPoint {
 						}
 					});
 
-					final RadioButton radioDispensa = new RadioButton("tipo",
+					RadioButton radioDispensa = new RadioButton("tipo",
 							"Dispensa");
-					radioDispensa.setEnabled(enabled);
+					radioDispensa.setEnabled(c);
 
 					radioDispensa.addClickHandler(new ClickHandler() {
 						@Override
@@ -2259,9 +2234,9 @@ public class Sistema_PRA implements EntryPoint {
 						}
 					});
 
-					final RadioButton radioInexi = new RadioButton("tipo",
+					RadioButton radioInexi = new RadioButton("tipo",
 							"Inexigibilidade");
-					radioInexi.setEnabled(enabled);
+					radioInexi.setEnabled(c);
 
 					radioInexi.addClickHandler(new ClickHandler() {
 						@Override
@@ -2277,9 +2252,9 @@ public class Sistema_PRA implements EntryPoint {
 						}
 					});
 
-					final RadioButton radioSessao = new RadioButton("tipo",
+					RadioButton radioSessao = new RadioButton("tipo",
 							"Sessão Pública");
-					radioSessao.setEnabled(enabled);
+					radioSessao.setEnabled(c);
 
 					radioSessao.addClickHandler(new ClickHandler() {
 						@Override
@@ -2321,39 +2296,6 @@ public class Sistema_PRA implements EntryPoint {
 						radioInexi.setValue(false);
 						radioSessao.setValue(false);
 					}
-					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
-							"/LoginHandler");
-
-					try {
-						Request request = builder.sendRequest(null, new RequestCallback() {
-
-							public void onError(Request request, Throwable exception) {
-							}
-
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									
-									User user = JsonUtils.safeEval(response.getText())
-											.cast();
-									status = user.getStatus();
-									if (!(status.equals("Connected"))) {
-										radioDispensa.setEnabled(false);
-										radioInexi.setEnabled(false);
-										radioPregao.setEnabled(false);
-										radioSessao.setEnabled(false);
-									}
-									
-									
-
-								} else {
-
-								}
-
-							}
-						});
-					} catch (RequestException e) {
-					}
 					vp.setSpacing(20);
 					vp.add(radioPregao);
 					vp.add(radioDispensa);
@@ -2366,7 +2308,7 @@ public class Sistema_PRA implements EntryPoint {
 				private HorizontalPanel createRadioGroup(Barrinha barrinha,
 						final Pedido pedido, final String handler,
 						String group, String atual, final String dado,
-						String valorVerdade, String valorFalso) {
+						String valorVerdade, String valorFalso,final boolean c) {
 					return createRadioGroup(barrinha, pedido, true, handler,
 							group, atual, dado, valorVerdade, valorFalso);
 				}
@@ -2377,10 +2319,9 @@ public class Sistema_PRA implements EntryPoint {
 						String atual, final String dado, String valorVerdade,
 						String valorFalso) {
 					final HorizontalPanel vp = new HorizontalPanel();
-					final RadioButton radioLegal = new RadioButton(group,
+					RadioButton radioLegal = new RadioButton(group,
 							valorVerdade);
-					radioLegal.setEnabled(enabled);
-					
+					radioLegal.setEnabled(c);
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
@@ -2394,39 +2335,8 @@ public class Sistema_PRA implements EntryPoint {
 
 						}
 					});
-					final RadioButton radioIlegal = new RadioButton(group, valorFalso);
-					radioIlegal.setEnabled(enabled);
-					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
-							"/LoginHandler");
-
-					try {
-						Request request = builder.sendRequest(null, new RequestCallback() {
-
-							public void onError(Request request, Throwable exception) {
-							}
-
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									
-									User user = JsonUtils.safeEval(response.getText())
-											.cast();
-									status = user.getStatus();
-									if (!(status.equals("Connected"))) {
-										radioIlegal.setEnabled(false);
-										radioLegal.setEnabled(false);
-									}
-									
-									
-
-								} else {
-
-								}
-
-							}
-						});
-					} catch (RequestException e) {
-					}
+					RadioButton radioIlegal = new RadioButton(group, valorFalso);
+					radioIlegal.setEnabled(c);
 					radioIlegal.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
@@ -2454,7 +2364,7 @@ public class Sistema_PRA implements EntryPoint {
 				}
 
 				private HorizontalPanel criaDatePicker(Barrinha barrinha,
-						String dataAtual, final String parameters) {
+						String dataAtual, final String parameters, boolean c) {
 					return criaDatePicker(barrinha, dataAtual, true, parameters);
 				}
 
@@ -2472,38 +2382,8 @@ public class Sistema_PRA implements EntryPoint {
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
-					final DateBox dateBox = new DateBox();
-					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
-							"/LoginHandler");
-
-					try {
-						Request request = builder.sendRequest(null, new RequestCallback() {
-
-							public void onError(Request request, Throwable exception) {
-							}
-
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									
-									User user = JsonUtils.safeEval(response.getText())
-											.cast();
-									status = user.getStatus();
-									if (!(status.equals("Connected"))) {
-										dateBox.setEnabled(false);
-									}
-									
-									
-
-								} else {
-
-								}
-
-							}
-						});
-					} catch (RequestException e) {
-					}
-
+					DateBox dateBox = new DateBox();
+					dateBox.setEnabled(c);
 					novo.add(dateBox);
 					dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat
 							.getFormat("dd/MM/yyyy")));
@@ -2576,47 +2456,16 @@ public class Sistema_PRA implements EntryPoint {
 
 				private HorizontalPanel createTextBox(final Barrinha barrinha,
 						final String parameter, String text,
-						final String numPedido){
-					
+						final String numPedido, final boolean c) {
+
 					final HorizontalPanel novo = new HorizontalPanel();
 					final SimplePanel uploading = new SimplePanel();
 					uploading.add(new HTML("<img src=\"images/up.gif\"></a>"));
 
 					final TextBox tal = new TextBox();
-					RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
-							"/LoginHandler");
-
-					try {
-						Request request = builder.sendRequest(null, new RequestCallback() {
-
-							public void onError(Request request, Throwable exception) {
-							}
-
-							public void onResponseReceived(Request request,
-									Response response) {
-								if (200 == response.getStatusCode()) {
-									
-									User user = JsonUtils.safeEval(response.getText())
-											.cast();
-									status = user.getStatus();
-									if (!(status.equals("Connected"))) {
-										tal.setEnabled(false);
-									}
-									
-									
-
-								} else {
-
-								}
-
-							}
-						});
-					} catch (RequestException e) {
-					}
-
-					
 					novo.add(tal);
-					
+					tal.setEnabled(c);
+
 					tal.setText(text);
 					// tal.setReadOnly(true);
 					tal.addClickHandler(new ClickHandler() {
@@ -2650,7 +2499,6 @@ public class Sistema_PRA implements EntryPoint {
 													Response response) {
 												if (200 == response
 														.getStatusCode()) {
-													
 													barrinha.atualizar();
 													uploading.clear();
 													uploading
