@@ -30,6 +30,8 @@ public class MaisButton extends Button {
 		this.listaa = listaa;
 		this.table = table;
 		addClickHandler(new ClickHandler() {
+			FocusWidget sender = (FocusWidget) event.getSource();
+			sender.setEnabled(false);
 			
 			@Override
 			public void onClick(ClickEvent event) {
