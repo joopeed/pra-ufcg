@@ -1,4 +1,4 @@
-﻿package br.edu.ufcg.pra.client;
+package br.edu.ufcg.pra.client;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
